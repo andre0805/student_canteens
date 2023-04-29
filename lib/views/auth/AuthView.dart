@@ -1,17 +1,20 @@
-import 'dart:math';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:student_canteens/services/AuthService.dart';
-import '../../services/AuthService.dart';
 
-class AuthView extends StatelessWidget {
+class AuthView extends StatefulWidget {
+  AuthView({super.key});
+
+  @override
+  State<AuthView> createState() => _AuthViewState();
+}
+
+class _AuthViewState extends State<AuthView> {
   AuthService authService = AuthService();
 
   String email = "";
   String password = "";
-
-  AuthView({super.key});
 
   // This widget is the root of your application.
   @override
@@ -66,8 +69,8 @@ class AuthView extends StatelessWidget {
                   height: 16,
                 ),
                 ElevatedButton(
-                  onPressed: () => {
-                    authService.signIn(email, password),
+                  onPressed: () {
+                    signIn();
                   },
                   child: Text("Prijavi se"),
                   style: ElevatedButton.styleFrom(
@@ -140,6 +143,61 @@ class AuthView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void signIn() async {
+    if (email.isEmpty || password.isEmpty) return;
+
+    showLoadingDialog();
+
+    try {
+      await authService.signIn(email, password);
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+        showAlertDialog("Greška", "Pogrešan email ili lozinka.");
+      } else if (e.code == 'invalid-email') {
+        showAlertDialog("Greška", "Neispravan email.");
+      } else {
+        showAlertDialog("Greška", "Došlo je do pogreške.");
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      showAlertDialog("Greška", "Došlo je do pogreške.");
+    }
+  }
+
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  void showAlertDialog(String title, String subtitle) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(subtitle),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
