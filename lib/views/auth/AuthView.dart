@@ -2,8 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:student_canteens/services/AuthService.dart';
+import '../../services/AuthService.dart';
 
 class AuthView extends StatelessWidget {
+  AuthService authService = AuthService();
+
   String email = "";
   String password = "";
 
@@ -28,7 +32,7 @@ class AuthView extends StatelessWidget {
                 ),
                 TextField(
                   onChanged: (value) {
-                    // TODO: Add email validation
+                    email = value;
                   },
                   decoration: InputDecoration(
                     hintText: "Email",
@@ -45,7 +49,7 @@ class AuthView extends StatelessWidget {
                 ),
                 TextField(
                   onChanged: (value) {
-                    // TODO: Add password validation
+                    password = value;
                   },
                   obscureText: true,
                   decoration: InputDecoration(
@@ -63,7 +67,7 @@ class AuthView extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () => {
-                    // TODO: Add login logic
+                    authService.signIn(email, password),
                   },
                   child: Text("Prijavi se"),
                   style: ElevatedButton.styleFrom(
