@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'views/auth/LoginView.dart';
+import 'package:student_canteens/views/auth/LoginView.dart';
 import 'views/HomeView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
             if (snapshot.hasData) {
               return HomeView();
             } else {
-              return LoginView();
+              return const LoginView();
             }
           },
         ),
