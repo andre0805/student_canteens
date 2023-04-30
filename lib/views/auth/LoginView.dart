@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:student_canteens/services/AuthService.dart';
+import 'RegisterView.dart';
+import 'package:flutter/cupertino.dart';
 
 class LoginView extends StatefulWidget {
-  LoginView({super.key});
+  const LoginView({super.key});
 
   @override
   State<LoginView> createState() => _AuthViewState();
@@ -24,7 +26,7 @@ class _AuthViewState extends State<LoginView> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -39,7 +41,7 @@ class _AuthViewState extends State<LoginView> {
                   },
                   decoration: InputDecoration(
                     hintText: "Email",
-                    enabledBorder: UnderlineInputBorder(
+                    enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: UnderlineInputBorder(
@@ -57,7 +59,7 @@ class _AuthViewState extends State<LoginView> {
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: "Lozinka",
-                    enabledBorder: UnderlineInputBorder(
+                    enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: UnderlineInputBorder(
@@ -72,10 +74,10 @@ class _AuthViewState extends State<LoginView> {
                   onPressed: () {
                     signIn();
                   },
-                  child: Text("Prijavi se"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[900],
                   ),
+                  child: const Text("Prijavi se"),
                 ),
                 const SizedBox(
                   height: 24,
@@ -124,7 +126,13 @@ class _AuthViewState extends State<LoginView> {
                     ),
                     TextButton(
                       onPressed: () => {
-                        // TODO: Add register logic
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            fullscreenDialog: true,
+                            builder: (context) => const RegisterView(),
+                          ),
+                        )
                       },
                       child: const Text(
                         "Registriraj se",
