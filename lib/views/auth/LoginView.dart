@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:student_canteens/services/AuthService.dart';
 
-class AuthView extends StatefulWidget {
-  AuthView({super.key});
+class LoginView extends StatefulWidget {
+  LoginView({super.key});
 
   @override
-  State<AuthView> createState() => _AuthViewState();
+  State<LoginView> createState() => _AuthViewState();
 }
 
-class _AuthViewState extends State<AuthView> {
+class _AuthViewState extends State<LoginView> {
   AuthService authService = AuthService();
 
   String email = "";
