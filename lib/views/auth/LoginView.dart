@@ -18,6 +18,9 @@ class _AuthViewState extends State<LoginView> {
   String email = "";
   String password = "";
 
+  String? emailError;
+  String? passwordError;
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -40,7 +43,8 @@ class _AuthViewState extends State<LoginView> {
                     email = value;
                   },
                   decoration: InputDecoration(
-                    hintText: "Email",
+                    labelText: "Email",
+                    errorText: emailError,
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
@@ -58,7 +62,8 @@ class _AuthViewState extends State<LoginView> {
                   },
                   obscureText: true,
                   decoration: InputDecoration(
-                    hintText: "Lozinka",
+                    labelText: "Lozinka",
+                    errorText: passwordError,
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
@@ -155,7 +160,7 @@ class _AuthViewState extends State<LoginView> {
   }
 
   void signIn() async {
-    if (email.isEmpty || password.isEmpty) return;
+    if (!validateInput()) return;
 
     showLoadingDialog();
 
@@ -164,17 +169,33 @@ class _AuthViewState extends State<LoginView> {
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        showAlertDialog("Greška", "Pogrešan email ili lozinka.");
-      } else if (e.code == 'invalid-email') {
-        showAlertDialog("Greška", "Neispravan email.");
-      } else {
-        showAlertDialog("Greška", "Došlo je do pogreške.");
-      }
+      processFirebaseErrorCode(e.code);
     } catch (e) {
       Navigator.pop(context);
-      showAlertDialog("Greška", "Došlo je do pogreške.");
+      showAlertDialog("Greška", "Došlo je do pogreške");
     }
+  }
+
+  bool validateInput() {
+    setState(() {
+      emailError = email.isEmpty ? "Potrebna email adresa" : null;
+      passwordError = password.isEmpty ? "Potrebna lozinka" : null;
+    });
+
+    return emailError == null && passwordError == null;
+  }
+
+  void processFirebaseErrorCode(String errorCode) {
+    setState(() {
+      if (errorCode == 'user-not-found' || errorCode == 'wrong-password') {
+        emailError = "Pogrešan email ili lozinka";
+        passwordError = "Pogrešan email ili lozinka";
+      } else if (errorCode == 'invalid-email') {
+        emailError = "Neispravan email";
+      } else {
+        showAlertDialog("Greška", "Došlo je do pogreške");
+      }
+    });
   }
 
   void showLoadingDialog() {

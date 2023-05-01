@@ -16,6 +16,10 @@ class _AuthViewState extends State<RegisterView> {
   String password = "";
   String confirmPassword = "";
 
+  String? emailError;
+  String? passwordError;
+  String? confirmPasswordError;
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,8 @@ class _AuthViewState extends State<RegisterView> {
                     email = value;
                   },
                   decoration: InputDecoration(
-                    hintText: "Email",
+                    labelText: "Email",
+                    errorText: emailError,
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
@@ -68,13 +73,14 @@ class _AuthViewState extends State<RegisterView> {
                   },
                   obscureText: true,
                   decoration: InputDecoration(
-                    hintText: "Lozinka",
+                    labelText: "Lozinka",
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey.shade900),
                     ),
+                    errorText: passwordError,
                   ),
                 ),
                 const SizedBox(
@@ -86,13 +92,14 @@ class _AuthViewState extends State<RegisterView> {
                   },
                   obscureText: true,
                   decoration: InputDecoration(
-                    hintText: "Potvrdi lozinku",
+                    labelText: "Potvrdi lozinku",
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey.shade900),
                     ),
+                    errorText: confirmPasswordError,
                   ),
                 ),
                 const SizedBox(
@@ -117,26 +124,50 @@ class _AuthViewState extends State<RegisterView> {
   }
 
   void signUp() async {
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) return;
+    if (!validateInput()) return;
 
     showLoadingDialog();
 
     try {
       await authService.signUp(email, password);
       Navigator.pop(context);
+      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        showAlertDialog("Greška", "Pogrešan email ili lozinka.");
-      } else if (e.code == 'invalid-email') {
-        showAlertDialog("Greška", "Neispravan email.");
-      } else {
-        showAlertDialog("Greška", "Došlo je do pogreške.");
-      }
+      processFirebaseErrorCode(e.code);
     } catch (e) {
       Navigator.pop(context);
       showAlertDialog("Greška", "Došlo je do pogreške.");
     }
+  }
+
+  bool validateInput() {
+    setState(() {
+      emailError = email.isEmpty ? "Potrebna email adresa" : null;
+      passwordError = password.isEmpty ? "Potrebna lozinka" : null;
+      confirmPasswordError =
+          confirmPassword.isEmpty ? "Potrebna potvrda lozinke" : null;
+      confirmPasswordError =
+          password != confirmPassword ? "Lozinke se ne podudaraju" : null;
+    });
+
+    return emailError == null &&
+        passwordError == null &&
+        confirmPasswordError == null;
+  }
+
+  void processFirebaseErrorCode(String errorCode) {
+    setState(() {
+      if (errorCode == 'email-already-in-use') {
+        emailError = "Korisnik s ovom email adresom već postoji";
+      } else if (errorCode == 'invalid-email') {
+        emailError = "Neispravan email";
+      } else if (errorCode == 'weak-password') {
+        passwordError = "Lozinka treba sadržavati minimalno 6 znakova";
+      } else {
+        showAlertDialog("Greška", "Došlo je do pogreške");
+      }
+    });
   }
 
   void showLoadingDialog() {
