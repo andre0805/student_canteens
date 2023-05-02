@@ -42,9 +42,11 @@ class _AuthViewState extends State<LoginView> {
                   onChanged: (value) {
                     email = value;
                   },
+                  cursorColor: Colors.grey[900],
                   decoration: InputDecoration(
                     labelText: "Email",
                     errorText: emailError,
+                    labelStyle: const TextStyle(color: Colors.grey),
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
@@ -61,9 +63,11 @@ class _AuthViewState extends State<LoginView> {
                     password = value;
                   },
                   obscureText: true,
+                  cursorColor: Colors.grey[900],
                   decoration: InputDecoration(
                     labelText: "Lozinka",
                     errorText: passwordError,
+                    labelStyle: const TextStyle(color: Colors.grey),
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
@@ -169,7 +173,7 @@ class _AuthViewState extends State<LoginView> {
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      processFirebaseErrorCode(e.code);
+      handleFirebaseAuthError(e.code);
     } catch (e) {
       Navigator.pop(context);
       showAlertDialog("Greška", "Došlo je do pogreške");
@@ -185,7 +189,7 @@ class _AuthViewState extends State<LoginView> {
     return emailError == null && passwordError == null;
   }
 
-  void processFirebaseErrorCode(String errorCode) {
+  void handleFirebaseAuthError(String errorCode) {
     setState(() {
       if (errorCode == 'user-not-found' || errorCode == 'wrong-password') {
         emailError = "Pogrešan email ili lozinka";

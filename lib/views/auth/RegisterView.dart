@@ -53,9 +53,11 @@ class _AuthViewState extends State<RegisterView> {
                   onChanged: (value) {
                     email = value;
                   },
+                  cursorColor: Colors.grey[900],
                   decoration: InputDecoration(
                     labelText: "Email",
                     errorText: emailError,
+                    labelStyle: const TextStyle(color: Colors.grey),
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
@@ -72,15 +74,17 @@ class _AuthViewState extends State<RegisterView> {
                     password = value;
                   },
                   obscureText: true,
+                  cursorColor: Colors.grey[900],
                   decoration: InputDecoration(
                     labelText: "Lozinka",
+                    errorText: passwordError,
+                    labelStyle: const TextStyle(color: Colors.grey),
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey.shade900),
                     ),
-                    errorText: passwordError,
                   ),
                 ),
                 const SizedBox(
@@ -91,15 +95,17 @@ class _AuthViewState extends State<RegisterView> {
                     confirmPassword = value;
                   },
                   obscureText: true,
+                  cursorColor: Colors.grey[900],
                   decoration: InputDecoration(
                     labelText: "Potvrdi lozinku",
+                    errorText: confirmPasswordError,
+                    labelStyle: const TextStyle(color: Colors.grey),
                     enabledBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey.shade900),
                     ),
-                    errorText: confirmPasswordError,
                   ),
                 ),
                 const SizedBox(
@@ -134,7 +140,7 @@ class _AuthViewState extends State<RegisterView> {
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-      processFirebaseErrorCode(e.code);
+      handleFirebaseAuthError(e.code);
     } catch (e) {
       Navigator.pop(context);
       showAlertDialog("Greška", "Došlo je do pogreške.");
@@ -156,7 +162,7 @@ class _AuthViewState extends State<RegisterView> {
         confirmPasswordError == null;
   }
 
-  void processFirebaseErrorCode(String errorCode) {
+  void handleFirebaseAuthError(String errorCode) {
     setState(() {
       if (errorCode == 'email-already-in-use') {
         emailError = "Korisnik s ovom email adresom već postoji";
