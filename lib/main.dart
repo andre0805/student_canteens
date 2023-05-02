@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:student_canteens/views/auth/EmailVerificationView.dart';
 import 'package:student_canteens/views/auth/LoginView.dart';
-import 'views/HomeView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return HomeView();
+              return const EmailVerificationView();
             } else {
               return const LoginView();
             }
