@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/views/HomeView.dart';
+import 'package:student_canteens/services/AuthService.dart';
 
 class EmailVerificationView extends StatefulWidget {
   const EmailVerificationView({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class EmailVerificationView extends StatefulWidget {
 }
 
 class _EmailVerificationViewState extends State<EmailVerificationView> {
+  AuthService authService = AuthService();
   bool isEmailVerified = false;
   Timer? timer;
   int resendEmailCounter = 0;
@@ -81,7 +83,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   }
 
   void cancelEmailVerification() async {
-    await FirebaseAuth.instance.signOut();
+    await authService.signOut();
   }
 
   void handleFirebaseAuthError(String errorCode) {
