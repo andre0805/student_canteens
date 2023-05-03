@@ -40,7 +40,9 @@ class _AuthViewState extends State<LoginView> {
                 ),
                 TextField(
                   onChanged: (value) {
-                    email = value;
+                    setState(() {
+                      email = value;
+                    });
                   },
                   cursorColor: Colors.grey[900],
                   decoration: InputDecoration(
@@ -56,7 +58,7 @@ class _AuthViewState extends State<LoginView> {
                   ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 8,
                 ),
                 TextField(
                   onChanged: (value) {
@@ -75,6 +77,24 @@ class _AuthViewState extends State<LoginView> {
                       borderSide: BorderSide(color: Colors.grey.shade900),
                     ),
                   ),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: email.isEmpty ? null : forgotPassword,
+                      child: Text(
+                        "Zaboravljena lozinka?",
+                        style: TextStyle(
+                          color: email.isEmpty ? Colors.grey[500] : Colors.blue,
+                          fontSize: 12,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
                 const SizedBox(
                   height: 16,
@@ -200,6 +220,21 @@ class _AuthViewState extends State<LoginView> {
         showAlertDialog("Greška", "Došlo je do pogreške");
       }
     });
+  }
+
+  void forgotPassword() async {
+    try {
+      await authService.forgotPassword(email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Poslan je email za resetiranje lozinke"),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      handleFirebaseAuthError(e.code);
+    } catch (e) {
+      showAlertDialog("Greška", "Došlo je do pogreške");
+    }
   }
 
   void showLoadingDialog() {
