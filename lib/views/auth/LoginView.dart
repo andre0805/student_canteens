@@ -135,7 +135,7 @@ class _AuthViewState extends State<LoginView> {
                 ),
                 SignInButton(
                   Buttons.Google,
-                  onPressed: () => {},
+                  onPressed: signInWithGoogle,
                   text: "Prijava s Google-om",
                 ),
                 const SizedBox(
@@ -181,6 +181,16 @@ class _AuthViewState extends State<LoginView> {
         ),
       ),
     );
+  }
+
+  void signInWithGoogle() async {
+    try {
+      await authService.signInWithGoogle();
+    } on FirebaseAuthException catch (e) {
+      handleFirebaseAuthError(e.code);
+    } catch (e) {
+      showAlertDialog("Greška", "Došlo je do pogreške");
+    }
   }
 
   void signIn() async {
