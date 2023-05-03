@@ -15,7 +15,8 @@ class EmailVerificationView extends StatefulWidget {
 class _EmailVerificationViewState extends State<EmailVerificationView> {
   AuthService authService = AuthService();
   bool isEmailVerified = false;
-  Timer? timer;
+  Timer? checkEmailVerifiedTimer;
+  Timer? resendEmailTimer;
   int resendEmailCounter = 0;
 
   @override
@@ -27,7 +28,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
     if (!isEmailVerified) {
       sendEmailVerification();
 
-      timer = Timer.periodic(
+      checkEmailVerifiedTimer = Timer.periodic(
         const Duration(seconds: 3),
         (timer) {
           checkEmailVerified();
@@ -39,7 +40,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   @override
   void dispose() {
     super.dispose();
-    timer?.cancel();
+    checkEmailVerifiedTimer?.cancel();
   }
 
   void sendEmailVerification() async {
@@ -47,7 +48,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
       resendEmailCounter = 10;
     });
 
-    Timer.periodic(
+    resendEmailTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
         setState(() {
@@ -78,11 +79,14 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
     });
 
     if (isEmailVerified) {
-      timer?.cancel();
+      checkEmailVerifiedTimer?.cancel();
+      resendEmailTimer?.cancel();
     }
   }
 
   void cancelEmailVerification() async {
+    checkEmailVerifiedTimer?.cancel();
+    resendEmailTimer?.cancel();
     await authService.signOut();
   }
 
