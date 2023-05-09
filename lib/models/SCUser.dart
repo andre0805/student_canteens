@@ -10,4 +10,13 @@ class SCUser {
     required this.surname,
     required this.email,
   });
+
+  factory SCUser.fromJson(Map<String, dynamic> json) {
+    return SCUser(
+      id: json['id'],
+      name: json['name'],
+      surname: json['surname'],
+      email: json['email'],
+    );
+  }
 }
