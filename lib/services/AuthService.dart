@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:student_canteens/models/SCUser.dart';
 
 class AuthService {
-  Future<void> signUp(String email, String password) async {
+  Future<void> signUp(SCUser user, String password) async {
     await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
+        .createUserWithEmailAndPassword(email: user.email, password: password);
   }
 
   Future<void> signIn(String email, String password) async {
