@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/views/HomeView.dart';
 import 'package:student_canteens/services/AuthService.dart';
+import 'package:student_canteens/views/utils.dart';
 
 class EmailVerificationView extends StatefulWidget {
   const EmailVerificationView({Key? key}) : super(key: key);
@@ -41,64 +42,6 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   void dispose() {
     super.dispose();
     checkEmailVerifiedTimer?.cancel();
-  }
-
-  void sendEmailVerification() async {
-    setState(() {
-      resendEmailCounter = 10;
-    });
-
-    resendEmailTimer = Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) {
-        setState(() {
-          resendEmailCounter--;
-          if (resendEmailCounter == 0) {
-            timer.cancel();
-          }
-        });
-      },
-    );
-
-    try {
-      await FirebaseAuth.instance.currentUser?.sendEmailVerification();
-    } on FirebaseAuthException catch (e) {
-      handleFirebaseAuthError(e.code);
-      resendEmailCounter = 30;
-    } catch (e) {
-      showAlertDialog("Greška", e.toString());
-    }
-  }
-
-  void checkEmailVerified() async {
-    await FirebaseAuth.instance.currentUser?.reload();
-
-    setState(() {
-      isEmailVerified =
-          FirebaseAuth.instance.currentUser?.emailVerified ?? false;
-    });
-
-    if (isEmailVerified) {
-      checkEmailVerifiedTimer?.cancel();
-      resendEmailTimer?.cancel();
-    }
-  }
-
-  void cancelEmailVerification() async {
-    checkEmailVerifiedTimer?.cancel();
-    resendEmailTimer?.cancel();
-    await authService.signOut();
-  }
-
-  void handleFirebaseAuthError(String errorCode) {
-    setState(() {
-      if (errorCode == 'too-many-requests') {
-        showAlertDialog(
-            "Greška", "Previše zahtjeva. Molim te pokušaj ponovo kasnije.");
-      } else {
-        showAlertDialog("Greška", "Došlo je do pogreške");
-      }
-    });
   }
 
   @override
@@ -165,23 +108,61 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
           );
   }
 
-  void showAlertDialog(String title, String subtitle) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(subtitle),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        );
+  void sendEmailVerification() async {
+    setState(() {
+      resendEmailCounter = 10;
+    });
+
+    resendEmailTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        setState(() {
+          resendEmailCounter--;
+          if (resendEmailCounter == 0) {
+            timer.cancel();
+          }
+        });
       },
     );
+
+    try {
+      await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+    } on FirebaseAuthException catch (e) {
+      handleFirebaseAuthError(e.code);
+      resendEmailCounter = 30;
+    } catch (e) {
+      Utils.showAlertDialog(context, "Greška", e.toString());
+    }
+  }
+
+  void checkEmailVerified() async {
+    await FirebaseAuth.instance.currentUser?.reload();
+
+    setState(() {
+      isEmailVerified =
+          FirebaseAuth.instance.currentUser?.emailVerified ?? false;
+    });
+
+    if (isEmailVerified) {
+      checkEmailVerifiedTimer?.cancel();
+      resendEmailTimer?.cancel();
+    }
+  }
+
+  void cancelEmailVerification() async {
+    checkEmailVerifiedTimer?.cancel();
+    resendEmailTimer?.cancel();
+    await authService.signOut();
+  }
+
+  void handleFirebaseAuthError(String errorCode) {
+    setState(() {
+      if (errorCode == 'too-many-requests') {
+        Utils.showAlertDialog(context, "Greška",
+            "Previše zahtjeva. Molim te pokušaj ponovo kasnije.");
+      } else {
+        Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
+      }
+    });
   }
 }

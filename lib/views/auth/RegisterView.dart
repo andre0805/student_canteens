@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
+import 'package:student_canteens/views/utils.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -12,10 +13,16 @@ class RegisterView extends StatefulWidget {
 class _AuthViewState extends State<RegisterView> {
   AuthService authService = AuthService();
 
+  String name = "";
+  String surname = "";
+  String phoneNumber = "";
   String email = "";
   String password = "";
   String confirmPassword = "";
 
+  String? nameError;
+  String? surnameError;
+  String? phoneNumberError;
   String? emailError;
   String? passwordError;
   String? confirmPasswordError;
@@ -132,7 +139,7 @@ class _AuthViewState extends State<RegisterView> {
   void signUp() async {
     if (!validateInput()) return;
 
-    showLoadingDialog();
+    Utils.showLoadingDialog(context);
 
     try {
       await authService.signUp(email, password);
@@ -143,7 +150,7 @@ class _AuthViewState extends State<RegisterView> {
       handleFirebaseAuthError(e.code);
     } catch (e) {
       Navigator.pop(context);
-      showAlertDialog("Greška", "Došlo je do pogreške.");
+      Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške.");
     }
   }
 
@@ -171,40 +178,8 @@ class _AuthViewState extends State<RegisterView> {
       } else if (errorCode == 'weak-password') {
         passwordError = "Lozinka treba sadržavati minimalno 6 znakova";
       } else {
-        showAlertDialog("Greška", "Došlo je do pogreške");
+        Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
       }
     });
-  }
-
-  void showLoadingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-  }
-
-  void showAlertDialog(String title, String subtitle) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(subtitle),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

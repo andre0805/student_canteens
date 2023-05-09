@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:student_canteens/services/AuthService.dart';
+import 'package:student_canteens/views/utils.dart';
 import 'RegisterView.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -189,14 +190,14 @@ class _AuthViewState extends State<LoginView> {
     } on FirebaseAuthException catch (e) {
       handleFirebaseAuthError(e.code);
     } catch (e) {
-      showAlertDialog("Greška", "Došlo je do pogreške");
+      Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
     }
   }
 
   void signIn() async {
     if (!validateInput()) return;
 
-    showLoadingDialog();
+    Utils.showLoadingDialog(context);
 
     try {
       await authService.signIn(email, password);
@@ -206,7 +207,7 @@ class _AuthViewState extends State<LoginView> {
       handleFirebaseAuthError(e.code);
     } catch (e) {
       Navigator.pop(context);
-      showAlertDialog("Greška", "Došlo je do pogreške");
+      Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
     }
   }
 
@@ -227,7 +228,7 @@ class _AuthViewState extends State<LoginView> {
       } else if (errorCode == 'invalid-email') {
         emailError = "Neispravan email";
       } else {
-        showAlertDialog("Greška", "Došlo je do pogreške");
+        Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
       }
     });
   }
@@ -235,47 +236,12 @@ class _AuthViewState extends State<LoginView> {
   void forgotPassword() async {
     try {
       await authService.forgotPassword(email);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Poslan je email za resetiranje lozinke"),
-        ),
-      );
+      Utils.showSnackBarMessage(
+          context, "Poslan je email za resetiranje lozinke");
     } on FirebaseAuthException catch (e) {
       handleFirebaseAuthError(e.code);
     } catch (e) {
-      showAlertDialog("Greška", "Došlo je do pogreške");
+      Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
     }
-  }
-
-  void showLoadingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-  }
-
-  void showAlertDialog(String title, String subtitle) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(subtitle),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
