@@ -1,11 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:student_canteens/models/SCUser.dart';
+import 'package:student_canteens/services/GCF.dart';
 
 class AuthService {
+  GCF gcf = GCF.sharedInstance;
+
   Future<void> signUp(SCUser user, String password) async {
-    await FirebaseAuth.instance
+    UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: user.email, password: password);
+
+    SCUser newUser = SCUser(
+      id: userCredential.user!.uid,
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
+    );
+
+    await gcf.createUser(newUser);
   }
 
   Future<void> signIn(String email, String password) async {
@@ -21,7 +33,20 @@ class AuthService {
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    await FirebaseAuth.instance.signInWithCredential(credential);
+
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+    User user = userCredential.user!;
+
+    SCUser newUser = SCUser(
+      id: userCredential.user!.uid,
+      name: user.displayName ?? "Unknown",
+      surname: "",
+      email: googleUser.email,
+    );
+
+    await gcf.createUser(newUser);
   }
 
   Future<void> signOut() async {
