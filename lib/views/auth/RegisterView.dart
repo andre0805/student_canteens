@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/views/utils.dart';
+import 'package:student_canteens/models/SCUser.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -15,14 +16,12 @@ class _AuthViewState extends State<RegisterView> {
 
   String name = "";
   String surname = "";
-  String phoneNumber = "";
   String email = "";
   String password = "";
   String confirmPassword = "";
 
   String? nameError;
   String? surnameError;
-  String? phoneNumberError;
   String? emailError;
   String? passwordError;
   String? confirmPasswordError;
@@ -55,6 +54,46 @@ class _AuthViewState extends State<RegisterView> {
                 const Spacer(),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
+                ),
+                TextField(
+                  onChanged: (value) {
+                    name = value;
+                  },
+                  cursorColor: Colors.grey[900],
+                  decoration: InputDecoration(
+                    labelText: "Ime",
+                    errorText: nameError,
+                    labelStyle: const TextStyle(color: Colors.grey),
+                    enabledBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey.shade900),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  onChanged: (value) {
+                    surname = value;
+                  },
+                  cursorColor: Colors.grey[900],
+                  decoration: InputDecoration(
+                    labelText: "Prezime",
+                    errorText: surnameError,
+                    labelStyle: const TextStyle(color: Colors.grey),
+                    enabledBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey.shade900),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
                 ),
                 TextField(
                   onChanged: (value) {
@@ -116,7 +155,7 @@ class _AuthViewState extends State<RegisterView> {
                   ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 24,
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -142,7 +181,8 @@ class _AuthViewState extends State<RegisterView> {
     Utils.showLoadingDialog(context);
 
     try {
-      await authService.signUp(email, password);
+      SCUser user = SCUser(name: name, surname: surname, email: email);
+      await authService.signUp(user, password);
       Navigator.pop(context);
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
@@ -156,6 +196,8 @@ class _AuthViewState extends State<RegisterView> {
 
   bool validateInput() {
     setState(() {
+      nameError = name.isEmpty ? "Potrebno ime" : null;
+      surnameError = surname.isEmpty ? "Potrebno prezime" : null;
       emailError = email.isEmpty ? "Potrebna email adresa" : null;
       passwordError = password.isEmpty ? "Potrebna lozinka" : null;
       confirmPasswordError =
@@ -164,7 +206,9 @@ class _AuthViewState extends State<RegisterView> {
           password != confirmPassword ? "Lozinke se ne podudaraju" : null;
     });
 
-    return emailError == null &&
+    return nameError == null &&
+        surnameError == null &&
+        emailError == null &&
         passwordError == null &&
         confirmPasswordError == null;
   }
