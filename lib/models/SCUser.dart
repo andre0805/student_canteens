@@ -19,4 +19,8 @@ class SCUser {
       email: json['email'],
     );
   }
+
+  String getDisplayName() {
+    return "$name $surname";
+  }
 }
