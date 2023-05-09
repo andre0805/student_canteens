@@ -1,3 +1,4 @@
+import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/SCUser.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -44,5 +45,21 @@ class GCF {
         },
       ),
     );
+  }
+
+  Future<List<Canteen>> getCanteens() async {
+    http.Response response = await http.get(
+      Uri.parse(BASE_URL + GET_CANTEENS),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> json = jsonDecode(response.body);
+      return json.map((e) => Canteen.fromJson(e)).toList();
+    } else {
+      return [];
+    }
   }
 }
