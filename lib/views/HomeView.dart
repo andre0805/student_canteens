@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:student_canteens/services/GCF.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   HomeView({super.key});
 
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
   AuthService authService = AuthService();
-  User? user = FirebaseAuth.instance.currentUser;
+  GCF gcf = GCF.sharedInstance;
+
+  List<Canteen> canteens = [];
+
+  @override
+  void initState() {
+    super.initState();
+    gcf.getCanteens().then((value) {
+      setState(() {
+        canteens = value;
+      });
+    });
+
+    print("Canteens: " + canteens.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +45,16 @@ class HomeView extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Text("logged in as: ${user?.email ?? "unknown"}"),
-      ),
+      body: ListView.builder(
+          itemCount: canteens.length,
+          itemBuilder: (context, index) {
+            return Card(
+              child: ListTile(
+                title: Text(canteens[index].name),
+                subtitle: Text(canteens[index].address),
+              ),
+            );
+          }),
     );
   }
 }
