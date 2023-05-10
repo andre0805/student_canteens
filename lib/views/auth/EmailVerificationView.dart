@@ -76,10 +76,6 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[900],
-                              disabledBackgroundColor: Colors.grey[400],
-                            ),
                             onPressed: (resendEmailCounter == 0)
                                 ? sendEmailVerification
                                 : null,
@@ -94,7 +90,9 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
                           ),
                           ElevatedButton(
                             onPressed: cancelEmailVerification,
-                            style: ElevatedButton.styleFrom(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                            ),
                             child: const Text("Poništi"),
                           ),
                         ],

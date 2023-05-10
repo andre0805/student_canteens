@@ -104,9 +104,6 @@ class _AuthViewState extends State<LoginView> {
                   onPressed: () {
                     signIn();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[900],
-                  ),
                   child: const Text("Prijavi se"),
                 ),
                 const SizedBox(

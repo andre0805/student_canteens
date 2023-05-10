@@ -31,7 +31,6 @@ class _AuthViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[900],
         title: const Text("Registracija"),
         leading: IconButton(
           onPressed: () {
@@ -161,9 +160,6 @@ class _AuthViewState extends State<RegisterView> {
                   onPressed: () {
                     signUp();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[900],
-                  ),
                   child: const Text("Registriraj se"),
                 ),
                 const Spacer(),
