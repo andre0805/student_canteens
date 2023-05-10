@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
-import 'package:student_canteens/views/utils.dart';
+import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/models/SCUser.dart';
 
 class RegisterView extends StatefulWidget {
