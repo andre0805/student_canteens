@@ -6,6 +6,7 @@ import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/Comparator.dart';
 import 'package:student_canteens/views/auth/LoginView.dart';
+import 'package:student_canteens/views/canteens/CanteenView.dart';
 
 class CanteensView extends StatefulWidget {
   CanteensView({super.key});
@@ -197,7 +198,7 @@ class _CanteensViewState extends State<CanteensView> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const LoginView(),
+        builder: (context) => CanteenView(canteen: canteen),
       ),
     );
   }
