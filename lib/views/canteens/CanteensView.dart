@@ -1,20 +1,20 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/Comparator.dart';
+import 'package:student_canteens/views/auth/LoginView.dart';
 
-class HomeView extends StatefulWidget {
-  HomeView({super.key});
+class CanteensView extends StatefulWidget {
+  CanteensView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<CanteensView> createState() => _CanteensViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _CanteensViewState extends State<CanteensView> {
   AuthService authService = AuthService();
   StorageService storageService = StorageService();
   GCF gcf = GCF.sharedInstance;
@@ -90,16 +90,26 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
 
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 8),
+            ),
+
             // city picker
             SliverVisibility(
               visible: !isLoading,
               sliver: SliverToBoxAdapter(
                 child: Center(
                   child: SizedBox(
-                    width: 200,
+                    width: 220,
+                    height: 50,
                     child: DropdownButton(
                       focusColor: Colors.white,
                       isExpanded: true,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                      ),
+                      iconSize: 26,
                       value: selectedCity ?? "Bjelovar",
                       items: cities.map((e) {
                         return DropdownMenuItem(
@@ -114,6 +124,10 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
+            ),
+
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 8),
             ),
 
             // list of canteens
@@ -131,6 +145,11 @@ class _HomeViewState extends State<HomeView> {
                           child: ListTile(
                             title: Text(selectedCanteens[index].name),
                             subtitle: Text(selectedCanteens[index].address),
+                            tileColor: Colors.white70,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            onTap: () => selectCanteen(selectedCanteens[index]),
                           ),
                         ),
                       );
@@ -172,5 +191,14 @@ class _HomeViewState extends State<HomeView> {
       selectedCity = city;
       selectedCanteens = canteenMap[city] ?? [];
     });
+  }
+
+  void selectCanteen(Canteen canteen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LoginView(),
+      ),
+    );
   }
 }
