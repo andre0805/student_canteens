@@ -1,10 +1,10 @@
 import 'dart:collection';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
+import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/Comparator.dart';
 
 class HomeView extends StatefulWidget {
@@ -16,6 +16,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   AuthService authService = AuthService();
+  StorageService storageService = StorageService();
   GCF gcf = GCF.sharedInstance;
 
   Map<String, List<Canteen>> canteenMap = HashMap();
@@ -23,15 +24,26 @@ class _HomeViewState extends State<HomeView> {
     return HR_Comparator.compare(key1, key2);
   });
 
-  String selectedCity = "Bjelovar";
+  String? selectedCity;
   List<Canteen> selectedCanteens = [];
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    getCanteens().then((value) {
+
+    setState(() {
+      isLoading = true;
+    });
+
+    Future.wait([
+      storageService.getString("selectedCity"),
+      getCanteens(),
+    ]).then((value) {
       setState(() {
-        selectedCanteens = canteenMap[selectedCity]!;
+        selectedCity = value[0] as String;
+        selectedCanteens = canteenMap[selectedCity] ?? [];
+        isLoading = false;
       });
     });
   }
@@ -68,44 +80,63 @@ class _HomeViewState extends State<HomeView> {
               ],
             ),
 
+            // loading indicator
+            SliverVisibility(
+              visible: isLoading,
+              sliver: const SliverFillRemaining(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+
             // city picker
-            SliverToBoxAdapter(
-              child: Center(
-                child: SizedBox(
-                  width: 200,
-                  child: DropdownButton(
-                    focusColor: Colors.white,
-                    isExpanded: true,
-                    value: selectedCity,
-                    items: cities.map((e) {
-                      return DropdownMenuItem(
-                        value: e,
-                        child: Text(e),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      selectCity(value.toString());
-                    },
+            SliverVisibility(
+              visible: !isLoading,
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                  child: SizedBox(
+                    width: 200,
+                    child: DropdownButton(
+                      focusColor: Colors.white,
+                      isExpanded: true,
+                      value: selectedCity ?? "Bjelovar",
+                      items: cities.map((e) {
+                        return DropdownMenuItem(
+                          value: e,
+                          child: Text(e),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        selectCity(value.toString());
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
 
             // list of canteens
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                childCount: selectedCanteens.length,
-                (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Card(
-                      child: ListTile(
-                        title: Text(selectedCanteens[index].name),
-                        subtitle: Text(selectedCanteens[index].address),
-                      ),
-                    ),
-                  );
-                },
+            SliverVisibility(
+              visible: !isLoading,
+              sliver: SliverPadding(
+                padding: const EdgeInsets.only(bottom: 24),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: selectedCanteens.length,
+                    (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Card(
+                          child: ListTile(
+                            title: Text(selectedCanteens[index].name),
+                            subtitle: Text(selectedCanteens[index].address),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ],
@@ -134,10 +165,12 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  void selectCity(String city) {
+  void selectCity(String city) async {
+    await storageService.saveString("selectedCity", city);
+
     setState(() {
       selectedCity = city;
-      selectedCanteens = canteenMap[city]!;
+      selectedCanteens = canteenMap[city] ?? [];
     });
   }
 }
