@@ -40,17 +40,6 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      // appBar: AppBar(
-      //   title: const Text("Home"),
-      //   actions: [
-      //     IconButton(
-      //       onPressed: () {
-      //         authService.signOut();
-      //       },
-      //       icon: const Icon(Icons.logout),
-      //     ),
-      //   ],
-      // ),
       body: RefreshIndicator(
         onRefresh: refreshWidget,
         edgeOffset: 180,
