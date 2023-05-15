@@ -5,11 +5,10 @@ import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/Comparator.dart';
-import 'package:student_canteens/views/auth/LoginView.dart';
 import 'package:student_canteens/views/canteens/CanteenView.dart';
 
 class CanteensView extends StatefulWidget {
-  CanteensView({super.key});
+  const CanteensView({super.key});
 
   @override
   State<CanteensView> createState() => _CanteensViewState();
@@ -182,15 +181,16 @@ class _CanteensViewState extends State<CanteensView> {
   Future<void> getCanteens() {
     canteenMap.clear();
     return gcf.getCanteens().then((value) {
-      value.forEach((e) {
-        String city = e.city;
+      for (Canteen canteen in value) {
+        String city = canteen.city;
         cities.add(city);
         if (canteenMap.containsKey(city)) {
-          canteenMap[city]?.add(e);
+          canteenMap[city]?.add(canteen);
         } else {
-          canteenMap[city] = [e];
+          canteenMap[city] = [canteen];
         }
-      });
+      }
+
       setState(() {});
     });
   }
