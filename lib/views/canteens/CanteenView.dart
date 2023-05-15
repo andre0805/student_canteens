@@ -1,11 +1,11 @@
 import 'dart:collection';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/WrokSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/StorageService.dart';
+import 'package:student_canteens/views/canteens/WorkScheduleListView.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CanteenView extends StatefulWidget {
@@ -25,9 +25,7 @@ class _CanteenViewState extends State<CanteenView> {
   StorageService storageService = StorageService();
   GCF gcf = GCF.sharedInstance;
 
-  Set<WorkSchedule> workSchedules = SplayTreeSet((key1, key2) {
-    return key1.compareTo(key2);
-  });
+  Set<WorkSchedule> workSchedules = {};
 
   bool isLoading = false;
 
@@ -151,48 +149,17 @@ class _CanteenViewState extends State<CanteenView> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            ListView.builder(
+                            Padding(
                               padding: const EdgeInsets.symmetric(
-                                vertical: 8,
                                 horizontal: 0,
+                                vertical: 8,
                               ),
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: workSchedules.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 2,
-                                    horizontal: 2,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 40,
-                                        child: Text(
-                                          workSchedules
-                                              .elementAt(index)
-                                              .getDayOfWeekAbbrString(),
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Text(
-                                        workSchedules
-                                            .elementAt(index)
-                                            .getTimesString(),
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                              child: WorkScheduleListView(
+                                canteen: canteen,
+                                workSchedules: workSchedules,
+                              ),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12),
                           ],
                         ),
                       ),
