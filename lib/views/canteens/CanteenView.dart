@@ -105,6 +105,7 @@ class _CanteenViewState extends State<CanteenView> {
               ),
             ),
 
+            // canteen info
             SliverVisibility(
               visible: !isLoading,
               sliver: SliverToBoxAdapter(
@@ -256,24 +257,6 @@ class _CanteenViewState extends State<CanteenView> {
                   ),
                 ),
               ),
-            ),
-
-            // work schedule
-            SliverVisibility(
-              visible: !isLoading,
-              sliver: SliverToBoxAdapter(),
-            ),
-
-            // contact
-            SliverVisibility(
-              visible: !isLoading,
-              sliver: SliverToBoxAdapter(),
-            ),
-
-            // web
-            SliverVisibility(
-              visible: !isLoading,
-              sliver: SliverToBoxAdapter(),
             ),
           ],
         ),
