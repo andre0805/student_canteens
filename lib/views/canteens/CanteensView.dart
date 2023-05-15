@@ -25,7 +25,7 @@ class _CanteensViewState extends State<CanteensView> {
     return HR_Comparator.compare(key1, key2);
   });
 
-  String? selectedCity;
+  String selectedCity = "";
   List<Canteen> selectedCanteens = [];
   bool isLoading = false;
 
@@ -42,8 +42,18 @@ class _CanteensViewState extends State<CanteensView> {
       getCanteens(),
     ]).then((value) {
       setState(() {
-        selectedCity = value[0] as String;
-        selectedCanteens = canteenMap[selectedCity] ?? [];
+        try {
+          selectedCity = value[0] as String;
+          selectedCanteens = canteenMap[selectedCity] ?? [];
+        } catch (e) {
+          try {
+            selectedCity = cities.first;
+            selectedCanteens = canteenMap[selectedCity] ?? [];
+          } catch (e) {
+            selectedCity = "";
+            selectedCanteens = [];
+          }
+        }
         isLoading = false;
       });
     });
@@ -111,7 +121,7 @@ class _CanteensViewState extends State<CanteensView> {
                         color: Colors.black,
                       ),
                       iconSize: 26,
-                      value: selectedCity ?? "Bjelovar",
+                      value: selectedCity,
                       items: cities.map((e) {
                         return DropdownMenuItem(
                           value: e,
