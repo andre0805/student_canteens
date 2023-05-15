@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
-import 'package:student_canteens/models/WrokSchedule.dart';
+import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/views/canteens/WorkScheduleListView.dart';

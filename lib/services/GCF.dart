@@ -3,7 +3,7 @@ import 'package:student_canteens/models/SCUser.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:student_canteens/models/WrokSchedule.dart';
+import 'package:student_canteens/models/WorkSchedule.dart';
 
 class GCF {
   static const String BASE_URL =
