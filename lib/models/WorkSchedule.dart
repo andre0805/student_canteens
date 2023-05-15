@@ -1,3 +1,4 @@
+
 class WorkSchedule {
   int id;
   int canteenId;
@@ -92,7 +93,7 @@ class WorkSchedule {
     if (openTime == null || closeTime == null) {
       return "Zatvoreno";
     } else {
-      return openTime! + " - " + closeTime!;
+      return openTime! + "-" + closeTime!;
     }
   }
 
@@ -100,7 +101,6 @@ class WorkSchedule {
     return getDayOfWeekString() + " " + getTimesString();
   }
 
-  @override
   int compareTo(other) {
     if (dayOfWeek == other.dayOfWeek) {
       return mealOfDay.compareTo(other.mealOfDay);
