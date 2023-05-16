@@ -26,6 +26,16 @@ class AuthService {
     await gcf.createUser(newUser);
   }
 
+  Future<void> signInUser(User user) async {
+    await gcf.getUser(user.email!).then((SCUser? scUser) {
+      if (scUser != null) {
+        sessionManager.signIn(scUser);
+      } else {
+        throw Exception("User not found");
+      }
+    });
+  }
+
   Future<void> signIn(String email, String password) async {
     SCUser? user = await gcf.getUser(email);
 

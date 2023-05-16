@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/views/auth/EmailVerificationView.dart';
 import 'package:student_canteens/views/auth/LoginView.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,8 +16,22 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final AuthService authService = AuthService.sharedInstance;
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    subscribeToAuthChanges();
+  }
 
   // This widget is the root of your application.
   @override
@@ -45,7 +60,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         body: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
+          stream: firebaseAuth.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return const EmailVerificationView();
@@ -56,5 +71,23 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void subscribeToAuthChanges() {
+    firebaseAuth.authStateChanges().listen((User? user) async {
+      if (user == null) {
+        await handleLogout();
+      } else {
+        await handleLogin(user);
+      }
+    });
+  }
+
+  Future<void> handleLogin(User user) async {
+    await authService.signInUser(user);
+  }
+
+  Future<void> handleLogout() async {
+    await authService.signOut();
   }
 }
