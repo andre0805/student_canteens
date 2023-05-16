@@ -84,9 +84,9 @@ class _CanteenViewState extends State<CanteenView> {
                   child: IconButton(
                     onPressed:
                         isFavorite ? removeFavoriteCanteen : addFavoriteCanteen,
-                    icon: Icon(isFavorite
-                        ? Icons.favorite
-                        : Icons.favorite_border_outlined),
+                    icon: Icon(
+                      isFavorite ? Icons.star : Icons.star_border,
+                    ),
                   ),
                 ),
               ],
