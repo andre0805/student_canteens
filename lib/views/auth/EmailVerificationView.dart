@@ -106,15 +106,20 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
           );
   }
 
+  void updateWidget(void Function() callback) {
+    if (!mounted) return;
+    setState(callback);
+  }
+
   void sendEmailVerification() async {
-    setState(() {
+    updateWidget(() {
       resendEmailCounter = 10;
     });
 
     resendEmailTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
-        setState(() {
+        updateWidget(() {
           resendEmailCounter--;
           if (resendEmailCounter == 0) {
             timer.cancel();
@@ -136,7 +141,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   void checkEmailVerified() async {
     await FirebaseAuth.instance.currentUser?.reload();
 
-    setState(() {
+    updateWidget(() {
       isEmailVerified =
           FirebaseAuth.instance.currentUser?.emailVerified ?? false;
     });
@@ -154,7 +159,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   }
 
   void handleFirebaseAuthError(String errorCode) {
-    setState(() {
+    updateWidget(() {
       if (errorCode == 'too-many-requests') {
         Utils.showAlertDialog(context, "Greška",
             "Previše zahtjeva. Molim te pokušaj ponovo kasnije.");

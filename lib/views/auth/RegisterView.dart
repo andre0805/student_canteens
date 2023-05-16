@@ -171,6 +171,11 @@ class _AuthViewState extends State<RegisterView> {
     );
   }
 
+  void updateWidget(void Function() callback) {
+    if (!mounted) return;
+    setState(callback);
+  }
+
   void signUp() async {
     if (!validateInput()) return;
 
@@ -191,7 +196,7 @@ class _AuthViewState extends State<RegisterView> {
   }
 
   bool validateInput() {
-    setState(() {
+    updateWidget(() {
       nameError = name.isEmpty ? "Potrebno ime" : null;
       surnameError = surname.isEmpty ? "Potrebno prezime" : null;
       emailError = email.isEmpty ? "Potrebna email adresa" : null;
@@ -210,7 +215,7 @@ class _AuthViewState extends State<RegisterView> {
   }
 
   void handleFirebaseAuthError(String errorCode) {
-    setState(() {
+    updateWidget(() {
       if (errorCode == 'email-already-in-use') {
         emailError = "Korisnik s ovom email adresom već postoji";
       } else if (errorCode == 'invalid-email') {

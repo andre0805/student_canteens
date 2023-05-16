@@ -41,7 +41,7 @@ class _AuthViewState extends State<LoginView> {
                 ),
                 TextField(
                   onChanged: (value) {
-                    setState(() {
+                    updateWidget(() {
                       email = value;
                     });
                   },
@@ -181,6 +181,11 @@ class _AuthViewState extends State<LoginView> {
     );
   }
 
+  void updateWidget(void Function() callback) {
+    if (!mounted) return;
+    setState(callback);
+  }
+
   void signInWithGoogle() async {
     try {
       await authService.signInWithGoogle();
@@ -209,7 +214,7 @@ class _AuthViewState extends State<LoginView> {
   }
 
   bool validateInput() {
-    setState(() {
+    updateWidget(() {
       emailError = email.isEmpty ? "Potrebna email adresa" : null;
       passwordError = password.isEmpty ? "Potrebna lozinka" : null;
     });
@@ -218,7 +223,7 @@ class _AuthViewState extends State<LoginView> {
   }
 
   void handleFirebaseAuthError(String errorCode) {
-    setState(() {
+    updateWidget(() {
       if (errorCode == 'user-not-found' || errorCode == 'wrong-password') {
         emailError = "Pogrešan email ili lozinka";
         passwordError = "Pogrešan email ili lozinka";

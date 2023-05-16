@@ -35,26 +35,22 @@ class _CanteenViewState extends State<CanteenView> {
   void initState() {
     super.initState();
 
-    if (mounted) {
-      setState(() {
-        isLoading = true;
-      });
-    }
+    updateWidget(() {
+      isLoading = true;
+    });
 
     Future.wait([
       getWorkschedule(),
       gcf.getFavoriteCanteens(),
     ]).then((value) {
-      if (mounted) {
-        setState(() {
-          workSchedules = value[0] as Set<WorkSchedule>;
-          sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
-          isLoading = false;
-          isFavorite =
-              sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
-          false;
-        });
-      }
+      updateWidget(() {
+        workSchedules = value[0] as Set<WorkSchedule>;
+        sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
+        isLoading = false;
+        isFavorite =
+            sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
+        false;
+      });
     });
   }
 
@@ -247,12 +243,17 @@ class _CanteenViewState extends State<CanteenView> {
     );
   }
 
+  void updateWidget(void Function() callback) {
+    if (!mounted) return;
+    setState(callback);
+  }
+
   Future<void> refreshWidget() async {
     Future.wait([
       getWorkschedule(),
       getFavoriteCanteens(),
     ]).then((value) {
-      setState(() {
+      updateWidget(() {
         workSchedules = value[0] as Set<WorkSchedule>;
         sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
         isFavorite =
@@ -278,35 +279,27 @@ class _CanteenViewState extends State<CanteenView> {
   }
 
   void addFavoriteCanteen() {
-    if (mounted) {
-      setState(() {
-        isFavorite = !isFavorite;
-      });
-    }
+    updateWidget(() {
+      isFavorite = !isFavorite;
+    });
 
     gcf.addFavoriteCanteen(canteen.id).then((value) {
-      if (mounted) {
-        setState(() {
-          isFavorite = value;
-        });
-      }
+      updateWidget(() {
+        isFavorite = value;
+      });
     });
   }
 
   void removeFavoriteCanteen() {
-    if (mounted) {
-      setState(() {
-        isFavorite = !isFavorite;
-      });
-    }
+    updateWidget(() {
+      isFavorite = !isFavorite;
+    });
 
     gcf.removeFavoriteCanteen(canteen.id).then(
       (value) {
-        if (mounted) {
-          setState(() {
-            isFavorite = !value;
-          });
-        }
+        updateWidget(() {
+          isFavorite = !value;
+        });
       },
     );
   }

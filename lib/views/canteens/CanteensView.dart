@@ -32,7 +32,7 @@ class _CanteensViewState extends State<CanteensView> {
   void initState() {
     super.initState();
 
-    setState(() {
+    updateWidget(() {
       isLoading = true;
     });
 
@@ -40,7 +40,7 @@ class _CanteensViewState extends State<CanteensView> {
       storageService.getString("selectedCity"),
       getCanteens(),
     ]).then((value) {
-      setState(() {
+      updateWidget(() {
         try {
           selectedCity = value[0] as String;
           selectedCanteens = canteenMap[selectedCity] ?? [];
@@ -174,6 +174,11 @@ class _CanteensViewState extends State<CanteensView> {
     );
   }
 
+  void updateWidget(void Function() callback) {
+    if (!mounted) return;
+    setState(callback);
+  }
+
   Future<void> refreshWidget() async {
     return getCanteens();
   }
@@ -191,14 +196,14 @@ class _CanteensViewState extends State<CanteensView> {
         }
       }
 
-      setState(() {});
+      updateWidget(() {});
     });
   }
 
   void selectCity(String city) async {
     await storageService.saveString("selectedCity", city);
 
-    setState(() {
+    updateWidget(() {
       selectedCity = city;
       selectedCanteens = canteenMap[city] ?? [];
     });
