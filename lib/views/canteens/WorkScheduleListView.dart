@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/WorkSchedules.dart';
@@ -50,10 +48,9 @@ class _WorkScheduleListViewState extends State<WorkScheduleListView> {
   Widget build(BuildContext context) {
     return workSchedule_allDay.isNotEmpty
         ? WorkScheduleView(workSchedule: workSchedule_allDay)
-        : SizedBox(
-            height: 220,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
+        : SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               children: [
                 // breakfast work schedule
                 Visibility(
