@@ -90,8 +90,11 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      await FirebaseAuth.instance.signOut();
+    }
+
     sessionManager.signOut();
-    await FirebaseAuth.instance.signOut();
   }
 
   Future<void> forgotPassword(String email) async {
