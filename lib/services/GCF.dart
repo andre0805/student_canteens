@@ -124,18 +124,21 @@ class GCF {
     );
 
     if (response.statusCode == 200) {
-      print(jsonDecode(response.body));
-      List<dynamic> json = jsonDecode(response.body);
-      return json.map((e) => e as int).toSet();
+      final List<dynamic> json = jsonDecode(response.body);
+      final Set<int> favoriteCanteens = json
+          .map((e) => Map<String, int>.from(e))
+          .map((e) => e.values.first)
+          .toSet();
+      return favoriteCanteens;
     } else {
       return {};
     }
   }
 
-  Future<void> addFavoriteCanteen(int canteenId) async {
+  Future<bool> addFavoriteCanteen(int canteenId) async {
     String? userId = sessionManager.currentUser?.id;
 
-    if (userId == null) return;
+    if (userId == null) return false;
 
     http.Response response = await http.post(
       Uri.parse(BASE_URL + ADD_FAVORITE_CANTEEN),
@@ -150,15 +153,18 @@ class GCF {
       ),
     );
 
-    if (response.statusCode == 200) {
-      sessionManager.currentUser?.favoriteCanteens?.add(canteenId);
+    if (response.statusCode == 201) {
+      sessionManager.currentUser?.favoriteCanteens.add(canteenId);
+      return true;
+    } else {
+      return false;
     }
   }
 
-  Future<void> removeFavoriteCanteen(int canteenId) async {
+  Future<bool> removeFavoriteCanteen(int canteenId) async {
     String? userId = sessionManager.currentUser?.id;
 
-    if (userId == null) return;
+    if (userId == null) return false;
 
     http.Response response = await http.post(
       Uri.parse(BASE_URL + REMOVE_FAVORITE_CANTEEN),
@@ -174,7 +180,10 @@ class GCF {
     );
 
     if (response.statusCode == 200) {
-      sessionManager.currentUser?.favoriteCanteens?.remove(canteenId);
+      sessionManager.currentUser?.favoriteCanteens.remove(canteenId);
+      return true;
+    } else {
+      return false;
     }
   }
 }
