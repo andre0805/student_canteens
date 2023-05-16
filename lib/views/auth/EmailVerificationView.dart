@@ -14,7 +14,7 @@ class EmailVerificationView extends StatefulWidget {
 }
 
 class _EmailVerificationViewState extends State<EmailVerificationView> {
-  AuthService authService = AuthService();
+  AuthService authService = AuthService.sharedInstance;
   bool isEmailVerified = false;
   Timer? checkEmailVerifiedTimer;
   Timer? resendEmailTimer;

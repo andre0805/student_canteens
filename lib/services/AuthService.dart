@@ -5,8 +5,12 @@ import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 
 class AuthService {
-  GCF gcf = GCF.sharedInstance;
-  SessionManager sessionManager = SessionManager.sharedInstance;
+  final GCF gcf = GCF.sharedInstance;
+  final SessionManager sessionManager = SessionManager.sharedInstance;
+
+  static final AuthService sharedInstance = AuthService._();
+
+  AuthService._();
 
   Future<void> signUp(SCUser user, String password) async {
     UserCredential userCredential = await FirebaseAuth.instance

@@ -14,7 +14,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<LoginView> {
-  AuthService authService = AuthService();
+  AuthService authService = AuthService.sharedInstance;
 
   String email = "";
   String password = "";

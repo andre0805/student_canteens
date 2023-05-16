@@ -15,7 +15,7 @@ class CanteensView extends StatefulWidget {
 }
 
 class _CanteensViewState extends State<CanteensView> {
-  AuthService authService = AuthService();
+  AuthService authService = AuthService.sharedInstance;
   StorageService storageService = StorageService();
   GCF gcf = GCF.sharedInstance;
 

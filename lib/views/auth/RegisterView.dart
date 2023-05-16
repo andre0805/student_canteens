@@ -12,7 +12,7 @@ class RegisterView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<RegisterView> {
-  AuthService authService = AuthService();
+  AuthService authService = AuthService.sharedInstance;
 
   String name = "";
   String surname = "";
