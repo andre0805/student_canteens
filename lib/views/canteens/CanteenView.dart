@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
+import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/views/canteens/WorkScheduleListView.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,12 +23,13 @@ class _CanteenViewState extends State<CanteenView> {
 
   _CanteenViewState({required this.canteen});
 
+  SessionManager sessionManager = SessionManager.sharedInstance;
   StorageService storageService = StorageService();
   GCF gcf = GCF.sharedInstance;
 
   Set<WorkSchedule> workSchedules = {};
-
   bool isLoading = false;
+  bool isFavorite = false;
 
   @override
   void initState() {
@@ -35,14 +37,22 @@ class _CanteenViewState extends State<CanteenView> {
 
     setState(() {
       isLoading = true;
+      isFavorite =
+          sessionManager.currentUser?.favoriteCanteens?.contains(canteen.id) ??
+              false;
     });
 
     Future.wait([
       getWorkschedule(),
+      gcf.getFavoriteCanteens(),
     ]).then((value) {
       setState(() {
-        workSchedules = value[0];
+        workSchedules = value[0] as Set<WorkSchedule>;
+        sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
         isLoading = false;
+        isFavorite = sessionManager.currentUser?.favoriteCanteens
+                ?.contains(canteen.id) ??
+            false;
       });
     });
   }
@@ -65,16 +75,13 @@ class _CanteenViewState extends State<CanteenView> {
                 },
                 icon: const Icon(Icons.arrow_back),
               ),
-              title: const Text(
-                "",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
               actions: [
                 IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.star_border),
+                  onPressed:
+                      isFavorite ? removeFavoriteCanteen : addFavoriteCanteen,
+                  icon: Icon(isFavorite
+                      ? Icons.favorite
+                      : Icons.favorite_border_outlined),
                 ),
               ],
             ),
@@ -234,9 +241,14 @@ class _CanteenViewState extends State<CanteenView> {
   Future<void> refreshWidget() async {
     Future.wait([
       getWorkschedule(),
+      getFavoriteCanteens(),
     ]).then((value) {
       setState(() {
-        workSchedules = value[0];
+        workSchedules = value[0] as Set<WorkSchedule>;
+        sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
+        isFavorite = sessionManager.currentUser?.favoriteCanteens
+                ?.contains(canteen.id) ??
+            false;
       });
     });
   }
@@ -251,5 +263,37 @@ class _CanteenViewState extends State<CanteenView> {
     } else {
       print('Could not launch ${canteen.url.toString()}');
     }
+  }
+
+  Future<Set<int>> getFavoriteCanteens() {
+    return gcf.getFavoriteCanteens();
+  }
+
+  void addFavoriteCanteen() async {
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+
+    await gcf.addFavoriteCanteen(canteen.id);
+
+    setState(() {
+      isFavorite =
+          sessionManager.currentUser?.favoriteCanteens?.contains(canteen.id) ??
+              false;
+    });
+  }
+
+  void removeFavoriteCanteen() async {
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+
+    await gcf.removeFavoriteCanteen(canteen.id);
+
+    setState(() {
+      isFavorite =
+          sessionManager.currentUser?.favoriteCanteens?.contains(canteen.id) ??
+              false;
+    });
   }
 }
