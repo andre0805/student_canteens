@@ -3,12 +3,14 @@ class SCUser {
   final String name;
   final String surname;
   final String email;
+  Set<int>? favoriteCanteens = {};
 
   SCUser({
     this.id,
     required this.name,
     required this.surname,
     required this.email,
+    this.favoriteCanteens,
   });
 
   factory SCUser.fromJson(Map<String, dynamic> json) {
