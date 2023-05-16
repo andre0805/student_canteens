@@ -3,14 +3,14 @@ class SCUser {
   final String name;
   final String surname;
   final String email;
-  Set<int>? favoriteCanteens = {};
+  Set<int> favoriteCanteens;
 
   SCUser({
     this.id,
     required this.name,
     required this.surname,
     required this.email,
-    this.favoriteCanteens,
+    this.favoriteCanteens = const {},
   });
 
   factory SCUser.fromJson(Map<String, dynamic> json) {
@@ -24,5 +24,9 @@ class SCUser {
 
   String getDisplayName() {
     return "$name $surname";
+  }
+
+  bool isFavorite(int canteenId) {
+    return favoriteCanteens.contains(canteenId);
   }
 }

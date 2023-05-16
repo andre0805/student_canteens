@@ -35,26 +35,32 @@ class _CanteenViewState extends State<CanteenView> {
   void initState() {
     super.initState();
 
-    setState(() {
-      isLoading = true;
-      isFavorite =
-          sessionManager.currentUser?.favoriteCanteens?.contains(canteen.id) ??
-              false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
 
     Future.wait([
       getWorkschedule(),
       gcf.getFavoriteCanteens(),
     ]).then((value) {
-      setState(() {
-        workSchedules = value[0] as Set<WorkSchedule>;
-        sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
-        isLoading = false;
-        isFavorite = sessionManager.currentUser?.favoriteCanteens
-                ?.contains(canteen.id) ??
-            false;
-      });
+      if (mounted) {
+        setState(() {
+          workSchedules = value[0] as Set<WorkSchedule>;
+          sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
+          isLoading = false;
+          isFavorite =
+              sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
+          false;
+        });
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -76,12 +82,15 @@ class _CanteenViewState extends State<CanteenView> {
                 icon: const Icon(Icons.arrow_back),
               ),
               actions: [
-                IconButton(
-                  onPressed:
-                      isFavorite ? removeFavoriteCanteen : addFavoriteCanteen,
-                  icon: Icon(isFavorite
-                      ? Icons.favorite
-                      : Icons.favorite_border_outlined),
+                Visibility(
+                  visible: !isLoading,
+                  child: IconButton(
+                    onPressed:
+                        isFavorite ? removeFavoriteCanteen : addFavoriteCanteen,
+                    icon: Icon(isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border_outlined),
+                  ),
                 ),
               ],
             ),
@@ -246,9 +255,8 @@ class _CanteenViewState extends State<CanteenView> {
       setState(() {
         workSchedules = value[0] as Set<WorkSchedule>;
         sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
-        isFavorite = sessionManager.currentUser?.favoriteCanteens
-                ?.contains(canteen.id) ??
-            false;
+        isFavorite =
+            sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
       });
     });
   }
@@ -269,31 +277,37 @@ class _CanteenViewState extends State<CanteenView> {
     return gcf.getFavoriteCanteens();
   }
 
-  void addFavoriteCanteen() async {
-    setState(() {
-      isFavorite = !isFavorite;
-    });
+  void addFavoriteCanteen() {
+    if (mounted) {
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+    }
 
-    await gcf.addFavoriteCanteen(canteen.id);
-
-    setState(() {
-      isFavorite =
-          sessionManager.currentUser?.favoriteCanteens?.contains(canteen.id) ??
-              false;
+    gcf.addFavoriteCanteen(canteen.id).then((value) {
+      if (mounted) {
+        setState(() {
+          isFavorite = value;
+        });
+      }
     });
   }
 
-  void removeFavoriteCanteen() async {
-    setState(() {
-      isFavorite = !isFavorite;
-    });
+  void removeFavoriteCanteen() {
+    if (mounted) {
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+    }
 
-    await gcf.removeFavoriteCanteen(canteen.id);
-
-    setState(() {
-      isFavorite =
-          sessionManager.currentUser?.favoriteCanteens?.contains(canteen.id) ??
-              false;
-    });
+    gcf.removeFavoriteCanteen(canteen.id).then(
+      (value) {
+        if (mounted) {
+          setState(() {
+            isFavorite = !value;
+          });
+        }
+      },
+    );
   }
 }
