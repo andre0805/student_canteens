@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:student_canteens/models/WorkSchedule.dart';
+import 'package:student_canteens/services/SessionManager.dart';
 
 class GCF {
   static const String BASE_URL =
@@ -13,10 +14,15 @@ class GCF {
   static const String GET_USER = '/getUser';
   static const String CREATE_USER = '/createUser';
   static const String GET_WORK_SCHEDULE = '/getWorkSchedule';
+  static const String GET_FAVORITE_CANTEENS = '/getFavoriteCanteens';
+  static const String ADD_FAVORITE_CANTEEN = '/addFavoriteCanteen';
+  static const String REMOVE_FAVORITE_CANTEEN = '/removeFavoriteCanteen';
 
   static const GCF sharedInstance = GCF._();
 
   const GCF._();
+
+  static final SessionManager sessionManager = SessionManager.sharedInstance;
 
   Future<SCUser?> getUser(String email) async {
     http.Response response = await http.get(
@@ -97,6 +103,78 @@ class GCF {
       return json.map((e) => WorkSchedule.fromJson(e)).toSet();
     } else {
       return {};
+    }
+  }
+
+  Future<Set<int>> getFavoriteCanteens() async {
+    String? userId = sessionManager.currentUser?.id;
+
+    if (userId == null) return {};
+
+    http.Response response = await http.post(
+      Uri.parse(BASE_URL + GET_FAVORITE_CANTEENS),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          "userId": userId,
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      print(jsonDecode(response.body));
+      List<dynamic> json = jsonDecode(response.body);
+      return json.map((e) => e as int).toSet();
+    } else {
+      return {};
+    }
+  }
+
+  Future<void> addFavoriteCanteen(int canteenId) async {
+    String? userId = sessionManager.currentUser?.id;
+
+    if (userId == null) return;
+
+    http.Response response = await http.post(
+      Uri.parse(BASE_URL + ADD_FAVORITE_CANTEEN),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          "userId": userId,
+          "canteenId": canteenId,
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      sessionManager.currentUser?.favoriteCanteens?.add(canteenId);
+    }
+  }
+
+  Future<void> removeFavoriteCanteen(int canteenId) async {
+    String? userId = sessionManager.currentUser?.id;
+
+    if (userId == null) return;
+
+    http.Response response = await http.post(
+      Uri.parse(BASE_URL + REMOVE_FAVORITE_CANTEEN),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          "userId": userId,
+          "canteenId": canteenId,
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      sessionManager.currentUser?.favoriteCanteens?.remove(canteenId);
     }
   }
 }
