@@ -1,4 +1,4 @@
-import 'dart:collection';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
@@ -6,6 +6,7 @@ import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
+import 'package:student_canteens/views/canteens/CanteenMapView.dart';
 import 'package:student_canteens/views/canteens/WorkScheduleListView.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -106,11 +107,17 @@ class _CanteenViewState extends State<CanteenView> {
               visible: !isLoading,
               sliver: SliverToBoxAdapter(
                 child: Container(
-                  height: 200,
-                  color: Colors.green[400],
-                  child: const Center(
-                    child: Text("Google map"),
+                  height: 250,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 1,
+                        offset: const Offset(0, 2), // Shadow position
+                      ),
+                    ],
                   ),
+                  child: CanteenMapView(canteen: canteen),
                 ),
               ),
             ),
@@ -136,7 +143,7 @@ class _CanteenViewState extends State<CanteenView> {
                         ),
                       ),
 
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
 
                       // canteen address
                       Text(
@@ -146,7 +153,7 @@ class _CanteenViewState extends State<CanteenView> {
                         ),
                       ),
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
 
                       // work schedule
                       Visibility(
@@ -171,7 +178,7 @@ class _CanteenViewState extends State<CanteenView> {
                                 workSchedules: workSchedules,
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 8),
                           ],
                         ),
                       ),
@@ -189,14 +196,14 @@ class _CanteenViewState extends State<CanteenView> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4),
                             Text(
                               canteen.contact.toString(),
                               style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 16),
                           ],
                         ),
                       ),
@@ -214,7 +221,7 @@ class _CanteenViewState extends State<CanteenView> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4),
                             InkWell(
                               onTap: openCanteenWeb,
                               child: const Text(
