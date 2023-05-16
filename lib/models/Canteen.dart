@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class Canteen {
   final int id;
   final String name;

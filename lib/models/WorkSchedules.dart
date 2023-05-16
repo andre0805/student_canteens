@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/material.dart';
 import 'package:student_canteens/models/WorkSchedule.dart';
 
 class WorkSchedules {

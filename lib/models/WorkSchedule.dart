@@ -1,4 +1,3 @@
-
 class WorkSchedule {
   int id;
   int canteenId;
