@@ -153,8 +153,20 @@ class _CanteensViewState extends State<CanteensView> {
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Card(
                           child: ListTile(
-                            title: Text(selectedCanteens[index].name),
-                            subtitle: Text(selectedCanteens[index].address),
+                            title: Text(
+                              selectedCanteens[index].name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            subtitle: Text(
+                              selectedCanteens[index].address,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
                             tileColor: Colors.white70,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
