@@ -34,12 +34,13 @@ class _CanteenMapViewState extends State<CanteenMapView> {
       mapType: MapType.normal,
       scrollGesturesEnabled: true,
       zoomGesturesEnabled: true,
-      rotateGesturesEnabled: true,
+      rotateGesturesEnabled: false,
+      tiltGesturesEnabled: false,
       myLocationButtonEnabled: false,
       myLocationEnabled: false,
       initialCameraPosition: CameraPosition(
         target: canteenLocation,
-        zoom: 10,
+        zoom: 13.0,
       ),
       onMapCreated: (controller) {
         _controller.complete(controller);
