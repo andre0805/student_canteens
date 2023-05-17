@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/models/WorkSchedule.dart';
@@ -22,7 +23,7 @@ class CanteenView extends StatefulWidget {
 }
 
 class _CanteenViewState extends State<CanteenView> {
-  final Canteen canteen;
+  Canteen canteen;
 
   _CanteenViewState({required this.canteen});
 
@@ -68,17 +69,52 @@ class _CanteenViewState extends State<CanteenView> {
       backgroundColor: Colors.grey[200],
       floatingActionButton: Visibility(
         visible: !isLoading,
-        child: FloatingActionButton(
-          onPressed: () {},
+        child: SpeedDial(
           backgroundColor: Colors.grey[900],
           foregroundColor: Colors.grey[200],
-          splashColor: Colors.grey[700],
           elevation: 10.0,
-          shape: const CircleBorder(),
-          child: const Icon(
-            Icons.people,
-            size: 25,
-          ),
+          overlayColor: Colors.grey[900],
+          overlayOpacity: 0.5,
+          activeIcon: Icons.close,
+          icon: Icons.people,
+          spacing: 8,
+          children: [
+            SpeedDialChild(
+              label: 'Prijavi vrlo dugačak red',
+              backgroundColor: getColorFromQueueLength(QueueLength.VERY_LONG),
+              child: const Icon(Icons.people),
+              shape: const CircleBorder(),
+              onTap: () => reportQueueLength(QueueLength.VERY_LONG),
+            ),
+            SpeedDialChild(
+              label: 'Prijavi dugačak red',
+              backgroundColor: getColorFromQueueLength(QueueLength.LONG),
+              child: const Icon(Icons.people),
+              shape: const CircleBorder(),
+              onTap: () => reportQueueLength(QueueLength.LONG),
+            ),
+            SpeedDialChild(
+              label: 'Prijavi srednji red',
+              backgroundColor: getColorFromQueueLength(QueueLength.MEDIUM),
+              child: const Icon(Icons.people),
+              shape: const CircleBorder(),
+              onTap: () => reportQueueLength(QueueLength.MEDIUM),
+            ),
+            SpeedDialChild(
+              label: 'Prijavi kratak red',
+              backgroundColor: getColorFromQueueLength(QueueLength.SHORT),
+              child: const Icon(Icons.people),
+              shape: const CircleBorder(),
+              onTap: () => reportQueueLength(QueueLength.SHORT),
+            ),
+            SpeedDialChild(
+              label: 'Prijavi bez reda',
+              backgroundColor: getColorFromQueueLength(QueueLength.NONE),
+              child: const Icon(Icons.people),
+              shape: const CircleBorder(),
+              onTap: () => reportQueueLength(QueueLength.NONE),
+            ),
+          ],
         ),
       ),
       body: RefreshIndicator(
@@ -286,12 +322,14 @@ class _CanteenViewState extends State<CanteenView> {
 
   Future<void> refreshWidget() async {
     Future.wait([
+      getCanteen(),
       getWorkschedule(),
       getFavoriteCanteens(),
     ]).then((value) {
       updateWidget(() {
-        workSchedules = value[0] as Set<WorkSchedule>;
-        sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
+        canteen = value[0] as Canteen;
+        workSchedules = value[1] as Set<WorkSchedule>;
+        sessionManager.currentUser?.favoriteCanteens = value[2] as Set<int>;
         isFavorite =
             sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
       });
@@ -308,6 +346,10 @@ class _CanteenViewState extends State<CanteenView> {
     } else {
       print('Could not launch ${canteen.url.toString()}');
     }
+  }
+
+  Future<Canteen?> getCanteen() {
+    return gcf.getCanteen(canteen.id);
   }
 
   Future<Set<int>> getFavoriteCanteens() {
@@ -338,5 +380,11 @@ class _CanteenViewState extends State<CanteenView> {
         });
       },
     );
+  }
+
+  void reportQueueLength(QueueLength queueLength) async {
+    gcf
+        .reportQueueLength(canteen.id, queueLength, null)
+        .then((value) => refreshWidget());
   }
 }
