@@ -16,17 +16,23 @@ import 'package:url_launcher/url_launcher.dart';
 
 class CanteenView extends StatefulWidget {
   final Canteen canteen;
+  final Function parentRefreshWidget;
 
-  const CanteenView({super.key, required this.canteen});
+  const CanteenView(
+      {super.key, required this.canteen, required this.parentRefreshWidget});
 
   @override
-  State<CanteenView> createState() => _CanteenViewState(canteen: canteen);
+  State<CanteenView> createState() => _CanteenViewState(
+        canteen: canteen,
+        parentRefreshWidget: parentRefreshWidget,
+      );
 }
 
 class _CanteenViewState extends State<CanteenView> {
   Canteen canteen;
+  final Function parentRefreshWidget;
 
-  _CanteenViewState({required this.canteen});
+  _CanteenViewState({required this.canteen, required this.parentRefreshWidget});
 
   SessionManager sessionManager = SessionManager.sharedInstance;
   StorageService storageService = StorageService();
@@ -387,14 +393,17 @@ class _CanteenViewState extends State<CanteenView> {
     gcf.reportQueueLength(canteen.id, queueLength, null).then((reportId) {
       if (reportId != null) {
         refreshWidget();
-        Utils.showSnackBarMessageWithAction(
-          context,
-          getQueueLengthReportResponseMessage(queueLength),
-          "Poništi",
-          () => removeQueueLengthReport(reportId),
-        );
+        parentRefreshWidget();
+        if (mounted) {
+          Utils.showSnackBarMessageWithAction(
+            context,
+            getQueueLengthReportResponseMessage(queueLength),
+            "Poništi",
+            () => removeQueueLengthReport(reportId),
+          );
+        }
       } else {
-        Utils.showSnackBarMessage(context, "Greška!");
+        if (mounted) Utils.showSnackBarMessage(context, "Greška!");
       }
     });
   }
@@ -403,6 +412,7 @@ class _CanteenViewState extends State<CanteenView> {
     gcf.removeQueueLengthReport(reportId).then((result) {
       if (result) {
         refreshWidget();
+        parentRefreshWidget();
         if (mounted) Utils.showSnackBarMessage(context, "Prijava poništena!");
       } else {
         if (mounted) Utils.showSnackBarMessage(context, "Greška!");

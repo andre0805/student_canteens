@@ -208,8 +208,9 @@ class _CanteensViewState extends State<CanteensView> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CanteenView(canteen: canteen),
+        builder: (context) =>
+            CanteenView(canteen: canteen, parentRefreshWidget: refreshWidget),
       ),
-    ).then((value) => refreshWidget());
+    );
   }
 }
