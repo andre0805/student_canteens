@@ -50,11 +50,11 @@ Color getColorFromQueueLength(QueueLength length) {
     case QueueLength.NONE:
       return Colors.green;
     case QueueLength.SHORT:
-      return Colors.green.shade400;
+      return Colors.lightGreen;
     case QueueLength.MEDIUM:
       return Colors.yellow.shade400;
     case QueueLength.LONG:
-      return Colors.orange;
+      return Colors.orange.shade400;
     case QueueLength.VERY_LONG:
       return Colors.red;
     default:
