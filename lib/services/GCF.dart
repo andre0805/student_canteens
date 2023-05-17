@@ -1,4 +1,5 @@
 import 'package:student_canteens/models/Canteen.dart';
+import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/models/SCUser.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -17,6 +18,7 @@ class GCF {
   static const String GET_FAVORITE_CANTEENS = '/getFavoriteCanteens';
   static const String ADD_FAVORITE_CANTEEN = '/addFavoriteCanteen';
   static const String REMOVE_FAVORITE_CANTEEN = '/removeFavoriteCanteen';
+  static const String REPORT_QUEUE_LENGTH = '/addReport';
 
   static const GCF sharedInstance = GCF._();
 
@@ -75,7 +77,7 @@ class GCF {
 
   Future<Canteen?> getCanteen(int canteenId) async {
     http.Response response = await http.get(
-      Uri.parse(BASE_URL + GET_CANTEEN + '?canteenId=' + canteenId.toString()),
+      Uri.parse(BASE_URL + GET_CANTEEN + '?id=' + canteenId.toString()),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -185,5 +187,29 @@ class GCF {
     } else {
       return false;
     }
+  }
+
+  Future<bool> reportQueueLength(
+      int canteenId, QueueLength queueLength, String? description) async {
+    String? userId = sessionManager.currentUser?.id;
+
+    if (userId == null) return false;
+
+    http.Response response = await http.post(
+      Uri.parse(BASE_URL + REPORT_QUEUE_LENGTH),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          "userId": userId,
+          "canteenId": canteenId,
+          "queueLength": queueLength.index,
+          "description": description,
+        },
+      ),
+    );
+
+    return response.statusCode == 201;
   }
 }
