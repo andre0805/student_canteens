@@ -50,7 +50,7 @@ class QueueLengthView extends StatelessWidget {
       widgets.add(
         Icon(
           queueIcon,
-          color: Colors.grey.shade200,
+          color: Colors.grey.shade300,
           shadows: [
             Shadow(
               blurRadius: 1,

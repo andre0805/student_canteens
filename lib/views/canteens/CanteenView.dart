@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
+import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/views/canteens/CanteenMapView.dart';
+import 'package:student_canteens/views/canteens/QueueLengthView.dart';
 import 'package:student_canteens/views/canteens/WorkScheduleListView.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -134,6 +136,18 @@ class _CanteenViewState extends State<CanteenView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // queue length
+                      Visibility(
+                        visible: canteen.queueLength != QueueLength.UNKNOWN,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 8),
+                            QueueLengthView(queueLength: canteen.queueLength),
+                            const SizedBox(height: 4),
+                          ],
+                        ),
+                      ),
+
                       // canteen name
                       Text(
                         canteen.name,
