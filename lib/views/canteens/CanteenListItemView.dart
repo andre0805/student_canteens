@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
-import 'package:student_canteens/models/QueueLength.dart';
-import 'package:student_canteens/utils/utils.dart';
+import 'package:student_canteens/views/canteens/QueueLengthView.dart';
 
 class CanteenListItemView extends StatelessWidget {
   const CanteenListItemView({
@@ -24,15 +23,7 @@ class CanteenListItemView extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GestureDetector(
-                onTap: () => Utils.showSnackBarMessage(
-                  context,
-                  getQueueLengthString(canteen.queueLength),
-                ),
-                child: Row(
-                  children: getQueueLengthWidgets(),
-                ),
-              ),
+              QueueLengthView(queueLength: canteen.queueLength),
               Text(
                 canteen.name,
                 style: const TextStyle(
@@ -57,45 +48,5 @@ class CanteenListItemView extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  List<Widget> getQueueLengthWidgets() {
-    List<Widget> widgets = [];
-
-    if (canteen.queueLength == QueueLength.UNKNOWN) return widgets;
-
-    for (int i = 0; i < canteen.queueLength.index; i++) {
-      widgets.add(
-        Icon(
-          queueIcon,
-          color: getColorFromQueueLength(canteen.queueLength),
-          shadows: [
-            Shadow(
-              blurRadius: 1,
-              color: Colors.grey.shade400,
-              offset: const Offset(1, 1),
-            ),
-          ],
-        ),
-      );
-    }
-
-    for (int i = 0; i < 5 - canteen.queueLength.index; i++) {
-      widgets.add(
-        Icon(
-          queueIcon,
-          color: Colors.grey.shade200,
-          shadows: [
-            Shadow(
-              blurRadius: 1,
-              color: Colors.grey.shade400,
-              offset: const Offset(1, 1),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return widgets;
   }
 }
