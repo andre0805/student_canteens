@@ -1,3 +1,5 @@
+import 'package:student_canteens/models/QueueLength.dart';
+
 class Canteen {
   final int id;
   final String name;
@@ -10,6 +12,7 @@ class Canteen {
   final String? imageUrl;
   final String latitude;
   final String longitude;
+  final QueueLength queueLength;
 
   Canteen({
     required this.id,
@@ -23,6 +26,7 @@ class Canteen {
     required this.imageUrl,
     required this.latitude,
     required this.longitude,
+    required this.queueLength,
   });
 
   factory Canteen.fromJson(Map<String, dynamic> json) {
@@ -38,6 +42,7 @@ class Canteen {
       imageUrl: json['cover_picture'],
       latitude: json['latitude'],
       longitude: json['longitude'],
+      queueLength: queueLengthFromInt(json['queue_length']),
     );
   }
 }
