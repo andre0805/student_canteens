@@ -66,6 +66,21 @@ class _CanteenViewState extends State<CanteenView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
+      floatingActionButton: Visibility(
+        visible: !isLoading,
+        child: FloatingActionButton(
+          onPressed: () {},
+          backgroundColor: Colors.grey[900],
+          foregroundColor: Colors.grey[200],
+          splashColor: Colors.grey[700],
+          elevation: 10.0,
+          shape: const CircleBorder(),
+          child: const Icon(
+            Icons.people,
+            size: 25,
+          ),
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: refreshWidget,
         edgeOffset: 120,
