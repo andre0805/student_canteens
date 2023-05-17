@@ -210,6 +210,6 @@ class _CanteensViewState extends State<CanteensView> {
       MaterialPageRoute(
         builder: (context) => CanteenView(canteen: canteen),
       ),
-    );
+    ).then((value) => refreshWidget());
   }
 }
