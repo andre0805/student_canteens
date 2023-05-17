@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/QueueLength.dart';
+import 'package:student_canteens/models/QueueLengthReport.dart';
 import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteens/CanteenMapView.dart';
+import 'package:student_canteens/views/canteens/QueueLengthReportsView.dart';
 import 'package:student_canteens/views/canteens/QueueLengthView.dart';
 import 'package:student_canteens/views/canteens/WorkScheduleListView.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,6 +41,7 @@ class _CanteenViewState extends State<CanteenView> {
   GCF gcf = GCF.sharedInstance;
 
   Set<WorkSchedule> workSchedules = {};
+  List<QueueLengthReport> queueLengthReports = [];
   bool isLoading = false;
   bool isFavorite = false;
 
@@ -52,7 +55,8 @@ class _CanteenViewState extends State<CanteenView> {
 
     Future.wait([
       getWorkschedule(),
-      gcf.getFavoriteCanteens(),
+      getFavoriteCanteens(),
+      getQueueLengthReports(),
     ]).then((value) {
       updateWidget(() {
         workSchedules = value[0] as Set<WorkSchedule>;
@@ -60,7 +64,7 @@ class _CanteenViewState extends State<CanteenView> {
         isLoading = false;
         isFavorite =
             sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
-        false;
+        queueLengthReports = value[2] as List<QueueLengthReport>;
       });
     });
   }
@@ -310,6 +314,28 @@ class _CanteenViewState extends State<CanteenView> {
                         ),
                       ),
 
+                      // queue length reports
+                      Visibility(
+                          visible: canteen.queueLength != QueueLength.UNKNOWN,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16),
+                              const Text(
+                                "Prijave reda",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              QueueLengthReportsView(
+                                canteen: canteen,
+                                queueLengthReports: queueLengthReports,
+                              ),
+                            ],
+                          )),
+
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -332,6 +358,7 @@ class _CanteenViewState extends State<CanteenView> {
       getCanteen(),
       getWorkschedule(),
       getFavoriteCanteens(),
+      getQueueLengthReports(),
     ]).then((value) {
       updateWidget(() {
         canteen = value[0] as Canteen;
@@ -339,6 +366,7 @@ class _CanteenViewState extends State<CanteenView> {
         sessionManager.currentUser?.favoriteCanteens = value[2] as Set<int>;
         isFavorite =
             sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
+        queueLengthReports = value[3] as List<QueueLengthReport>;
       });
     });
   }
@@ -357,6 +385,10 @@ class _CanteenViewState extends State<CanteenView> {
 
   Future<Canteen?> getCanteen() {
     return gcf.getCanteen(canteen.id);
+  }
+
+  Future<List<QueueLengthReport>> getQueueLengthReports() {
+    return gcf.getQueueLengthReports(canteen.id);
   }
 
   Future<Set<int>> getFavoriteCanteens() {
