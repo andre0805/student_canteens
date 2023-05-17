@@ -385,15 +385,39 @@ class _CanteenViewState extends State<CanteenView> {
 
   void reportQueueLength(QueueLength queueLength) async {
     gcf.reportQueueLength(canteen.id, queueLength, null).then((value) {
-      if (value) {
-        refreshWidget();
-        Utils.showSnackBarMessage(
-          context,
-          "Uspješno ste prijavili " + getQueueLengthString(queueLength),
-        );
-      } else {
-        Utils.showSnackBarMessage(context, "Greška!");
-      }
+      if (value) refreshWidget();
+      Utils.showSnackBarMessage(
+          context, getQueueLengthReportResponseMessage(queueLength, value));
     });
+  }
+
+  String getQueueLengthReportResponseMessage(
+      QueueLength queueLength, bool result) {
+    if (!result) return "Greška!";
+
+    String message = "Uspješno ste prijavili ";
+
+    switch (queueLength) {
+      case QueueLength.NONE:
+        message += "da nema reda";
+        break;
+      case QueueLength.SHORT:
+        message += "kratak red";
+        break;
+      case QueueLength.MEDIUM:
+        message += "srednji red";
+        break;
+      case QueueLength.LONG:
+        message += "dugačak red";
+        break;
+      case QueueLength.VERY_LONG:
+        message += "vrlo dugačak red";
+        break;
+      case QueueLength.UNKNOWN:
+        message += "nepoznat red";
+        break;
+    }
+
+    return message + "!";
   }
 }
