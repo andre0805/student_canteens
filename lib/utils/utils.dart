@@ -35,11 +35,34 @@ class Utils {
   }
 
   static void showSnackBarMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    hideCurrentSnackBar(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
       ),
     );
+  }
+
+  static void showSnackBarMessageWithAction(
+    BuildContext context,
+    String message,
+    String actionText,
+    Function action,
+  ) {
+    hideCurrentSnackBar(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 5),
+        action: SnackBarAction(
+          label: actionText,
+          onPressed: () => action(),
+        ),
+      ),
+    );
+  }
+
+  static void hideCurrentSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
 }

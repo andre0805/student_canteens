@@ -384,37 +384,53 @@ class _CanteenViewState extends State<CanteenView> {
   }
 
   void reportQueueLength(QueueLength queueLength) async {
-    gcf.reportQueueLength(canteen.id, queueLength, null).then((value) {
-      if (value) refreshWidget();
-      Utils.showSnackBarMessage(
-          context, getQueueLengthReportResponseMessage(queueLength, value));
+    gcf.reportQueueLength(canteen.id, queueLength, null).then((reportId) {
+      if (reportId != null) {
+        refreshWidget();
+        Utils.showSnackBarMessageWithAction(
+          context,
+          getQueueLengthReportResponseMessage(queueLength),
+          "Poništi",
+          () => removeQueueLengthReport(reportId),
+        );
+      } else {
+        Utils.showSnackBarMessage(context, "Greška!");
+      }
     });
   }
 
-  String getQueueLengthReportResponseMessage(
-      QueueLength queueLength, bool result) {
-    if (!result) return "Greška!";
+  void removeQueueLengthReport(int reportId) async {
+    gcf.removeQueueLengthReport(reportId).then((result) {
+      if (result) {
+        refreshWidget();
+        if (mounted) Utils.showSnackBarMessage(context, "Prijava poništena!");
+      } else {
+        if (mounted) Utils.showSnackBarMessage(context, "Greška!");
+      }
+    });
+  }
 
-    String message = "Uspješno ste prijavili ";
+  String getQueueLengthReportResponseMessage(QueueLength queueLength) {
+    String message = "Uspješna prijava ";
 
     switch (queueLength) {
       case QueueLength.NONE:
         message += "da nema reda";
         break;
       case QueueLength.SHORT:
-        message += "kratak red";
+        message += "kratkog reda";
         break;
       case QueueLength.MEDIUM:
-        message += "srednji red";
+        message += "srednjeg reda";
         break;
       case QueueLength.LONG:
-        message += "dugačak red";
+        message += "dugačkog reda";
         break;
       case QueueLength.VERY_LONG:
-        message += "vrlo dugačak red";
+        message += "vrlo dugačakog reda";
         break;
       case QueueLength.UNKNOWN:
-        message += "nepoznat red";
+        message += "nepoznatog reda";
         break;
     }
 

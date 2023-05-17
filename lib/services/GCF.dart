@@ -19,6 +19,7 @@ class GCF {
   static const String ADD_FAVORITE_CANTEEN = '/addFavoriteCanteen';
   static const String REMOVE_FAVORITE_CANTEEN = '/removeFavoriteCanteen';
   static const String REPORT_QUEUE_LENGTH = '/addReport';
+  static const String REMOVE_QUEUE_LENGTH_REPORT = '/removeReport';
 
   static const GCF sharedInstance = GCF._();
 
@@ -189,12 +190,10 @@ class GCF {
     }
   }
 
-  Future<bool> reportQueueLength(
   Future<int?> reportQueueLength(
       int canteenId, QueueLength queueLength, String? description) async {
     String? userId = sessionManager.currentUser?.id;
 
-    if (userId == null) return false;
     if (userId == null) return null;
 
     http.Response response = await http.post(
@@ -219,5 +218,20 @@ class GCF {
       return null;
     }
   }
+
+  Future<bool> removeQueueLengthReport(int reportId) async {
+    http.Response response = await http.post(
+      Uri.parse(BASE_URL + REMOVE_QUEUE_LENGTH_REPORT),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          "reportId": reportId,
+        },
+      ),
+    );
+
+    return response.statusCode == 200;
   }
 }
