@@ -177,7 +177,7 @@ class _CanteenViewState extends State<CanteenView> {
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.2),
                         blurRadius: 1,
-                        offset: const Offset(0, 2), // Shadow position
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
@@ -453,29 +453,19 @@ class _CanteenViewState extends State<CanteenView> {
   }
 
   String getQueueLengthReportResponseMessage(QueueLength queueLength) {
-    String message = "Uspješna prijava ";
-
     switch (queueLength) {
       case QueueLength.NONE:
-        message += "da nema reda";
-        break;
+        return "Prijavljeno da nema reda!";
       case QueueLength.SHORT:
-        message += "kratkog reda";
-        break;
+        return "Prijavljen kratak red!";
       case QueueLength.MEDIUM:
-        message += "srednjeg reda";
-        break;
+        return "Prijavljen srednji red!";
       case QueueLength.LONG:
-        message += "dugačkog reda";
-        break;
+        return "Prijavljen dugačak red!";
       case QueueLength.VERY_LONG:
-        message += "vrlo dugačakog reda";
-        break;
+        return "Prijavljen vrlo dugačak red!";
       case QueueLength.UNKNOWN:
-        message += "nepoznatog reda";
-        break;
+        return "Greška!";
     }
-
-    return message + "!";
   }
 }
