@@ -190,10 +190,12 @@ class GCF {
   }
 
   Future<bool> reportQueueLength(
+  Future<int?> reportQueueLength(
       int canteenId, QueueLength queueLength, String? description) async {
     String? userId = sessionManager.currentUser?.id;
 
     if (userId == null) return false;
+    if (userId == null) return null;
 
     http.Response response = await http.post(
       Uri.parse(BASE_URL + REPORT_QUEUE_LENGTH),
@@ -210,6 +212,12 @@ class GCF {
       ),
     );
 
-    return response.statusCode == 201;
+    if (response.statusCode == 201) {
+      List<dynamic> json = jsonDecode(response.body);
+      return json.first['id'];
+    } else {
+      return null;
+    }
+  }
   }
 }
