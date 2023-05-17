@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +23,27 @@ class _CanteenMapViewState extends State<CanteenMapView> {
         ),
         super();
 
-  Completer<GoogleMapController> _controller = Completer();
+  GoogleMapController? mapController;
   LatLng canteenLocation;
+
+  @override
+  void initState() {
+    mapController?.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: canteenLocation,
+          zoom: 13.0,
+        ),
+      ),
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    mapController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +60,7 @@ class _CanteenMapViewState extends State<CanteenMapView> {
         zoom: 13.0,
       ),
       onMapCreated: (controller) {
-        _controller.complete(controller);
+        mapController = controller;
       },
       markers: {
         Marker(
