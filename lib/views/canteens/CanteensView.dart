@@ -171,8 +171,11 @@ class _CanteensViewState extends State<CanteensView> {
   }
 
   Future<void> refreshWidget() async {
-    await getCanteens();
-    updateWidget(() {});
+    return getCanteens().then((value) {
+      updateWidget(() {
+        selectedCanteens = canteenMap[selectedCity] ?? [];
+      });
+    });
   }
 
   Future<void> getCanteens() {
