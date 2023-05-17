@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/QueueLength.dart';
+import 'package:student_canteens/utils/utils.dart';
 
 class CanteenListItemView extends StatelessWidget {
   const CanteenListItemView({
@@ -23,8 +24,14 @@ class CanteenListItemView extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: getQueueLengthWidgets(),
+              GestureDetector(
+                onTap: () => Utils.showSnackBarMessage(
+                  context,
+                  getQueueLengthString(canteen.queueLength),
+                ),
+                child: Row(
+                  children: getQueueLengthWidgets(),
+                ),
               ),
               Text(
                 canteen.name,
@@ -57,7 +64,7 @@ class CanteenListItemView extends StatelessWidget {
 
     if (canteen.queueLength == QueueLength.UNKNOWN) return widgets;
 
-    for (int i = 0; i < canteen.queueLength.index + 1; i++) {
+    for (int i = 0; i < canteen.queueLength.index; i++) {
       widgets.add(
         Icon(
           queueIcon,
@@ -73,7 +80,7 @@ class CanteenListItemView extends StatelessWidget {
       );
     }
 
-    for (int i = 0; i < 4 - canteen.queueLength.index; i++) {
+    for (int i = 0; i < 5 - canteen.queueLength.index; i++) {
       widgets.add(
         Icon(
           queueIcon,
@@ -88,20 +95,6 @@ class CanteenListItemView extends StatelessWidget {
         ),
       );
     }
-
-    widgets.add(
-      const SizedBox(width: 8),
-    );
-
-    widgets.add(
-      Text(
-        getQueueLengthString(canteen.queueLength),
-        style: const TextStyle(
-          fontWeight: FontWeight.w300,
-          fontSize: 12,
-        ),
-      ),
-    );
 
     return widgets;
   }
