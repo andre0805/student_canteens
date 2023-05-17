@@ -6,6 +6,7 @@ import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/Comparator.dart';
 import 'package:student_canteens/views/canteens/CanteenView.dart';
+import 'package:student_canteens/views/canteens/CanteenListItemView.dart';
 
 class CanteensView extends StatefulWidget {
   const CanteensView({super.key});
@@ -149,31 +150,9 @@ class _CanteensViewState extends State<CanteensView> {
                   delegate: SliverChildBuilderDelegate(
                     childCount: selectedCanteens.length,
                     (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Card(
-                          child: ListTile(
-                            title: Text(
-                              selectedCanteens[index].name,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            subtitle: Text(
-                              selectedCanteens[index].address,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                            tileColor: Colors.white70,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            onTap: () => selectCanteen(selectedCanteens[index]),
-                          ),
-                        ),
+                      return CanteenListItemView(
+                        canteen: selectedCanteens[index],
+                        onTap: () => selectCanteen(selectedCanteens[index]),
                       );
                     },
                   ),
@@ -192,7 +171,8 @@ class _CanteensViewState extends State<CanteensView> {
   }
 
   Future<void> refreshWidget() async {
-    return getCanteens();
+    await getCanteens();
+    updateWidget(() {});
   }
 
   Future<void> getCanteens() {
