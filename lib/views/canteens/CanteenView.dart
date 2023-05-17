@@ -385,6 +385,6 @@ class _CanteenViewState extends State<CanteenView> {
   void reportQueueLength(QueueLength queueLength) async {
     gcf
         .reportQueueLength(canteen.id, queueLength, null)
-        .then((value) => refreshWidget());
+        .then((value) => value ? refreshWidget() : null);
   }
 }
