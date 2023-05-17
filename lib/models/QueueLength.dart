@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 enum QueueLength {
+  UNKNOWN,
   NONE,
   SHORT,
   MEDIUM,
   LONG,
   VERY_LONG,
-  UNKNOWN,
 }
 
 QueueLength queueLengthFromInt(int? length) {
