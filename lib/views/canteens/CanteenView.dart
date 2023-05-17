@@ -8,6 +8,7 @@ import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
+import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteens/CanteenMapView.dart';
 import 'package:student_canteens/views/canteens/QueueLengthView.dart';
 import 'package:student_canteens/views/canteens/WorkScheduleListView.dart';
@@ -383,8 +384,16 @@ class _CanteenViewState extends State<CanteenView> {
   }
 
   void reportQueueLength(QueueLength queueLength) async {
-    gcf
-        .reportQueueLength(canteen.id, queueLength, null)
-        .then((value) => value ? refreshWidget() : null);
+    gcf.reportQueueLength(canteen.id, queueLength, null).then((value) {
+      if (value) {
+        refreshWidget();
+        Utils.showSnackBarMessage(
+          context,
+          "Uspješno ste prijavili " + getQueueLengthString(queueLength),
+        );
+      } else {
+        Utils.showSnackBarMessage(context, "Greška!");
+      }
+    });
   }
 }
