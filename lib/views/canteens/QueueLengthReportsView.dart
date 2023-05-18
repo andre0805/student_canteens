@@ -35,48 +35,51 @@ class QueueLengthReportsView extends StatelessWidget {
             itemBuilder: (context, index) {
               QueueLengthReport queueLengthReport = queueLengthReports[index];
               return Card(
-                  elevation: 2,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ListTile(
+                  tileColor: Colors.white70,
+                  splashColor: Colors.grey[200],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: ListTile(
-                    tileColor: Colors.white70,
-                    splashColor: Colors.grey[200],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    onTap: () => handleReportTapped(context, queueLengthReport),
-                    title: Wrap(
-                      direction: Axis.horizontal,
-                      alignment: WrapAlignment.spaceBetween,
-                      crossAxisAlignment: WrapCrossAlignment.end,
-                      children: [
-                        Wrap(
-                          direction: Axis.vertical,
-                          spacing: 8,
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          children: [
-                            Text(
-                              queueLengthReport.getRelativeTimeString(),
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w300,
-                              ),
+                  onTap: () => handleReportTapped(context, queueLengthReport),
+                  title: Wrap(
+                    direction: Axis.horizontal,
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    children: [
+                      Wrap(
+                        direction: Axis.vertical,
+                        spacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        children: [
+                          Text(
+                            queueLengthReport.getRelativeTimeString(),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
                             ),
-                            Text(
-                              queueLengthReport.getDisplayName(),
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                          Text(
+                            queueLengthReport.getDisplayName(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                        QueueLengthView(
-                            queueLength: queueLengthReport.queueLength),
-                      ],
-                    ),
-                  ));
+                          ),
+                        ],
+                      ),
+                      QueueLengthView(
+                        queueLength: queueLengthReport.queueLength,
+                        queueIconSize: 24,
+                      ),
+                    ],
+                  ),
+                ),
+              );
             },
           );
   }

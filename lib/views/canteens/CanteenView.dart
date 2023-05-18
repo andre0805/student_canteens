@@ -205,9 +205,18 @@ class _CanteenViewState extends State<CanteenView> {
                           direction: Axis.horizontal,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            const SizedBox(height: 8),
-                            QueueLengthView(queueLength: canteen.queueLength),
-                            const SizedBox(height: 4),
+                            QueueLengthView(
+                              queueLength: canteen.queueLength,
+                              queueIconSize: 30,
+                            ),
+                            IconButton(
+                              onPressed: showQueueLengthInfo,
+                              icon: Icon(
+                                Icons.info_outline_rounded,
+                                size: 20,
+                                color: Colors.blue[200],
+                              ),
+                            ),
                           ],
                         ),
                       ),

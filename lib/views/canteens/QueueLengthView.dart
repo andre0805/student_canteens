@@ -6,11 +6,13 @@ class QueueLengthView extends StatelessWidget {
   const QueueLengthView({
     Key? key,
     required this.queueLength,
+    required this.queueIconSize,
   }) : super(key: key);
 
   final QueueLength queueLength;
 
   final IconData queueIcon = Icons.person;
+  final double queueIconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class QueueLengthView extends StatelessWidget {
         Icon(
           queueIcon,
           color: getColorFromQueueLength(queueLength),
+          size: queueIconSize,
           shadows: [
             Shadow(
               blurRadius: 1,
@@ -49,6 +52,7 @@ class QueueLengthView extends StatelessWidget {
         Icon(
           queueIcon,
           color: Colors.grey.shade300,
+          size: queueIconSize,
           shadows: [
             Shadow(
               blurRadius: 1,

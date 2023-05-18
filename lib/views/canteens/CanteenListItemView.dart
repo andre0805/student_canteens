@@ -23,7 +23,10 @@ class CanteenListItemView extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              QueueLengthView(queueLength: canteen.queueLength),
+              QueueLengthView(
+                queueLength: canteen.queueLength,
+                queueIconSize: 26,
+              ),
               Text(
                 canteen.name,
                 style: const TextStyle(
