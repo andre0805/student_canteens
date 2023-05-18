@@ -1,4 +1,5 @@
 import 'package:student_canteens/models/QueueLength.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class QueueLengthReport {
   final int id;
@@ -46,6 +47,6 @@ class QueueLengthReport {
   }
 
   String getRelativeTimeString() {
-    return "${createdAt.hour}:${createdAt.minute}";
+    return timeago.format(createdAt.toLocal(), locale: 'hr');
   }
 }
