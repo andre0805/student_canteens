@@ -9,6 +9,17 @@ enum QueueLength {
   VERY_LONG,
 }
 
+extension QueueLengthIterable on QueueLength {
+  static Iterable<QueueLength> get values => [
+        QueueLength.UNKNOWN,
+        QueueLength.NONE,
+        QueueLength.SHORT,
+        QueueLength.MEDIUM,
+        QueueLength.LONG,
+        QueueLength.VERY_LONG,
+      ];
+}
+
 QueueLength queueLengthFromInt(int? length) {
   if (length == null) return QueueLength.UNKNOWN;
 
