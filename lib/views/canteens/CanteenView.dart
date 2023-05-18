@@ -90,41 +90,17 @@ class _CanteenViewState extends State<CanteenView> {
           icon: Icons.people,
           spacing: 8,
           children: [
-            SpeedDialChild(
-              label: 'Prijavi vrlo dugačak red',
-              backgroundColor: getColorFromQueueLength(QueueLength.VERY_LONG),
-              child: const Icon(Icons.people),
-              shape: const CircleBorder(),
-              onTap: () => reportQueueLength(QueueLength.VERY_LONG),
-            ),
-            SpeedDialChild(
-              label: 'Prijavi dugačak red',
-              backgroundColor: getColorFromQueueLength(QueueLength.LONG),
-              child: const Icon(Icons.people),
-              shape: const CircleBorder(),
-              onTap: () => reportQueueLength(QueueLength.LONG),
-            ),
-            SpeedDialChild(
-              label: 'Prijavi srednji red',
-              backgroundColor: getColorFromQueueLength(QueueLength.MEDIUM),
-              child: const Icon(Icons.people),
-              shape: const CircleBorder(),
-              onTap: () => reportQueueLength(QueueLength.MEDIUM),
-            ),
-            SpeedDialChild(
-              label: 'Prijavi kratak red',
-              backgroundColor: getColorFromQueueLength(QueueLength.SHORT),
-              child: const Icon(Icons.people),
-              shape: const CircleBorder(),
-              onTap: () => reportQueueLength(QueueLength.SHORT),
-            ),
-            SpeedDialChild(
-              label: 'Prijavi bez reda',
-              backgroundColor: getColorFromQueueLength(QueueLength.NONE),
-              child: const Icon(Icons.people),
-              shape: const CircleBorder(),
-              onTap: () => reportQueueLength(QueueLength.NONE),
-            ),
+            for (QueueLength queueLength in QueueLength.values) ...[
+              if (queueLength != QueueLength.UNKNOWN)
+                SpeedDialChild(
+                  label:
+                      QueueLengthExtension.getReportActionMessage(queueLength),
+                  backgroundColor: QueueLengthExtension.getColor(queueLength),
+                  child: const Icon(Icons.people),
+                  shape: const CircleBorder(),
+                  onTap: () => reportQueueLength(queueLength),
+                ),
+            ],
           ],
         ),
       ),
@@ -461,7 +437,7 @@ class _CanteenViewState extends State<CanteenView> {
         if (mounted) {
           Utils.showSnackBarMessageWithAction(
             context,
-            getQueueLengthReportResponseMessage(queueLength),
+            QueueLengthExtension.getReportResponseMessage(queueLength),
             "Poništi",
             () => removeQueueLengthReport(reportId),
           );
@@ -482,23 +458,6 @@ class _CanteenViewState extends State<CanteenView> {
         if (mounted) Utils.showSnackBarMessage(context, "Greška!");
       }
     });
-  }
-
-  String getQueueLengthReportResponseMessage(QueueLength queueLength) {
-    switch (queueLength) {
-      case QueueLength.NONE:
-        return "Prijavljeno da nema reda!";
-      case QueueLength.SHORT:
-        return "Prijavljen kratak red!";
-      case QueueLength.MEDIUM:
-        return "Prijavljen srednji red!";
-      case QueueLength.LONG:
-        return "Prijavljen dugačak red!";
-      case QueueLength.VERY_LONG:
-        return "Prijavljen vrlo dugačak red!";
-      case QueueLength.UNKNOWN:
-        return "Greška!";
-    }
   }
 
   void showQueueLengthInfo() {
@@ -540,7 +499,7 @@ class _CanteenViewState extends State<CanteenView> {
                       queueIconSize: 18,
                     ),
                     Text(
-                      " — ${queueLengthString(queueLength)}",
+                      " — ${QueueLengthExtension.getLegendDescription(queueLength)}",
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[900],
@@ -568,22 +527,5 @@ class _CanteenViewState extends State<CanteenView> {
         ),
       ],
     );
-  }
-
-  String queueLengthString(QueueLength queueLength) {
-    switch (queueLength) {
-      case QueueLength.UNKNOWN:
-        return "nepoznato stanje reda";
-      case QueueLength.NONE:
-        return "nema reda";
-      case QueueLength.SHORT:
-        return "kratak red (1-5 min)";
-      case QueueLength.MEDIUM:
-        return "srednji red (5-15 min)";
-      case QueueLength.LONG:
-        return "dugačak red (15-30 min)";
-      case QueueLength.VERY_LONG:
-        return "vrlo dugačak red (30+ min)";
-    }
   }
 }

@@ -42,7 +42,7 @@ class Canteen {
       imageUrl: json['cover_picture'],
       latitude: json['latitude'],
       longitude: json['longitude'],
-      queueLength: queueLengthFromInt(json['queue_length']),
+      queueLength: QueueLengthExtension.fromInt(json['queue_length']),
     );
   }
 }

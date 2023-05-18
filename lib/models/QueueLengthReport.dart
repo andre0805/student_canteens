@@ -28,7 +28,7 @@ class QueueLengthReport {
     return QueueLengthReport(
       id: json['id'] as int,
       canteenId: json['canteen_id'] as int,
-      queueLength: queueLengthFromInt(json['queue_length'] as int),
+      queueLength: QueueLengthExtension.fromInt(json['queue_length'] as int),
       description: json['description'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       userId: json['user_id'] as String,

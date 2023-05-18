@@ -27,7 +27,7 @@ class QueueLengthView extends StatelessWidget {
       widgets.add(
         Icon(
           queueIcon,
-          color: getColorFromQueueLength(queueLength),
+          color: QueueLengthExtension.getColor(queueLength),
           size: queueIconSize,
           shadows: [
             Shadow(
