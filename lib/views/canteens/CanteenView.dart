@@ -309,7 +309,8 @@ class _CanteenViewState extends State<CanteenView> {
                                   decorationColor: Colors.blue,
                                 ),
                               ),
-                            )
+                            ),
+                            const SizedBox(height: 16),
                           ],
                         ),
                       ),
@@ -320,9 +321,8 @@ class _CanteenViewState extends State<CanteenView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 16),
                               const Text(
-                                "Prijave reda",
+                                "Prijave",
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
