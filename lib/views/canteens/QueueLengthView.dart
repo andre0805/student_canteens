@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/QueueLength.dart';
-import 'package:student_canteens/utils/utils.dart';
 
 class QueueLengthView extends StatelessWidget {
   const QueueLengthView({
@@ -16,14 +15,8 @@ class QueueLengthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Utils.showSnackBarMessage(
-        context,
-        getQueueLengthString(queueLength),
-      ),
-      child: Wrap(
-        children: getQueueLengthWidgets(),
-      ),
+    return Wrap(
+      children: getQueueLengthWidgets(),
     );
   }
 
