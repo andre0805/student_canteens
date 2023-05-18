@@ -28,8 +28,6 @@ class QueueLengthView extends StatelessWidget {
   List<Widget> getQueueLengthWidgets() {
     List<Widget> widgets = [];
 
-    if (queueLength == QueueLength.UNKNOWN) return widgets;
-
     for (int i = 0; i < queueLength.index; i++) {
       widgets.add(
         Icon(

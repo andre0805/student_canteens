@@ -199,9 +199,11 @@ class _CanteenViewState extends State<CanteenView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // queue length
-                      Visibility(
-                        visible: canteen.queueLength != QueueLength.UNKNOWN,
-                        child: Column(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                        child: Wrap(
+                          direction: Axis.horizontal,
+                          crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             const SizedBox(height: 8),
                             QueueLengthView(queueLength: canteen.queueLength),
