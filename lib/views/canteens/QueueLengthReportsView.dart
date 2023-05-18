@@ -19,57 +19,66 @@ class QueueLengthReportsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.only(top: 8, bottom: 24),
-      itemCount: queueLengthReports.length,
-      itemBuilder: (context, index) {
-        QueueLengthReport queueLengthReport = queueLengthReports[index];
-        return Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+    return queueLengthReports.isEmpty
+        ? const Text(
+            "Trenutno nema zabilježenih prijava za ovu menzu.",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
             ),
-            child: ListTile(
-              tileColor: Colors.white70,
-              splashColor: Colors.grey[200],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              onTap: () => handleReportTapped(context, queueLengthReport),
-              title: Wrap(
-                direction: Axis.horizontal,
-                alignment: WrapAlignment.spaceBetween,
-                crossAxisAlignment: WrapCrossAlignment.end,
-                children: [
-                  Wrap(
-                    direction: Axis.vertical,
-                    spacing: 8,
-                    crossAxisAlignment: WrapCrossAlignment.start,
-                    children: [
-                      Text(
-                        queueLengthReport.getRelativeTimeString(),
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                      Text(
-                        queueLengthReport.getDisplayName(),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+          )
+        : ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(top: 8, bottom: 24),
+            itemCount: queueLengthReports.length,
+            itemBuilder: (context, index) {
+              QueueLengthReport queueLengthReport = queueLengthReports[index];
+              return Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  QueueLengthView(queueLength: queueLengthReport.queueLength),
-                ],
-              ),
-            ));
-      },
-    );
+                  child: ListTile(
+                    tileColor: Colors.white70,
+                    splashColor: Colors.grey[200],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    onTap: () => handleReportTapped(context, queueLengthReport),
+                    title: Wrap(
+                      direction: Axis.horizontal,
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.end,
+                      children: [
+                        Wrap(
+                          direction: Axis.vertical,
+                          spacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          children: [
+                            Text(
+                              queueLengthReport.getRelativeTimeString(),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            Text(
+                              queueLengthReport.getDisplayName(),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        QueueLengthView(
+                            queueLength: queueLengthReport.queueLength),
+                      ],
+                    ),
+                  ));
+            },
+          );
   }
 
   void handleReportTapped(
