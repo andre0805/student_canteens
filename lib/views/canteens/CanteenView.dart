@@ -332,6 +332,7 @@ class _CanteenViewState extends State<CanteenView> {
                               QueueLengthReportsView(
                                 canteen: canteen,
                                 queueLengthReports: queueLengthReports,
+                                onRemoveReport: removeQueueLengthReport,
                               ),
                             ],
                           )),

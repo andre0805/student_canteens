@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/QueueLengthReport.dart';
+import 'package:student_canteens/services/SessionManager.dart';
+import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteens/QueueLengthView.dart';
 
 class QueueLengthReportsView extends StatelessWidget {
   final Canteen canteen;
   final List<QueueLengthReport> queueLengthReports;
+  final Function onRemoveReport;
 
   const QueueLengthReportsView({
     super.key,
     required this.canteen,
     required this.queueLengthReports,
+    required this.onRemoveReport,
   });
 
   @override
@@ -24,16 +28,17 @@ class QueueLengthReportsView extends StatelessWidget {
         QueueLengthReport queueLengthReport = queueLengthReports[index];
         return Card(
             elevation: 2,
-            surfaceTintColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 12,
+            child: ListTile(
+              tileColor: Colors.white70,
+              splashColor: Colors.grey[200],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Wrap(
+              onTap: () => handleReportTapped(context, queueLengthReport),
+              title: Wrap(
                 direction: Axis.horizontal,
                 alignment: WrapAlignment.spaceBetween,
                 crossAxisAlignment: WrapCrossAlignment.end,
@@ -65,5 +70,49 @@ class QueueLengthReportsView extends StatelessWidget {
             ));
       },
     );
+  }
+
+  void handleReportTapped(
+    BuildContext context,
+    QueueLengthReport queueLengthReport,
+  ) {
+    String? userId = SessionManager.sharedInstance.currentUser?.id;
+
+    if (userId == null) return;
+
+    if (queueLengthReport.userId == userId) {
+      Utils.showAlertDialogWithActions(context, 'Poništi prijavu',
+          'Možeš poništiti svoju prijavu ako misliš da je pogrešna.', [
+        TextButton(
+          style: ButtonStyle(
+            textStyle: MaterialStateProperty.all(
+              const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Odustani'),
+        ),
+        TextButton(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all(Colors.red[400]),
+            overlayColor: MaterialStateProperty.all(Colors.red[50]),
+            textStyle: MaterialStateProperty.all(
+              const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+            onRemoveReport(queueLengthReport.id);
+          },
+          child: const Text('Poništi prijavu'),
+        ),
+      ]);
+    }
   }
 }
