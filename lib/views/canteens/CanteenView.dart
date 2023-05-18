@@ -321,9 +321,9 @@ class _CanteenViewState extends State<CanteenView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Prijave",
-                                style: TextStyle(
+                              Text(
+                                "Prijave (${queueLengthReports.length})",
+                                style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
