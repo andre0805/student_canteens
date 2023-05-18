@@ -4,45 +4,24 @@ import 'package:student_canteens/models/WorkSchedules.dart';
 import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/views/canteens/WorkScheduleView.dart';
 
-class WorkScheduleListView extends StatefulWidget {
-  final Canteen canteen;
-  final Set<WorkSchedule> workSchedules;
-
-  WorkScheduleListView({
-    Key? key,
-    required this.canteen,
-    required this.workSchedules,
-  }) : super(key: key);
-
-  @override
-  State<WorkScheduleListView> createState() => _WorkScheduleListViewState(
-        canteen: canteen,
-        workSchedules: workSchedules,
-      );
-}
-
-class _WorkScheduleListViewState extends State<WorkScheduleListView> {
+class WorkScheduleListView extends StatelessWidget {
   final Canteen canteen;
   final WorkSchedules workSchedules;
 
-  _WorkScheduleListViewState({
+  WorkScheduleListView({
     required this.canteen,
     required Set<WorkSchedule> workSchedules,
-  }) : workSchedules = WorkSchedules(workSchedules: workSchedules);
+  }) : workSchedules = WorkSchedules(workSchedules: workSchedules) {
+    workSchedule_allDay = this.workSchedules.getWorkScheduleForMealOfDay(-1);
+    workSchedule_breakfast = this.workSchedules.getWorkScheduleForMealOfDay(1);
+    workSchedule_lunch = this.workSchedules.getWorkScheduleForMealOfDay(2);
+    workSchedule_dinner = this.workSchedules.getWorkScheduleForMealOfDay(3);
+  }
 
   Map<String, String> workSchedule_allDay = {};
   Map<String, String> workSchedule_breakfast = {};
   Map<String, String> workSchedule_lunch = {};
   Map<String, String> workSchedule_dinner = {};
-
-  @override
-  void initState() {
-    super.initState();
-    workSchedule_allDay = workSchedules.getWorkScheduleForMealOfDay(-1);
-    workSchedule_breakfast = workSchedules.getWorkScheduleForMealOfDay(1);
-    workSchedule_lunch = workSchedules.getWorkScheduleForMealOfDay(2);
-    workSchedule_dinner = workSchedules.getWorkScheduleForMealOfDay(3);
-  }
 
   @override
   Widget build(BuildContext context) {
