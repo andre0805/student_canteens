@@ -334,6 +334,7 @@ class _CanteenViewState extends State<CanteenView> {
                                 queueLengthReports: queueLengthReports,
                                 onRemoveReport: removeQueueLengthReport,
                               ),
+                              const SizedBox(height: 24),
                             ],
                           )),
 
