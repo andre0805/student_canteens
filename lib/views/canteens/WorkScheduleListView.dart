@@ -9,22 +9,22 @@ class WorkScheduleListView extends StatelessWidget {
   final WorkSchedules workSchedules;
 
   WorkScheduleListView({
+    super.key,
     required this.canteen,
     required Set<WorkSchedule> workSchedules,
-  }) : workSchedules = WorkSchedules(workSchedules: workSchedules) {
-    workSchedule_allDay = this.workSchedules.getWorkScheduleForMealOfDay(-1);
-    workSchedule_breakfast = this.workSchedules.getWorkScheduleForMealOfDay(1);
-    workSchedule_lunch = this.workSchedules.getWorkScheduleForMealOfDay(2);
-    workSchedule_dinner = this.workSchedules.getWorkScheduleForMealOfDay(3);
-  }
-
-  Map<String, String> workSchedule_allDay = {};
-  Map<String, String> workSchedule_breakfast = {};
-  Map<String, String> workSchedule_lunch = {};
-  Map<String, String> workSchedule_dinner = {};
+  }) : workSchedules = WorkSchedules(workSchedules: workSchedules);
 
   @override
   Widget build(BuildContext context) {
+    Map<String, String> workSchedule_allDay =
+        workSchedules.getWorkScheduleForMealOfDay(-1);
+    Map<String, String> workSchedule_breakfast =
+        workSchedules.getWorkScheduleForMealOfDay(1);
+    Map<String, String> workSchedule_lunch =
+        workSchedules.getWorkScheduleForMealOfDay(2);
+    Map<String, String> workSchedule_dinner =
+        workSchedules.getWorkScheduleForMealOfDay(3);
+
     return workSchedule_allDay.isNotEmpty
         ? WorkScheduleView(workSchedule: workSchedule_allDay)
         : SingleChildScrollView(
