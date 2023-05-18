@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
+import 'package:student_canteens/utils/CroatianMessages.dart';
 import 'package:student_canteens/views/auth/EmailVerificationView.dart';
 import 'package:student_canteens/views/auth/LoginView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +14,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  timeago.setLocaleMessages('hr', CroatianMessages());
 
   runApp(const MyApp());
 }
