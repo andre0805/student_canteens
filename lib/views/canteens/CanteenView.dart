@@ -318,10 +318,13 @@ class _CanteenViewState extends State<CanteenView> {
                       ),
 
                       // queue length reports
-                      Visibility(
-                          visible: canteen.queueLength != QueueLength.UNKNOWN,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Wrap(
+                            direction: Axis.horizontal,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 0,
                             children: [
                               Text(
                                 "Prijave (${queueLengthReports.length})",
@@ -330,15 +333,32 @@ class _CanteenViewState extends State<CanteenView> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              QueueLengthReportsView(
-                                canteen: canteen,
-                                queueLengthReports: queueLengthReports,
-                                onRemoveReport: removeQueueLengthReport,
+                              IconButton(
+                                onPressed: () {
+                                  Utils.showAlertDialog(
+                                    context,
+                                    "Prijave",
+                                    """• Prijave služe za informiranje drugih korisnika o duljini reda u menzi.\n\n• Prosječna duljina reda u menzi računa se na temelju svih prijava u posljednjih 15 minuta.\n\n• Duljinu reda u menzi možeš prijaviti klikom na gumb u donjem desnom kutu ekrana.\n\n• Ako pogrešno prijaviš duljinu reda u menzi, možeš je poništiti klikom na jednu od svojih prijava u popisu prijava.""",
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.info_outline_rounded,
+                                  size: 20,
+                                  color: Colors.blue[200],
+                                ),
                               ),
                               const SizedBox(height: 24),
                             ],
-                          )),
+                          ),
+                          const SizedBox(height: 4),
+                          QueueLengthReportsView(
+                            canteen: canteen,
+                            queueLengthReports: queueLengthReports,
+                            onRemoveReport: removeQueueLengthReport,
+                          ),
+                          const SizedBox(height: 48),
+                        ],
+                      ),
 
                       const SizedBox(height: 24),
                     ],
