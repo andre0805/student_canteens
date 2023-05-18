@@ -347,7 +347,7 @@ class _CanteenViewState extends State<CanteenView> {
                                   Utils.showAlertDialog(
                                     context,
                                     "Prijave",
-                                    """• Prijave služe za informiranje drugih korisnika o duljini reda u menzi.\n\n• Prosječna duljina reda u menzi računa se na temelju svih prijava u posljednjih 15 minuta.\n\n• Duljinu reda u menzi možeš prijaviti klikom na gumb u donjem desnom kutu ekrana.\n\n• Ako pogrešno prijaviš duljinu reda u menzi, možeš je poništiti klikom na jednu od svojih prijava u popisu prijava.""",
+                                    """• Prijave služe za informiranje drugih korisnika o duljini reda u menzi.\n\n• Ovdje možeš vidjeti svoje prijave i prijave drugih korisnika u posljednjih 15 min.""",
                                   );
                                 },
                                 icon: Icon(
@@ -356,7 +356,6 @@ class _CanteenViewState extends State<CanteenView> {
                                   color: Colors.blue[200],
                                 ),
                               ),
-                              const SizedBox(height: 24),
                             ],
                           ),
                           const SizedBox(height: 4),
@@ -499,6 +498,92 @@ class _CanteenViewState extends State<CanteenView> {
         return "Prijavljen vrlo dugačak red!";
       case QueueLength.UNKNOWN:
         return "Greška!";
+    }
+  }
+
+  void showQueueLengthInfo() {
+    Utils.showAlertDialogWithCustomContent(
+      context,
+      "Prosječna duljina reda",
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            """• Prosječna duljina reda u menzi računa se na temelju svih prijava u posljednjih 15 minuta.\n\n• Duljinu reda u menzi možeš prijaviti klikom na gumb u donjem desnom kutu ekrana.\n\n• Ako pogrešno prijaviš duljinu reda u menzi, možeš je poništiti klikom na jednu od svojih prijava u popisu prijava.""",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            "Legenda",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            direction: Axis.vertical,
+            spacing: 8,
+            children: [
+              for (QueueLength queueLength in QueueLength.values) ...[
+                Wrap(
+                  direction: Axis.horizontal,
+                  spacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    QueueLengthView(
+                      queueLength: queueLength,
+                      queueIconSize: 18,
+                    ),
+                    Text(
+                      " — ${queueLengthString(queueLength)}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[900],
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ],
+          ),
+        ],
+      ),
+      [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text(
+            "OK",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String queueLengthString(QueueLength queueLength) {
+    switch (queueLength) {
+      case QueueLength.UNKNOWN:
+        return "nepoznato stanje reda";
+      case QueueLength.NONE:
+        return "nema reda";
+      case QueueLength.SHORT:
+        return "kratak red (1-5 min)";
+      case QueueLength.MEDIUM:
+        return "srednji red (5-15 min)";
+      case QueueLength.LONG:
+        return "dugačak red (15-30 min)";
+      case QueueLength.VERY_LONG:
+        return "vrlo dugačak red (30+ min)";
     }
   }
 }
