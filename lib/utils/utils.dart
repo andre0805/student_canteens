@@ -91,6 +91,34 @@ class Utils {
     );
   }
 
+  static void showAlertDialogWithCustomContent(
+    BuildContext context,
+    String title,
+    Widget content,
+    List<Widget> actions,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: content,
+          actions: actions,
+        );
+      },
+    );
+  }
+
   static void showSnackBarMessage(BuildContext context, String message) {
     hideCurrentSnackBar(context);
     ScaffoldMessenger.of(context).showSnackBar(
