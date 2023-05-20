@@ -44,6 +44,7 @@ class _CanteenViewState extends State<CanteenView> {
   List<QueueLengthReport> queueLengthReports = [];
   bool isLoading = false;
   bool isFavorite = false;
+  Timer? refreshDataTimer;
 
   @override
   void initState() {
@@ -67,11 +68,19 @@ class _CanteenViewState extends State<CanteenView> {
         queueLengthReports = value[2] as List<QueueLengthReport>;
       });
     });
+
+    refreshDataTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (timer) {
+        refreshWidget();
+      },
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
+    refreshDataTimer?.cancel();
   }
 
   @override

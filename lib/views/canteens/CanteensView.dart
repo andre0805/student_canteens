@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
@@ -28,6 +29,7 @@ class _CanteensViewState extends State<CanteensView> {
   String selectedCity = "";
   List<Canteen> selectedCanteens = [];
   bool isLoading = false;
+  Timer? refreshDataTimer;
 
   @override
   void initState() {
@@ -57,6 +59,19 @@ class _CanteensViewState extends State<CanteensView> {
         isLoading = false;
       });
     });
+
+    refreshDataTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (timer) {
+        refreshWidget();
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    refreshDataTimer?.cancel();
   }
 
   @override
