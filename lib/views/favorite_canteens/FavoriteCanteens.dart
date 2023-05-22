@@ -87,7 +87,7 @@ class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
 
           // list of canteens
           SliverVisibility(
-            visible: !isLoading,
+            visible: !isLoading && favoriteCanteens.isNotEmpty,
             sliver: SliverPadding(
               padding: const EdgeInsets.only(bottom: 24),
               sliver: SliverList(
@@ -99,6 +99,26 @@ class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
                       onTap: () => selectCanteen(favoriteCanteens[index]),
                     );
                   },
+                ),
+              ),
+            ),
+          ),
+
+          // empty list message
+          SliverVisibility(
+            visible: !isLoading && favoriteCanteens.isEmpty,
+            sliver: SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                  child: Text(
+                    "Nema omiljenih menzi.",
+                    style: TextStyle(
+                      color: Colors.grey[900],
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
                 ),
               ),
             ),
