@@ -69,14 +69,6 @@ class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
                 color: Colors.white,
               ),
             ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  authService.signOut();
-                },
-                icon: const Icon(Icons.logout),
-              ),
-            ],
           ),
 
           // loading indicator

@@ -90,14 +90,6 @@ class _CanteensViewState extends State<CanteensView> {
                 color: Colors.white,
               ),
             ),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  authService.signOut();
-                },
-                icon: const Icon(Icons.logout),
-              ),
-            ],
           ),
 
           // loading indicator
