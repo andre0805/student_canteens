@@ -19,8 +19,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
   final SCUser? currentUser = SessionManager.sharedInstance.currentUser;
   final String? profileImageUrl = FirebaseAuth.instance.currentUser?.photoURL;
 
-  int selectedItemIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -73,10 +71,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title: "Popis menza",
             icon: Icons.list,
             onTap: () {
-              Navigator.pop(context);
-              updateWidget(() {
+              setState(() {
                 selectedDrawerItemIndex = 0;
               });
+              Navigator.pop(context);
             },
           ),
           DrawerItem(
@@ -84,10 +82,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title: "Omiljene menze",
             icon: Icons.star,
             onTap: () {
-              Navigator.pop(context);
-              updateWidget(() {
+              setState(() {
                 selectedDrawerItemIndex = 1;
               });
+              Navigator.pop(context);
             },
           ),
           DrawerItem(
@@ -95,10 +93,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title: "Karta",
             icon: Icons.map,
             onTap: () {
-              Navigator.pop(context);
               updateWidget(() {
                 selectedDrawerItemIndex = 2;
               });
+              Navigator.pop(context);
             },
           ),
           const Divider(
