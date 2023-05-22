@@ -26,6 +26,10 @@ class SCUser {
     return "$name $surname";
   }
 
+  String getInitials() {
+    return "${name[0]}${surname[0]}";
+  }
+
   bool isFavorite(int canteenId) {
     return favoriteCanteens.contains(canteenId);
   }
