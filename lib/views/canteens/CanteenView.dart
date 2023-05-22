@@ -61,10 +61,10 @@ class _CanteenViewState extends State<CanteenView> {
     ]).then((value) {
       updateWidget(() {
         workSchedules = value[0] as Set<WorkSchedule>;
-        sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
+        sessionManager.currentUser?.favoriteCanteens =
+            value[1] as List<Canteen>;
         isLoading = false;
-        isFavorite =
-            sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
+        isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
         queueLengthReports = value[2] as List<QueueLengthReport>;
       });
     });
@@ -380,9 +380,9 @@ class _CanteenViewState extends State<CanteenView> {
       updateWidget(() {
         canteen = value[0] as Canteen;
         workSchedules = value[1] as Set<WorkSchedule>;
-        sessionManager.currentUser?.favoriteCanteens = value[2] as Set<int>;
-        isFavorite =
-            sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
+        sessionManager.currentUser?.favoriteCanteens =
+            value[2] as List<Canteen>;
+        isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
         queueLengthReports = value[3] as List<QueueLengthReport>;
       });
     });
@@ -408,7 +408,7 @@ class _CanteenViewState extends State<CanteenView> {
     return gcf.getQueueLengthReports(canteen.id);
   }
 
-  Future<Set<int>> getFavoriteCanteens() {
+  Future<List<Canteen>> getFavoriteCanteens() {
     return gcf.getFavoriteCanteens();
   }
 
@@ -417,7 +417,7 @@ class _CanteenViewState extends State<CanteenView> {
       isFavorite = !isFavorite;
     });
 
-    gcf.addFavoriteCanteen(canteen.id).then((value) {
+    gcf.addFavoriteCanteen(canteen).then((value) {
       updateWidget(() {
         isFavorite = value;
       });
@@ -429,7 +429,7 @@ class _CanteenViewState extends State<CanteenView> {
       isFavorite = !isFavorite;
     });
 
-    gcf.removeFavoriteCanteen(canteen.id).then(
+    gcf.removeFavoriteCanteen(canteen).then(
       (value) {
         updateWidget(() {
           isFavorite = !value;

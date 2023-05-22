@@ -1,16 +1,18 @@
+import 'package:student_canteens/models/Canteen.dart';
+
 class SCUser {
   final String? id;
   final String name;
   final String surname;
   final String email;
-  Set<int> favoriteCanteens;
+  List<Canteen> favoriteCanteens;
 
   SCUser({
     this.id,
     required this.name,
     required this.surname,
     required this.email,
-    this.favoriteCanteens = const {},
+    this.favoriteCanteens = const [],
   });
 
   factory SCUser.fromJson(Map<String, dynamic> json) {
@@ -30,7 +32,7 @@ class SCUser {
     return "${name[0]}${surname[0]}";
   }
 
-  bool isFavorite(int canteenId) {
-    return favoriteCanteens.contains(canteenId);
+  bool isFavorite(Canteen canteen) {
+    return favoriteCanteens.map((e) => e.id).contains(canteen.id);
   }
 }
