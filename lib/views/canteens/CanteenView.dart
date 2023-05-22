@@ -412,30 +412,30 @@ class _CanteenViewState extends State<CanteenView> {
     return gcf.getFavoriteCanteens();
   }
 
-  void addFavoriteCanteen() {
-    updateWidget(() {
-      isFavorite = !isFavorite;
-    });
+  void addFavoriteCanteen() async {
+    Utils.showLoadingDialog(context);
 
-    gcf.addFavoriteCanteen(canteen).then((value) {
-      updateWidget(() {
-        isFavorite = value;
-      });
-    });
+    bool result = await gcf.addFavoriteCanteen(canteen);
+
+    if (result) {
+      await refreshWidget();
+      await parentRefreshWidget();
+    }
+
+    Navigator.pop(context);
   }
 
-  void removeFavoriteCanteen() {
-    updateWidget(() {
-      isFavorite = !isFavorite;
-    });
+  void removeFavoriteCanteen() async {
+    Utils.showLoadingDialog(context);
 
-    gcf.removeFavoriteCanteen(canteen).then(
-      (value) {
-        updateWidget(() {
-          isFavorite = !value;
-        });
-      },
-    );
+    bool result = await gcf.removeFavoriteCanteen(canteen);
+
+    if (result) {
+      await refreshWidget();
+      await parentRefreshWidget();
+    }
+
+    Navigator.pop(context);
   }
 
   void reportQueueLength(QueueLength queueLength) async {
