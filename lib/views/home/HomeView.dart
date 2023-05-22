@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/AuthService.dart';
-import 'package:student_canteens/services/SessionManager.dart';
+import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/views/canteens/CanteensView.dart';
 import 'package:student_canteens/views/favorite_canteens/FavoriteCanteens.dart';
 import 'package:student_canteens/views/home/DrawerItem.dart';
@@ -15,15 +15,27 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final GCF gcf = GCF.sharedInstance;
   final AuthService authService = AuthService.sharedInstance;
 
-  final SCUser? currentUser = SessionManager.sharedInstance.currentUser;
-  final String? profileImageUrl = FirebaseAuth.instance.currentUser?.photoURL;
+  SCUser? currentUser;
+  String? profileImageUrl;
 
   final views = [
     const CanteensView(),
     const FavoriteCanteensView(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    gcf.getUser(FirebaseAuth.instance.currentUser?.email ?? "").then((value) {
+      setState(() {
+        currentUser = value;
+      });
+    });
+    profileImageUrl = FirebaseAuth.instance.currentUser?.photoURL;
+  }
 
   @override
   Widget build(BuildContext context) {
