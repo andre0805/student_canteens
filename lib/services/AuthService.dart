@@ -7,13 +7,14 @@ import 'package:student_canteens/services/SessionManager.dart';
 class AuthService {
   final GCF gcf = GCF.sharedInstance;
   final SessionManager sessionManager = SessionManager.sharedInstance;
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   static final AuthService sharedInstance = AuthService._();
 
   AuthService._();
 
   Future<void> signUp(SCUser user, String password) async {
-    UserCredential userCredential = await FirebaseAuth.instance
+    UserCredential userCredential = await firebaseAuth
         .createUserWithEmailAndPassword(email: user.email, password: password);
 
     SCUser newUser = SCUser(
@@ -37,7 +38,7 @@ class AuthService {
   }
 
   Future<void> signIn(String email, String password) async {
-    UserCredential userCredential = await FirebaseAuth.instance
+    UserCredential userCredential = await firebaseAuth
         .signInWithEmailAndPassword(email: email, password: password);
 
     if (userCredential.user == null) {
@@ -63,7 +64,7 @@ class AuthService {
     );
 
     UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        await firebaseAuth.signInWithCredential(credential);
 
     User? user = userCredential.user;
 
@@ -90,14 +91,14 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      await FirebaseAuth.instance.signOut();
+    if (firebaseAuth.currentUser != null) {
+      await firebaseAuth.signOut();
     }
 
     sessionManager.signOut();
   }
 
   Future<void> forgotPassword(String email) async {
-    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    await firebaseAuth.sendPasswordResetEmail(email: email);
   }
 }
