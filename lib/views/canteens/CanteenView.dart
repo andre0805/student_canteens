@@ -56,16 +56,13 @@ class _CanteenViewState extends State<CanteenView> {
 
     Future.wait([
       getWorkschedule(),
-      getFavoriteCanteens(),
       getQueueLengthReports(),
     ]).then((value) {
       updateWidget(() {
         workSchedules = value[0] as Set<WorkSchedule>;
-        sessionManager.currentUser?.favoriteCanteens =
-            value[1] as List<Canteen>;
-        isLoading = false;
         isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
-        queueLengthReports = value[2] as List<QueueLengthReport>;
+        queueLengthReports = value[1] as List<QueueLengthReport>;
+        isLoading = false;
       });
     });
 
@@ -374,16 +371,13 @@ class _CanteenViewState extends State<CanteenView> {
     Future.wait([
       getCanteen(),
       getWorkschedule(),
-      getFavoriteCanteens(),
       getQueueLengthReports(),
     ]).then((value) {
       updateWidget(() {
         canteen = value[0] as Canteen;
         workSchedules = value[1] as Set<WorkSchedule>;
-        sessionManager.currentUser?.favoriteCanteens =
-            value[2] as List<Canteen>;
         isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
-        queueLengthReports = value[3] as List<QueueLengthReport>;
+        queueLengthReports = value[2] as List<QueueLengthReport>;
       });
     });
   }
@@ -408,34 +402,42 @@ class _CanteenViewState extends State<CanteenView> {
     return gcf.getQueueLengthReports(canteen.id);
   }
 
-  Future<List<Canteen>> getFavoriteCanteens() {
-    return gcf.getFavoriteCanteens();
-  }
-
   void addFavoriteCanteen() async {
-    Utils.showLoadingDialog(context);
+    updateWidget(() {
+      isFavorite = true;
+    });
 
     bool result = await gcf.addFavoriteCanteen(canteen);
 
     if (result) {
-      await refreshWidget();
       await parentRefreshWidget();
+      if (mounted)
+        Utils.showSnackBarMessage(context, "Dodano u omiljene menze!");
+    } else {
+      updateWidget(() {
+        isFavorite = false;
+      });
+      if (mounted) Utils.showSnackBarMessage(context, "Greška!");
     }
-
-    Navigator.pop(context);
   }
 
   void removeFavoriteCanteen() async {
-    Utils.showLoadingDialog(context);
+    updateWidget(() {
+      isFavorite = false;
+    });
 
     bool result = await gcf.removeFavoriteCanteen(canteen);
 
     if (result) {
-      await refreshWidget();
       await parentRefreshWidget();
+      if (mounted)
+        Utils.showSnackBarMessage(context, "Uklonjeno iz omiljenih menza!");
+    } else {
+      updateWidget(() {
+        isFavorite = true;
+      });
+      if (mounted) Utils.showSnackBarMessage(context, "Greška!");
     }
-
-    Navigator.pop(context);
   }
 
   void reportQueueLength(QueueLength queueLength) async {
