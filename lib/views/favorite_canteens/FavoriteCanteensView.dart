@@ -53,6 +53,7 @@ class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
         slivers: [
           // app bar
           SliverAppBar.medium(
+            centerTitle: true,
             surfaceTintColor: Colors.grey[900],
             title: const Text(
               "Omiljene menze",

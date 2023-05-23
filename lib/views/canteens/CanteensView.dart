@@ -83,6 +83,7 @@ class _CanteensViewState extends State<CanteensView> {
         slivers: [
           // app bar
           SliverAppBar.medium(
+            centerTitle: true,
             surfaceTintColor: Colors.grey[900],
             title: const Text(
               "Popis menza",
