@@ -15,12 +15,17 @@ class _MapViewState extends State<MapView> {
 
   GoogleMapController? mapController;
   LatLng center = const LatLng(44.891630, 16.476338);
+  bool isLoading = false;
 
   Set<Marker> markers = {};
 
   @override
   void initState() {
     super.initState();
+
+    updateWidget(() {
+      isLoading = true;
+    });
 
     Future.wait([
       gcf.getCanteens(),
@@ -50,6 +55,7 @@ class _MapViewState extends State<MapView> {
             ),
           );
         }).toSet();
+        isLoading = false;
       });
     });
   }
@@ -70,30 +76,43 @@ class _MapViewState extends State<MapView> {
           surfaceTintColor: Colors.grey[900],
         ),
 
-        // map
-        SliverFillRemaining(
-          child: GoogleMap(
-            mapType: MapType.normal,
-            scrollGesturesEnabled: true,
-            zoomGesturesEnabled: true,
-            rotateGesturesEnabled: false,
-            tiltGesturesEnabled: false,
-            myLocationButtonEnabled: false,
-            myLocationEnabled: false,
-            initialCameraPosition: CameraPosition(
-              target: center,
-              zoom: 6.5,
+        // loading indicator
+        SliverVisibility(
+          visible: isLoading,
+          sliver: const SliverFillRemaining(
+            child: Center(
+              child: CircularProgressIndicator(),
             ),
-            onMapCreated: (controller) {
-              mapController = controller;
-            },
-            markers: markers,
-            gestureRecognizers: {
-              Factory<OneSequenceGestureRecognizer>(
-                  () => EagerGestureRecognizer())
-            },
           ),
         ),
+
+        // map
+        SliverVisibility(
+          visible: !isLoading,
+          sliver: SliverFillRemaining(
+            child: GoogleMap(
+              mapType: MapType.normal,
+              scrollGesturesEnabled: true,
+              zoomGesturesEnabled: true,
+              rotateGesturesEnabled: false,
+              tiltGesturesEnabled: false,
+              myLocationButtonEnabled: false,
+              myLocationEnabled: false,
+              initialCameraPosition: CameraPosition(
+                target: center,
+                zoom: 6.5,
+              ),
+              onMapCreated: (controller) {
+                mapController = controller;
+              },
+              markers: markers,
+              gestureRecognizers: {
+                Factory<OneSequenceGestureRecognizer>(
+                    () => EagerGestureRecognizer())
+              },
+            ),
+          ),
+        )
       ],
     );
   }
