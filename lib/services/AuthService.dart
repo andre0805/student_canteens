@@ -32,7 +32,7 @@ class AuthService {
     if (scUser == null) {
       throw Exception("User not found");
     } else {
-      SessionManager.sharedInstance.signIn(scUser);
+      sessionManager.signIn(scUser);
     }
   }
 
