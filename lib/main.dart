@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
+import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/utils/CroatianMessages.dart';
 import 'package:student_canteens/views/auth/EmailVerificationView.dart';
@@ -31,6 +32,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final AuthService authService = AuthService.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final SessionManager sessionManager = SessionManager.sharedInstance;
+  final GCF gcf = GCF.sharedInstance;
 
   bool isLoading = false;
 
@@ -99,6 +102,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> handleLogin(User user) async {
     await authService.signInUser(user);
+    sessionManager.currentUser?.favoriteCanteens =
+        await gcf.getFavoriteCanteens();
     updateWidget(() {});
   }
 
