@@ -7,8 +7,9 @@ import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/views/canteens/CanteensView.dart';
 import 'package:student_canteens/views/favorite_canteens/FavoriteCanteensView.dart';
 import 'package:student_canteens/views/home/DrawerItem.dart';
+import 'package:student_canteens/views/map/MapView.dart';
 
-int selectedDrawerItemIndex = 0;
+int selectedDrawerItemIndex = 2;
 
 class HomeView extends StatefulWidget {
   @override
@@ -27,6 +28,7 @@ class _HomeViewState extends State<HomeView> {
   final views = [
     const CanteensView(),
     const FavoriteCanteensView(),
+    MapView(),
   ];
 
   @override
