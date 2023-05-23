@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
+import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/views/canteens/CanteenView.dart';
 import 'package:student_canteens/views/canteens/CanteenListItemView.dart';
@@ -17,27 +18,17 @@ class FavoriteCanteensView extends StatefulWidget {
 class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
   AuthService authService = AuthService.sharedInstance;
   StorageService storageService = StorageService();
+  SessionManager sessionManager = SessionManager.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
   List<Canteen> favoriteCanteens = [];
-  bool isLoading = false;
   Timer? refreshDataTimer;
 
   @override
   void initState() {
     super.initState();
 
-    updateWidget(() {
-      isLoading = true;
-    });
-
-    Future.wait([
-      getFavoriteCanteens(),
-    ]).then((value) {
-      updateWidget(() {
-        isLoading = false;
-      });
-    });
+    favoriteCanteens = sessionManager.currentUser?.favoriteCanteens ?? [];
 
     refreshDataTimer = Timer.periodic(
       const Duration(seconds: 10),
@@ -71,23 +62,13 @@ class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
             ),
           ),
 
-          // loading indicator
-          SliverVisibility(
-            visible: isLoading,
-            sliver: const SliverFillRemaining(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          ),
-
           const SliverToBoxAdapter(
             child: SizedBox(height: 8),
           ),
 
           // list of canteens
           SliverVisibility(
-            visible: !isLoading && favoriteCanteens.isNotEmpty,
+            visible: favoriteCanteens.isNotEmpty,
             sliver: SliverPadding(
               padding: const EdgeInsets.only(bottom: 24),
               sliver: SliverList(
@@ -106,7 +87,7 @@ class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
 
           // empty list message
           SliverVisibility(
-            visible: !isLoading && favoriteCanteens.isEmpty,
+            visible: favoriteCanteens.isEmpty,
             sliver: SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               sliver: SliverToBoxAdapter(
@@ -143,6 +124,7 @@ class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
     favoriteCanteens.clear();
     return gcf.getFavoriteCanteens().then((value) {
       updateWidget(() {
+        sessionManager.currentUser?.favoriteCanteens = value;
         favoriteCanteens = value;
       });
     });
