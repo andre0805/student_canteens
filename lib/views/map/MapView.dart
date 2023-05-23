@@ -25,25 +25,39 @@ class _MapViewState extends State<MapView> {
 
   @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      mapType: MapType.normal,
-      scrollGesturesEnabled: true,
-      zoomGesturesEnabled: true,
-      rotateGesturesEnabled: false,
-      tiltGesturesEnabled: false,
-      myLocationButtonEnabled: false,
-      myLocationEnabled: false,
-      initialCameraPosition: CameraPosition(
-        target: center,
-        zoom: 6.5,
-      ),
-      onMapCreated: (controller) {
-        mapController = controller;
-      },
-      markers: {},
-      gestureRecognizers: {
-        Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer())
-      },
+    return CustomScrollView(
+      slivers: [
+        // app bar
+        SliverAppBar(
+          centerTitle: true,
+          surfaceTintColor: Colors.grey[900],
+        ),
+
+        // map
+        SliverFillRemaining(
+          child: GoogleMap(
+            mapType: MapType.normal,
+            scrollGesturesEnabled: true,
+            zoomGesturesEnabled: true,
+            rotateGesturesEnabled: false,
+            tiltGesturesEnabled: false,
+            myLocationButtonEnabled: false,
+            myLocationEnabled: false,
+            initialCameraPosition: CameraPosition(
+              target: center,
+              zoom: 6.5,
+            ),
+            onMapCreated: (controller) {
+              mapController = controller;
+            },
+            markers: {},
+            gestureRecognizers: {
+              Factory<OneSequenceGestureRecognizer>(
+                  () => EagerGestureRecognizer())
+            },
+          ),
+        ),
+      ],
     );
   }
 }
