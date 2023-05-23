@@ -183,7 +183,8 @@ class GCF {
     );
 
     if (response.statusCode == 200) {
-      sessionManager.currentUser?.favoriteCanteens.remove(canteen);
+      sessionManager.currentUser?.favoriteCanteens
+          .removeWhere((element) => element.id == canteen.id);
       return true;
     } else {
       return false;
