@@ -110,6 +110,7 @@ class _AuthViewState extends State<RegisterView> {
                       borderSide: BorderSide(color: Colors.grey.shade900),
                     ),
                   ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(
                   height: 16,
