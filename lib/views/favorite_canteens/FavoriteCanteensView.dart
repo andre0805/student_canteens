@@ -17,7 +17,7 @@ class FavoriteCanteensView extends StatefulWidget {
 
 class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
   AuthService authService = AuthService.sharedInstance;
-  StorageService storageService = StorageService();
+  StorageService storageService = StorageService.sharedInstance;
   SessionManager sessionManager = SessionManager.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 

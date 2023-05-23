@@ -4,6 +4,7 @@ import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
+import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/views/canteens/CanteensView.dart';
 import 'package:student_canteens/views/favorite_canteens/FavoriteCanteensView.dart';
 import 'package:student_canteens/views/home/DrawerItem.dart';
@@ -21,6 +22,7 @@ class _HomeViewState extends State<HomeView> {
   final AuthService authService = AuthService.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final SessionManager sessionManager = SessionManager.sharedInstance;
+  final StorageService storageService = StorageService.sharedInstance;
 
   SCUser? currentUser;
   String? profileImageUrl;

@@ -37,7 +37,7 @@ class _CanteenViewState extends State<CanteenView> {
   _CanteenViewState({required this.canteen, required this.parentRefreshWidget});
 
   SessionManager sessionManager = SessionManager.sharedInstance;
-  StorageService storageService = StorageService();
+  StorageService storageService = StorageService.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
   Set<WorkSchedule> workSchedules = {};
