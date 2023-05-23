@@ -27,26 +27,26 @@ class AuthService {
   }
 
   Future<void> signInUser(User user) async {
-    await gcf.getUser(user.email!).then((SCUser? scUser) {
-      if (scUser != null) {
-        sessionManager.signIn(scUser);
-      } else {
-        throw Exception("User not found");
-      }
-    });
+    SCUser? scUser = await gcf.getUser(user.email!);
+
+    if (scUser == null) {
+      throw Exception("User not found");
+    } else {
+      SessionManager.sharedInstance.signIn(scUser);
+    }
   }
 
   Future<void> signIn(String email, String password) async {
-    SCUser? user = await gcf.getUser(email);
-
-    if (user == null) {
-      throw Exception("User not found");
-    }
-
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
 
     if (userCredential.user == null) {
+      throw Exception("User not found");
+    }
+
+    SCUser? user = await gcf.getUser(email);
+
+    if (user == null) {
       throw Exception("User not found");
     }
 
