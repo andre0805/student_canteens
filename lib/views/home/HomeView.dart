@@ -19,6 +19,7 @@ class _HomeViewState extends State<HomeView> {
   final GCF gcf = GCF.sharedInstance;
   final AuthService authService = AuthService.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final SessionManager sessionManager = SessionManager.sharedInstance;
 
   SCUser? currentUser;
   String? profileImageUrl;
@@ -31,12 +32,12 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    currentUser = sessionManager.currentUser;
+    profileImageUrl = firebaseAuth.currentUser?.photoURL;
   }
 
   @override
   Widget build(BuildContext context) {
-    currentUser = SessionManager.sharedInstance.currentUser;
-    profileImageUrl = firebaseAuth.currentUser?.photoURL;
     return Scaffold(
       backgroundColor: Colors.grey[200],
       drawer: Drawer(
