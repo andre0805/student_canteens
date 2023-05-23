@@ -22,6 +22,11 @@ class _AuthViewState extends State<LoginView> {
   String? emailError;
   String? passwordError;
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -199,11 +204,10 @@ class _AuthViewState extends State<LoginView> {
   void signIn() async {
     if (!validateInput()) return;
 
-    Utils.showLoadingDialog(context);
+    // Utils.showLoadingDialog(context);
 
     try {
       await authService.signIn(email, password);
-      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       handleFirebaseAuthError(e.code);
