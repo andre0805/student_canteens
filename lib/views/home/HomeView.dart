@@ -5,7 +5,7 @@ import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/views/canteens/CanteensView.dart';
-import 'package:student_canteens/views/favorite_canteens/FavoriteCanteens.dart';
+import 'package:student_canteens/views/favorite_canteens/FavoriteCanteensView.dart';
 import 'package:student_canteens/views/home/DrawerItem.dart';
 
 int selectedDrawerItemIndex = 0;
