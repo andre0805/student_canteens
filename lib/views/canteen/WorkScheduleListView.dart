@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/WorkSchedules.dart';
 import 'package:student_canteens/models/WorkSchedule.dart';
-import 'package:student_canteens/views/canteens/WorkScheduleView.dart';
+import 'package:student_canteens/views/canteen/WorkScheduleView.dart';
 
 class WorkScheduleListView extends StatelessWidget {
   final Canteen canteen;

@@ -10,10 +10,10 @@ import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/utils.dart';
-import 'package:student_canteens/views/canteens/CanteenMapView.dart';
-import 'package:student_canteens/views/canteens/QueueLengthReportsView.dart';
-import 'package:student_canteens/views/canteens/QueueLengthView.dart';
-import 'package:student_canteens/views/canteens/WorkScheduleListView.dart';
+import 'package:student_canteens/views/canteen/CanteenMapView.dart';
+import 'package:student_canteens/views/queue_length/QueueLengthReportsView.dart';
+import 'package:student_canteens/views/queue_length/QueueLengthView.dart';
+import 'package:student_canteens/views/canteen/WorkScheduleListView.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CanteenView extends StatefulWidget {

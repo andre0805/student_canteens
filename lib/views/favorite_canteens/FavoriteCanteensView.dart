@@ -5,7 +5,7 @@ import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
-import 'package:student_canteens/views/canteens/CanteenView.dart';
+import 'package:student_canteens/views/canteen/CanteenView.dart';
 import 'package:student_canteens/views/canteens/CanteenListItemView.dart';
 
 class FavoriteCanteensView extends StatefulWidget {
