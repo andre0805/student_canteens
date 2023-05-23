@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
+import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/views/canteens/CanteensView.dart';
 import 'package:student_canteens/views/favorite_canteens/FavoriteCanteens.dart';
 import 'package:student_canteens/views/home/DrawerItem.dart';
@@ -17,6 +18,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final GCF gcf = GCF.sharedInstance;
   final AuthService authService = AuthService.sharedInstance;
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   SCUser? currentUser;
   String? profileImageUrl;
@@ -29,16 +31,12 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    gcf.getUser(FirebaseAuth.instance.currentUser?.email ?? "").then((value) {
-      setState(() {
-        currentUser = value;
-      });
-    });
-    profileImageUrl = FirebaseAuth.instance.currentUser?.photoURL;
   }
 
   @override
   Widget build(BuildContext context) {
+    currentUser = SessionManager.sharedInstance.currentUser;
+    profileImageUrl = firebaseAuth.currentUser?.photoURL;
     return Scaffold(
       backgroundColor: Colors.grey[200],
       drawer: Drawer(
