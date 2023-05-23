@@ -10,7 +10,7 @@ import 'package:student_canteens/views/favorite_canteens/FavoriteCanteensView.da
 import 'package:student_canteens/views/home/DrawerItem.dart';
 import 'package:student_canteens/views/map/MapView.dart';
 
-int selectedDrawerItemIndex = 2;
+int selectedDrawerItemIndex = 0;
 
 class HomeView extends StatefulWidget {
   @override
@@ -36,6 +36,13 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    Future.wait([
+      storageService.getInt("selectedDrawerItemIndex"),
+    ]).then((values) {
+      updateWidget(() {
+        selectedDrawerItemIndex = values[0] ?? 0;
+      });
+    });
     currentUser = sessionManager.currentUser;
     profileImageUrl = firebaseAuth.currentUser?.photoURL;
   }
@@ -96,6 +103,7 @@ class _HomeViewState extends State<HomeView> {
               onTap: () {
                 setState(() {
                   selectedDrawerItemIndex = 0;
+                  storageService.saveInt("selectedDrawerItemIndex", 0);
                 });
                 Navigator.pop(context);
               },
@@ -107,6 +115,7 @@ class _HomeViewState extends State<HomeView> {
               onTap: () {
                 setState(() {
                   selectedDrawerItemIndex = 1;
+                  storageService.saveInt("selectedDrawerItemIndex", 1);
                 });
                 Navigator.pop(context);
               },
@@ -118,6 +127,7 @@ class _HomeViewState extends State<HomeView> {
               onTap: () {
                 updateWidget(() {
                   selectedDrawerItemIndex = 2;
+                  storageService.saveInt("selectedDrawerItemIndex", 2);
                 });
                 Navigator.pop(context);
               },
