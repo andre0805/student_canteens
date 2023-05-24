@@ -80,8 +80,8 @@ class _MainViewState extends State<MainView> {
             backgroundColor: Colors.grey[200],
             drawer: Drawer(
               backgroundColor: Colors.grey[200],
-              child: ListView(
-                padding: EdgeInsets.zero,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   UserAccountsDrawerHeader(
                     accountName: Text(
@@ -123,6 +123,7 @@ class _MainViewState extends State<MainView> {
                       color: Colors.grey[900],
                     ),
                   ),
+                  const SizedBox(height: 4),
                   DrawerItem(
                     index: 0,
                     title: "Popis menza",
@@ -135,6 +136,7 @@ class _MainViewState extends State<MainView> {
                       Navigator.pop(context);
                     },
                   ),
+                  const SizedBox(height: 4),
                   DrawerItem(
                     index: 1,
                     title: "Omiljene menze",
@@ -147,6 +149,7 @@ class _MainViewState extends State<MainView> {
                       Navigator.pop(context);
                     },
                   ),
+                  const SizedBox(height: 4),
                   DrawerItem(
                     index: 2,
                     title: "Karta",
@@ -159,6 +162,7 @@ class _MainViewState extends State<MainView> {
                       Navigator.pop(context);
                     },
                   ),
+                  const SizedBox(height: 4),
                   const Divider(
                     indent: 16,
                     endIndent: 16,
