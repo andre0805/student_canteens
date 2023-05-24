@@ -72,6 +72,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       home: Scaffold(
+        backgroundColor: Colors.grey[200],
         body: Center(
           child: isLoading
               ? const CircularProgressIndicator()
@@ -89,11 +90,16 @@ class _MyAppState extends State<MyApp> {
 
   void subscribeToAuthChanges() {
     firebaseAuth.authStateChanges().listen((User? user) async {
+      updateWidget(() {
+        isLoading = true;
+      });
+
       if (user == null) {
         await handleLogout();
       } else {
         await handleLogin(user);
       }
+
       updateWidget(() {
         isLoading = false;
       });
