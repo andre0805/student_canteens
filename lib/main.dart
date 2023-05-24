@@ -75,6 +75,9 @@ class _MainViewState extends State<HomeView> {
   void initState() {
     super.initState();
     subscribeToAuthChanges();
+    updateWidget(() {
+      isLoading = true;
+    });
   }
 
   // This widget is the root of your application.
@@ -98,7 +101,7 @@ class _MainViewState extends State<HomeView> {
 
   void subscribeToAuthChanges() {
     firebaseAuth.authStateChanges().listen((User? user) async {
-      Utils.showLoadingDialog(context);
+      if (!isLoading) Utils.showLoadingDialog(context);
 
       if (user == null) {
         await handleLogout();
@@ -106,7 +109,11 @@ class _MainViewState extends State<HomeView> {
         await handleLogin(user);
       }
 
-      Navigator.pop(context);
+      if (!isLoading) Navigator.pop(context);
+
+      updateWidget(() {
+        isLoading = false;
+      });
     });
   }
 
