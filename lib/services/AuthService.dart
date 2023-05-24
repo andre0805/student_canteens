@@ -14,17 +14,16 @@ class AuthService {
   AuthService._();
 
   Future<void> signUp(SCUser user, String password) async {
-    UserCredential userCredential = await firebaseAuth
-        .createUserWithEmailAndPassword(email: user.email, password: password);
-
     SCUser newUser = SCUser(
-      id: userCredential.user!.uid,
       name: user.name,
       surname: user.surname,
       email: user.email,
     );
 
     await gcf.createUser(newUser);
+
+    await firebaseAuth.createUserWithEmailAndPassword(
+        email: user.email, password: password);
   }
 
   Future<void> signInUser(User user) async {
@@ -38,13 +37,6 @@ class AuthService {
   }
 
   Future<void> signIn(String email, String password) async {
-    UserCredential userCredential = await firebaseAuth
-        .signInWithEmailAndPassword(email: email, password: password);
-
-    if (userCredential.user == null) {
-      throw Exception("User not found");
-    }
-
     SCUser? user = await gcf.getUser(email);
 
     if (user == null) {
@@ -52,42 +44,45 @@ class AuthService {
     }
 
     sessionManager.signIn(user);
+
+    UserCredential userCredential = await firebaseAuth
+        .signInWithEmailAndPassword(email: email, password: password);
+
+    if (userCredential.user == null) {
+      throw Exception("User not found");
+    }
   }
 
   Future<void> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      throw Exception("User not found");
+    }
+
     final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
+        await googleUser.authentication;
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    UserCredential userCredential =
-        await firebaseAuth.signInWithCredential(credential);
-
-    User? user = userCredential.user;
-
-    if (user == null) {
-      throw Exception("User not found");
-    }
-
-    SCUser? scUser = await gcf.getUser(user.email!);
+    SCUser? scUser = await gcf.getUser(googleUser.email);
 
     if (scUser != null) {
       sessionManager.signIn(scUser);
-      return;
     } else {
       SCUser newUser = SCUser(
-        id: userCredential.user!.uid,
-        name: user.displayName ?? "Unknown",
-        surname: "",
+        name: googleUser.displayName?.split(" ")[0] ?? "",
+        surname: googleUser.displayName?.split(" ")[1] ?? "",
         email: googleUser.email,
       );
 
       await gcf.createUser(newUser);
       sessionManager.signIn(newUser);
     }
+
+    await firebaseAuth.signInWithCredential(credential);
   }
 
   Future<void> signOut() async {
