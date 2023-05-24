@@ -17,10 +17,10 @@ int selectedDrawerItemIndex = 0;
 
 class MainView extends StatefulWidget {
   @override
-  State<MainView> createState() => _HomeViewState();
+  State<MainView> createState() => _MainViewState();
 }
 
-class _HomeViewState extends State<MainView> {
+class _MainViewState extends State<MainView> {
   final GCF gcf = GCF.sharedInstance;
   final AuthService authService = AuthService.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -61,6 +61,7 @@ class _HomeViewState extends State<MainView> {
         selectedDrawerItemIndex = values[0] ?? 0;
       });
     });
+
     currentUser = sessionManager.currentUser;
     profileImageUrl = firebaseAuth.currentUser?.photoURL;
   }
