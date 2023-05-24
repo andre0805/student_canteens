@@ -9,6 +9,7 @@ import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
+import 'package:student_canteens/utils/TimeOfDayExtension.dart';
 import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteen/CanteenMapView.dart';
 import 'package:student_canteens/views/queue_length/QueueLengthReportsView.dart';
@@ -85,7 +86,7 @@ class _CanteenViewState extends State<CanteenView> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       floatingActionButton: Visibility(
-        visible: !isLoading,
+        visible: !isLoading && isOpen(),
         child: SpeedDial(
           backgroundColor: Colors.grey[900],
           foregroundColor: Colors.grey[200],
@@ -485,6 +486,37 @@ class _CanteenViewState extends State<CanteenView> {
     }
   }
 
+  bool isOpen() {
+    TimeOfDay currentTime = TimeOfDay.now();
+    int dayOfWeek = DateTime.now().weekday;
+
+    Set<WorkSchedule> todayWorkSchedules = workSchedules
+        .where((workSchedule) => workSchedule.dayOfWeek == dayOfWeek)
+        .toSet();
+
+    if (todayWorkSchedules.isEmpty) return false;
+
+    for (WorkSchedule workSchedule in todayWorkSchedules) {
+      if (workSchedule.openTime == null || workSchedule.closeTime == null)
+        return false;
+
+      TimeOfDay openTime = TimeOfDay(
+        hour: int.parse(workSchedule.openTime!.split(":")[0]),
+        minute: int.parse(workSchedule.openTime!.split(":")[1]),
+      );
+
+      TimeOfDay closeTime = TimeOfDay(
+        hour: int.parse(workSchedule.closeTime!.split(":")[0]),
+        minute: int.parse(workSchedule.closeTime!.split(":")[1]),
+      );
+
+      if (currentTime.isAfter(openTime) && currentTime.isBefore(closeTime))
+        return true;
+    }
+
+    return false;
+  }
+
   void showQueueLengthInfo() {
     Utils.showAlertDialogWithCustomContent(
       context,
@@ -494,7 +526,7 @@ class _CanteenViewState extends State<CanteenView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            """• Prosječna duljina reda u menzi računa se na temelju svih prijava u posljednjih 15 minuta.\n\n• Duljinu reda u menzi možeš prijaviti klikom na gumb u donjem desnom kutu ekrana.\n\n• Ako pogrešno prijaviš duljinu reda u menzi, možeš je poništiti klikom na jednu od svojih prijava u popisu prijava.""",
+            """• Prosječna duljina reda u menzi računa se na temelju svih prijava u posljednjih 15 minuta.\n\n• Duljinu reda u menzi, ako je otvorena, možeš prijaviti klikom na gumb u donjem desnom kutu ekrana.\n\n• Ako pogrešno prijaviš duljinu reda u menzi, možeš je poništiti klikom na jednu od svojih prijava u popisu prijava.""",
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,
