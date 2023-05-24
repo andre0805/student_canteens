@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/utils/utils.dart';
-import 'package:student_canteens/views/main/MainView.dart';
 
 class EmailVerificationView extends StatefulWidget {
   const EmailVerificationView({Key? key}) : super(key: key);
@@ -15,95 +14,79 @@ class EmailVerificationView extends StatefulWidget {
 
 class _EmailVerificationViewState extends State<EmailVerificationView> {
   AuthService authService = AuthService.sharedInstance;
-  bool isEmailVerified = false;
-  Timer? checkEmailVerifiedTimer;
   Timer? resendEmailTimer;
   int resendEmailCounter = 0;
 
   @override
   void initState() {
     super.initState();
-
-    isEmailVerified = FirebaseAuth.instance.currentUser?.emailVerified ?? false;
-
-    if (!isEmailVerified) {
-      sendEmailVerification();
-
-      checkEmailVerifiedTimer = Timer.periodic(
-        const Duration(seconds: 3),
-        (timer) {
-          checkEmailVerified();
-        },
-      );
-    }
+    sendEmailVerification();
   }
 
   @override
   void dispose() {
     super.dispose();
-    checkEmailVerifiedTimer?.cancel();
+    resendEmailTimer?.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
-    return isEmailVerified
-        ? MainView()
-        : Scaffold(
-            backgroundColor: Colors.grey[200],
-            body: SafeArea(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      const Spacer(),
-                      const CircularProgressIndicator(),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      const Text(
-                        "Molim te potvrdi email adresu na koju smo ti poslali link za verifikaciju.",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: (resendEmailCounter == 0)
-                                ? sendEmailVerification
-                                : null,
-                            child: Text(
-                              resendEmailCounter == 0
-                                  ? "Pošalji ponovo"
-                                  : "Pošalji ponovo ${resendEmailCounter}s",
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 16,
-                          ),
-                          ElevatedButton(
-                            onPressed: cancelEmailVerification,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                            ),
-                            child: const Text("Poništi"),
-                          ),
-                        ],
-                      ),
-                      const Spacer()
-                    ],
-                  ),
+    return Scaffold(
+      backgroundColor: Colors.grey[200],
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const Spacer(),
+                const CircularProgressIndicator(),
+                const SizedBox(
+                  height: 24,
                 ),
-              ),
+                const Text(
+                  "Molim te potvrdi email adresu na koju smo ti poslali link za verifikaciju.",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: (resendEmailCounter == 0)
+                          ? sendEmailVerification
+                          : null,
+                      child: Text(
+                        resendEmailCounter == 0
+                            ? "Pošalji ponovo"
+                            : "Pošalji ponovo ${resendEmailCounter}s",
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    ElevatedButton(
+                      onPressed: cancelEmailVerification,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
+                      child: const Text("Poništi"),
+                    ),
+                  ],
+                ),
+                const Spacer()
+              ],
             ),
-          );
+          ),
+        ),
+      ),
+    );
   }
 
   void updateWidget(void Function() callback) {
@@ -138,22 +121,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
     }
   }
 
-  void checkEmailVerified() async {
-    await FirebaseAuth.instance.currentUser?.reload();
-
-    updateWidget(() {
-      isEmailVerified =
-          FirebaseAuth.instance.currentUser?.emailVerified ?? false;
-    });
-
-    if (isEmailVerified) {
-      checkEmailVerifiedTimer?.cancel();
-      resendEmailTimer?.cancel();
-    }
-  }
-
   void cancelEmailVerification() async {
-    checkEmailVerifiedTimer?.cancel();
     resendEmailTimer?.cancel();
     await authService.signOut();
   }

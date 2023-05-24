@@ -4,10 +4,10 @@ import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/utils/CroatianMessages.dart';
 import 'package:student_canteens/utils/utils.dart';
-import 'package:student_canteens/views/auth/EmailVerificationView.dart';
 import 'package:student_canteens/views/auth/LoginView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:student_canteens/views/main/MainView.dart';
 import 'firebase_options.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -87,7 +87,7 @@ class _MainViewState extends State<HomeView> {
             ? const CircularProgressIndicator()
             : SessionManager.sharedInstance.currentUser == null
                 ? const LoginView()
-                : const EmailVerificationView(),
+                : MainView(),
       ),
     );
   }
