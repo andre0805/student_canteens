@@ -7,17 +7,17 @@ import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/views/canteens/CanteensView.dart';
 import 'package:student_canteens/views/favorite_canteens/FavoriteCanteensView.dart';
-import 'package:student_canteens/views/home/DrawerItem.dart';
+import 'package:student_canteens/views/main/DrawerItem.dart';
 import 'package:student_canteens/views/map/MapView.dart';
 
 int selectedDrawerItemIndex = 0;
 
-class HomeView extends StatefulWidget {
+class MainView extends StatefulWidget {
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<MainView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends State<MainView> {
   final GCF gcf = GCF.sharedInstance;
   final AuthService authService = AuthService.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;

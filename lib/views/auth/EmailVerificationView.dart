@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/utils/utils.dart';
-import 'package:student_canteens/views/home/HomeView.dart';
+import 'package:student_canteens/views/main/MainView.dart';
 
 class EmailVerificationView extends StatefulWidget {
   const EmailVerificationView({Key? key}) : super(key: key);
@@ -47,7 +47,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   @override
   Widget build(BuildContext context) {
     return isEmailVerified
-        ? HomeView()
+        ? MainView()
         : Scaffold(
             backgroundColor: Colors.grey[200],
             body: SafeArea(

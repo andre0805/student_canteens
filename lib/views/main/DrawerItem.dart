@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_canteens/views/home/HomeView.dart';
+import 'package:student_canteens/views/main/MainView.dart';
 
 class DrawerItem extends StatelessWidget {
   final int index;
