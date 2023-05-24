@@ -210,10 +210,10 @@ class _AuthViewState extends State<LoginView> {
     try {
       await authService.signIn(email, password);
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      // Navigator.pop(context);
       handleFirebaseAuthError(e.code);
     } catch (e) {
-      Navigator.pop(context);
+      // Navigator.pop(context);
       Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
     }
   }
