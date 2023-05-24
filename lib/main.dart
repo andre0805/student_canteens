@@ -83,15 +83,12 @@ class _MainViewState extends State<HomeView> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: Center(
-        child: isLoading
-            ? const CircularProgressIndicator()
-            : SessionManager.sharedInstance.currentUser == null
-                ? const LoginView()
-                : MainView(),
-      ),
+    return Center(
+      child: isLoading
+          ? const CircularProgressIndicator()
+          : SessionManager.sharedInstance.currentUser == null
+              ? const LoginView()
+              : MainView(),
     );
   }
 
