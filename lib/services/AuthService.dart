@@ -30,6 +30,7 @@ class AuthService {
     SCUser? scUser = await gcf.getUser(user.email!);
 
     if (scUser == null) {
+      await signOut();
       throw Exception("User not found");
     } else {
       sessionManager.signIn(scUser);
@@ -40,6 +41,7 @@ class AuthService {
     SCUser? user = await gcf.getUser(email);
 
     if (user == null) {
+      await signOut();
       throw Exception("User not found");
     }
 
