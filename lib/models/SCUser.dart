@@ -1,7 +1,7 @@
 import 'package:student_canteens/models/Canteen.dart';
 
 class SCUser {
-  final String? id;
+  final int? id;
   final String name;
   final String surname;
   final String email;

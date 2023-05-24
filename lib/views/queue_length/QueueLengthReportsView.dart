@@ -88,7 +88,7 @@ class QueueLengthReportsView extends StatelessWidget {
     BuildContext context,
     QueueLengthReport queueLengthReport,
   ) {
-    String? userId = SessionManager.sharedInstance.currentUser?.id;
+    int? userId = SessionManager.sharedInstance.currentUser?.id;
 
     if (userId == null) return;
 

@@ -112,7 +112,7 @@ class GCF {
   }
 
   Future<List<Canteen>> getFavoriteCanteens() async {
-    String? userId = sessionManager.currentUser?.id;
+    int? userId = sessionManager.currentUser?.id;
 
     if (userId == null) return [];
 
@@ -139,7 +139,7 @@ class GCF {
   }
 
   Future<bool> addFavoriteCanteen(Canteen canteen) async {
-    String? userId = sessionManager.currentUser?.id;
+    int? userId = sessionManager.currentUser?.id;
 
     if (userId == null) return false;
 
@@ -165,7 +165,7 @@ class GCF {
   }
 
   Future<bool> removeFavoriteCanteen(Canteen canteen) async {
-    String? userId = sessionManager.currentUser?.id;
+    int? userId = sessionManager.currentUser?.id;
 
     if (userId == null) return false;
 
@@ -193,7 +193,7 @@ class GCF {
 
   Future<int?> reportQueueLength(
       int canteenId, QueueLength queueLength, String? description) async {
-    String? userId = sessionManager.currentUser?.id;
+    int? userId = sessionManager.currentUser?.id;
 
     if (userId == null) return null;
 

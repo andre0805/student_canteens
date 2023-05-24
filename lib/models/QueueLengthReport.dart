@@ -7,7 +7,7 @@ class QueueLengthReport {
   final QueueLength queueLength;
   final String? description;
   final DateTime createdAt;
-  final String userId;
+  final int userId;
   final String name;
   final String surname;
   final String email;
@@ -31,7 +31,7 @@ class QueueLengthReport {
       queueLength: QueueLengthExtension.fromInt(json['queue_length'] as int),
       description: json['description'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
-      userId: json['user_id'] as String,
+      userId: json['user_id'] as int,
       name: json['name'] as String,
       surname: json['surname'] as String,
       email: json['email'] as String,
