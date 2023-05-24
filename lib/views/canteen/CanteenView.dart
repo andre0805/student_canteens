@@ -9,7 +9,6 @@ import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
-import 'package:student_canteens/utils/TimeOfDayExtension.dart';
 import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteen/CanteenMapView.dart';
 import 'package:student_canteens/views/queue_length/QueueLengthReportsView.dart';
@@ -41,7 +40,6 @@ class _CanteenViewState extends State<CanteenView> {
   StorageService storageService = StorageService.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
-  Set<WorkSchedule> workSchedules = {};
   List<QueueLengthReport> queueLengthReports = [];
   bool isLoading = false;
   bool isFavorite = false;
@@ -60,7 +58,7 @@ class _CanteenViewState extends State<CanteenView> {
       getQueueLengthReports(),
     ]).then((value) {
       updateWidget(() {
-        workSchedules = value[0] as Set<WorkSchedule>;
+        canteen.workSchedules = value[0] as Set<WorkSchedule>;
         isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
         queueLengthReports = value[1] as List<QueueLengthReport>;
         isLoading = false;
@@ -86,7 +84,7 @@ class _CanteenViewState extends State<CanteenView> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       floatingActionButton: Visibility(
-        visible: !isLoading && isOpen(),
+        visible: !isLoading && canteen.isOpen,
         child: SpeedDial(
           backgroundColor: Colors.grey[900],
           foregroundColor: Colors.grey[200],
@@ -227,7 +225,7 @@ class _CanteenViewState extends State<CanteenView> {
 
                       // work schedule
                       Visibility(
-                        visible: workSchedules.isNotEmpty,
+                        visible: canteen.workSchedules.isNotEmpty,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -245,7 +243,7 @@ class _CanteenViewState extends State<CanteenView> {
                               ),
                               child: WorkScheduleListView(
                                 canteen: canteen,
-                                workSchedules: workSchedules,
+                                workSchedules: canteen.workSchedules,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -376,7 +374,7 @@ class _CanteenViewState extends State<CanteenView> {
     ]).then((value) {
       updateWidget(() {
         canteen = value[0] as Canteen;
-        workSchedules = value[1] as Set<WorkSchedule>;
+        canteen.workSchedules = value[1] as Set<WorkSchedule>;
         isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
         queueLengthReports = value[2] as List<QueueLengthReport>;
       });
@@ -484,37 +482,6 @@ class _CanteenViewState extends State<CanteenView> {
       }
       Navigator.pop(context);
     }
-  }
-
-  bool isOpen() {
-    TimeOfDay currentTime = TimeOfDay.now();
-    int dayOfWeek = DateTime.now().weekday;
-
-    Set<WorkSchedule> todayWorkSchedules = workSchedules
-        .where((workSchedule) => workSchedule.dayOfWeek == dayOfWeek)
-        .toSet();
-
-    if (todayWorkSchedules.isEmpty) return false;
-
-    for (WorkSchedule workSchedule in todayWorkSchedules) {
-      if (workSchedule.openTime == null || workSchedule.closeTime == null)
-        return false;
-
-      TimeOfDay openTime = TimeOfDay(
-        hour: int.parse(workSchedule.openTime!.split(":")[0]),
-        minute: int.parse(workSchedule.openTime!.split(":")[1]),
-      );
-
-      TimeOfDay closeTime = TimeOfDay(
-        hour: int.parse(workSchedule.closeTime!.split(":")[0]),
-        minute: int.parse(workSchedule.closeTime!.split(":")[1]),
-      );
-
-      if (currentTime.isAfter(openTime) && currentTime.isBefore(closeTime))
-        return true;
-    }
-
-    return false;
   }
 
   void showQueueLengthInfo() {

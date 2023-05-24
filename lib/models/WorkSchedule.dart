@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class WorkSchedule {
   int id;
   int canteenId;
@@ -71,6 +73,24 @@ class WorkSchedule {
       default:
         return "Nepoznato";
     }
+  }
+
+  TimeOfDay? getOpenTimeOfDay() {
+    if (openTime == null) return null;
+
+    return TimeOfDay(
+      hour: int.parse(openTime!.split(":")[0]),
+      minute: int.parse(openTime!.split(":")[1]),
+    );
+  }
+
+  TimeOfDay? getCloseTimeOfDay() {
+    if (closeTime == null) return null;
+
+    return TimeOfDay(
+      hour: int.parse(closeTime!.split(":")[0]),
+      minute: int.parse(closeTime!.split(":")[1]),
+    );
   }
 
   String getMealOfDayString() {
