@@ -55,20 +55,8 @@ class AuthService {
     }
   }
 
-  Future<void> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    if (googleUser == null) {
-      throw Exception("User not found");
-    }
-
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
+  Future<void> signInGoogleUser(
+      GoogleSignInAccount googleUser, OAuthCredential credential) async {
     SCUser? scUser = await gcf.getUser(googleUser.email);
 
     if (scUser != null) {
@@ -85,6 +73,25 @@ class AuthService {
     }
 
     await firebaseAuth.signInWithCredential(credential);
+  }
+
+  Future<Map<GoogleSignInAccount, OAuthCredential>> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      throw Exception("User not found");
+    }
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    return {
+      googleUser: credential,
+    };
   }
 
   Future<void> signOut() async {
