@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
+import 'package:student_canteens/services/LocationService.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/Comparator.dart';
+import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteen/CanteenView.dart';
 import 'package:student_canteens/views/canteens/CanteenListItemView.dart';
 
@@ -20,6 +23,7 @@ class CanteensView extends StatefulWidget {
 class _CanteensViewState extends State<CanteensView> {
   AuthService authService = AuthService.sharedInstance;
   StorageService storageService = StorageService.sharedInstance;
+  LocationService locationService = LocationService.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
   Map<String, List<Canteen>> canteenMap = HashMap();
@@ -253,7 +257,7 @@ class _CanteensViewState extends State<CanteensView> {
     );
   }
 
-  void sortCanteensBy(String criteria) {
+  void sortCanteensBy(String criteria) async {
     storageService.saveString("selectedSortCriteria", criteria);
     selectedSortCriteria = criteria;
 
@@ -272,7 +276,30 @@ class _CanteensViewState extends State<CanteensView> {
         };
         break;
       case "distance":
-        comparator = (c1, c2) => 0;
+        Position? userLocation = await getCurrentPosition();
+
+        if (userLocation == null) {
+          sortCanteensBy('name');
+          return;
+        }
+
+        comparator = (c1, c2) {
+          double distance1 = locationService.distanceFromPosition(
+            userLocation.latitude,
+            userLocation.longitude,
+            double.parse(c1.latitude),
+            double.parse(c1.longitude),
+          );
+
+          double distance2 = locationService.distanceFromPosition(
+            userLocation.latitude,
+            userLocation.longitude,
+            double.parse(c2.latitude),
+            double.parse(c2.longitude),
+          );
+
+          return distance1.compareTo(distance2);
+        };
         break;
       default:
         comparator = (c1, c2) => 0;
@@ -281,5 +308,15 @@ class _CanteensViewState extends State<CanteensView> {
     updateWidget(() {
       selectedCanteens.sort(comparator);
     });
+  }
+
+  Future<Position?> getCurrentPosition() async {
+    try {
+      Position position = await locationService.getCurrentPosition();
+      return position;
+    } catch (e) {
+      Utils.showAlertDialog(context, "Greška", e.toString());
+      return null;
+    }
   }
 }
