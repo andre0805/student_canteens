@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
+import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/StorageService.dart';
@@ -28,6 +29,7 @@ class _CanteensViewState extends State<CanteensView> {
 
   String selectedCity = "";
   List<Canteen> selectedCanteens = [];
+  String selectedSortCriteria = "";
   bool isLoading = false;
   Timer? refreshDataTimer;
 
@@ -40,12 +42,19 @@ class _CanteensViewState extends State<CanteensView> {
     });
 
     Future.wait([
+      storageService.getString("selectedSortCriteria"),
       storageService.getString("selectedCity"),
       getCanteens(),
     ]).then((value) {
       updateWidget(() {
         try {
-          selectedCity = value[0] as String;
+          selectedSortCriteria = value[0] as String;
+        } catch (e) {
+          selectedSortCriteria = "name";
+        }
+
+        try {
+          selectedCity = value[1] as String;
           selectedCanteens = canteenMap[selectedCity] ?? [];
         } catch (e) {
           try {
@@ -56,6 +65,9 @@ class _CanteensViewState extends State<CanteensView> {
             selectedCanteens = [];
           }
         }
+
+        sortCanteensBy(selectedSortCriteria);
+
         isLoading = false;
       });
     });
@@ -91,6 +103,32 @@ class _CanteensViewState extends State<CanteensView> {
                 color: Colors.white,
               ),
             ),
+            actions: [
+              PopupMenuButton(
+                icon: Icon(
+                  Icons.sort,
+                  color: Colors.grey[200],
+                ),
+                surfaceTintColor: Colors.grey[200],
+                onSelected: (value) => sortCanteensBy(value),
+                itemBuilder: (context) {
+                  return const [
+                    PopupMenuItem(
+                      value: "name",
+                      child: Text("Sortiraj po: Naziv"),
+                    ),
+                    PopupMenuItem(
+                      value: "queueLength",
+                      child: Text("Sortiraj po: Duljina reda"),
+                    ),
+                    PopupMenuItem(
+                      value: "distance",
+                      child: Text("Sortiraj po: Udaljenost"),
+                    ),
+                  ];
+                },
+              ),
+            ],
           ),
 
           // loading indicator
@@ -173,9 +211,8 @@ class _CanteensViewState extends State<CanteensView> {
 
   Future<void> refreshWidget() async {
     return getCanteens().then((value) {
-      updateWidget(() {
-        selectedCanteens = canteenMap[selectedCity] ?? [];
-      });
+      selectedCanteens = canteenMap[selectedCity] ?? [];
+      sortCanteensBy(selectedSortCriteria);
     });
   }
 
@@ -202,6 +239,7 @@ class _CanteensViewState extends State<CanteensView> {
     updateWidget(() {
       selectedCity = city;
       selectedCanteens = canteenMap[city] ?? [];
+      sortCanteensBy(selectedSortCriteria);
     });
   }
 
@@ -213,5 +251,35 @@ class _CanteensViewState extends State<CanteensView> {
             CanteenView(canteen: canteen, parentRefreshWidget: refreshWidget),
       ),
     );
+  }
+
+  void sortCanteensBy(String criteria) {
+    storageService.saveString("selectedSortCriteria", criteria);
+    selectedSortCriteria = criteria;
+
+    Comparator<Canteen> comparator;
+    switch (criteria) {
+      case "name":
+        comparator = (c1, c2) => HR_Comparator.compare(c1.name, c2.name);
+        break;
+      case "queueLength":
+        comparator = (c1, c2) {
+          int queueLengthCompareResult =
+              QueueLengthExtension.compare(c1.queueLength, c2.queueLength);
+          return queueLengthCompareResult == 0
+              ? HR_Comparator.compare(c1.name, c2.name)
+              : queueLengthCompareResult;
+        };
+        break;
+      case "distance":
+        comparator = (c1, c2) => 0;
+        break;
+      default:
+        comparator = (c1, c2) => 0;
+    }
+
+    updateWidget(() {
+      selectedCanteens.sort(comparator);
+    });
   }
 }
