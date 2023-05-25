@@ -261,6 +261,8 @@ class _CanteensViewState extends State<CanteensView> {
     storageService.saveString("selectedSortCriteria", criteria);
     selectedSortCriteria = criteria;
 
+    if (selectedCanteens.isEmpty || selectedCanteens.length == 1) return;
+
     Comparator<Canteen> comparator;
     switch (criteria) {
       case "name":
