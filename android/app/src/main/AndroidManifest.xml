@@ -36,6 +36,8 @@
             android:value="AIzaSyCWZ8NHTDOEnjn2o_zi2H_4qEhISHkHWiY"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <queries>
         <!-- to opens https URLs -->
         <intent>
