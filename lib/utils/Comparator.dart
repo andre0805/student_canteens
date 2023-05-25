@@ -8,7 +8,8 @@ class HR_Comparator {
         .replaceAll('ć', 'c~~')
         .replaceAll('đ', 'd~')
         .replaceAll('š', 's~')
-        .replaceAll('ž', 'z~');
+        .replaceAll('ž', 'z~')
+        .replaceAll("\"", "");
 
     String city2 = b
         .toLowerCase()
@@ -16,7 +17,8 @@ class HR_Comparator {
         .replaceAll('ć', 'c~~')
         .replaceAll('đ', 'd~')
         .replaceAll('š', 's~')
-        .replaceAll('ž', 'z~');
+        .replaceAll('ž', 'z~')
+        .replaceAll("\"", "");
 
     return city1.compareTo(city2);
   }
