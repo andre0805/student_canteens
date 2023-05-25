@@ -116,18 +116,24 @@ class _CanteensViewState extends State<CanteensView> {
                 surfaceTintColor: Colors.grey[200],
                 onSelected: (value) => sortCanteensBy(value),
                 itemBuilder: (context) {
-                  return const [
+                  return [
                     PopupMenuItem(
                       value: "name",
-                      child: Text("Sortiraj po: Naziv"),
+                      child: Text(selectedSortCriteria == 'name'
+                          ? "• Sortiraj po: Naziv"
+                          : "  Sortiraj po: Naziv"),
                     ),
                     PopupMenuItem(
                       value: "queueLength",
-                      child: Text("Sortiraj po: Duljina reda"),
+                      child: Text(selectedSortCriteria == 'queueLength'
+                          ? "• Sortiraj po: Duljina reda"
+                          : "  Sortiraj po: Duljina reda"),
                     ),
                     PopupMenuItem(
                       value: "distance",
-                      child: Text("Sortiraj po: Udaljenost"),
+                      child: Text(selectedSortCriteria == 'distance'
+                          ? "• Sortiraj po: Udaljenost"
+                          : "  Sortiraj po: Udaljenost"),
                     ),
                   ];
                 },
