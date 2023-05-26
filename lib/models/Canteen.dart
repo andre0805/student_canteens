@@ -73,4 +73,15 @@ class Canteen {
 
     return false;
   }
+
+  String getDistanceFromUserString() {
+    if (distanceFromUser == 0) return 'N/A';
+
+    if (distanceFromUser < 1000)
+      return '${distanceFromUser.toStringAsFixed(0)}m';
+
+    distanceFromUser /= 1000;
+
+    return '${distanceFromUser.toStringAsFixed(1)}km';
+  }
 }
