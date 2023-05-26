@@ -84,22 +84,7 @@ class _MainViewState extends State<MainView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   UserAccountsDrawerHeader(
-                    accountName: Text(
-                      currentUser?.getDisplayName() ?? "",
-                      style: TextStyle(
-                        color: Colors.grey[200],
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    accountEmail: Text(
-                      currentUser?.email ?? "",
-                      style: TextStyle(
-                        color: Colors.grey[200],
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    margin: const EdgeInsets.only(bottom: 0),
                     currentAccountPicture: Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: CircleAvatar(
@@ -118,6 +103,27 @@ class _MainViewState extends State<MainView> {
                               )
                             : null,
                       ),
+                    ),
+                    accountName: Text(
+                      currentUser?.getDisplayName() ?? "",
+                      style: TextStyle(
+                        color: Colors.grey[200],
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    accountEmail: Wrap(
+                      direction: Axis.vertical,
+                      children: [
+                        Text(
+                          currentUser?.email ?? "",
+                          style: TextStyle(
+                            color: Colors.grey[200],
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
                     decoration: BoxDecoration(
                       color: Colors.grey[900],
