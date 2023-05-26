@@ -1,4 +1,5 @@
 import 'package:student_canteens/models/Canteen.dart';
+import 'package:student_canteens/models/City.dart';
 import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/models/QueueLengthReport.dart';
 import 'package:student_canteens/models/SCUser.dart';
@@ -22,6 +23,7 @@ class GCF {
   static const String REPORT_QUEUE_LENGTH = '/addReport';
   static const String REMOVE_QUEUE_LENGTH_REPORT = '/removeReport';
   static const String GET_QUEUE_LENGTH_REPORTS = '/getCanteenReports';
+  static const String GET_CANTEEN_CITIES = '/getCanteenCities';
 
   static const GCF sharedInstance = GCF._();
 
@@ -251,6 +253,22 @@ class GCF {
       return json.map((e) => QueueLengthReport.fromJson(e)).toList();
     } else {
       return [];
+    }
+  }
+
+  Future<Set<City>> getCanteenCities() async {
+    http.Response response = await http.get(
+      Uri.parse(BASE_URL + GET_CANTEEN_CITIES),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> json = jsonDecode(response.body);
+      return json.map((e) => City.fromJson(e)).toSet();
+    } else {
+      return {};
     }
   }
 }
