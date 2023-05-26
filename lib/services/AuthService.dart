@@ -107,4 +107,17 @@ class AuthService {
   Future<void> forgotPassword(String email) async {
     await firebaseAuth.sendPasswordResetEmail(email: email);
   }
+
+  Future<void> updateUserEmail(String email) async {
+    // TODO: implement updateUserEmail
+  }
+
+  Future<bool> updateUser(SCUser user) async {
+    bool result = await gcf.updateUser(user);
+    SCUser? updatedUser = await gcf.getUser(user.email);
+
+    if (result && updatedUser != null) sessionManager.signIn(updatedUser);
+
+    return result && updatedUser != null;
+  }
 }

@@ -16,6 +16,7 @@ class GCF {
   static const String GET_CANTEEN = '/getCanteen';
   static const String GET_USER = '/getUser';
   static const String CREATE_USER = '/createUser';
+  static const String UPDATE_USER = '/updateUser';
   static const String GET_WORK_SCHEDULE = '/getWorkSchedule';
   static const String GET_FAVORITE_CANTEENS = '/getFavoriteCanteens';
   static const String ADD_FAVORITE_CANTEEN = '/addFavoriteCanteen';
@@ -62,6 +63,24 @@ class GCF {
         },
       ),
     );
+  }
+
+  Future<bool> updateUser(SCUser user) async {
+    http.Response response = await http.post(
+      Uri.parse(BASE_URL + UPDATE_USER),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "id": user.id,
+        "name": user.name,
+        "surname": user.surname,
+        "email": user.email,
+        "cityId": user.city != null ? int.tryParse(user.city!) : null
+      }),
+    );
+
+    return response.statusCode == 200;
   }
 
   Future<List<Canteen>> getCanteens() async {
