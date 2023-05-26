@@ -35,7 +35,7 @@ class CanteenListItemView extends StatelessWidget {
                     spacing: 4,
                     children: [
                       Text(
-                        getDistanceFromUser(),
+                        canteen.getDistanceFromUserString(),
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -75,15 +75,5 @@ class CanteenListItemView extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String getDistanceFromUser() {
-    double distance = canteen.distanceFromUser;
-
-    if (distance < 1000) return '${distance.toStringAsFixed(0)}m';
-
-    distance /= 1000;
-
-    return '${distance.toStringAsFixed(1)}km';
   }
 }

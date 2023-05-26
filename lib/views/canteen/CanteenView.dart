@@ -179,27 +179,51 @@ class _CanteenViewState extends State<CanteenView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // queue length
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 0),
-                        child: Wrap(
-                          direction: Axis.horizontal,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            QueueLengthView(
-                              queueLength: canteen.queueLength,
-                              queueIconSize: 30,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // queue length
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            child: Wrap(
+                              direction: Axis.horizontal,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                QueueLengthView(
+                                  queueLength: canteen.queueLength,
+                                  queueIconSize: 30,
+                                ),
+                                IconButton(
+                                  onPressed: showQueueLengthInfo,
+                                  icon: Icon(
+                                    Icons.info_outline_rounded,
+                                    size: 20,
+                                    color: Colors.blue[200],
+                                  ),
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              onPressed: showQueueLengthInfo,
-                              icon: Icon(
-                                Icons.info_outline_rounded,
-                                size: 20,
-                                color: Colors.blue[200],
+                          ),
+                          Wrap(
+                            direction: Axis.horizontal,
+                            spacing: 4,
+                            children: [
+                              Text(
+                                canteen.getDistanceFromUserString(),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                              const Icon(
+                                Icons.location_on,
+                                color: Colors.grey,
+                                size: 20,
+                              )
+                            ],
+                          )
+                        ],
                       ),
 
                       // canteen name
