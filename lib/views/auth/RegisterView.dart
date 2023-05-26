@@ -239,7 +239,12 @@ class _AuthViewState extends State<RegisterView> {
 
     try {
       Utils.showLoadingDialog(context);
-      SCUser user = SCUser(name: name, surname: surname, email: email);
+      SCUser user = SCUser(
+        name: name,
+        surname: surname,
+        email: email,
+        city: selectedCity?.id.toString(),
+      );
       await authService.signUp(user, password);
       Navigator.pop(context);
       Navigator.pop(context);

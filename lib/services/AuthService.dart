@@ -18,6 +18,7 @@ class AuthService {
       name: user.name,
       surname: user.surname,
       email: user.email,
+      city: user.city,
     );
 
     await gcf.createUser(newUser);
@@ -66,6 +67,7 @@ class AuthService {
         name: googleUser.displayName?.split(" ")[0] ?? "",
         surname: googleUser.displayName?.split(" ")[1] ?? "",
         email: googleUser.email,
+        city: "",
       );
 
       await gcf.createUser(newUser);

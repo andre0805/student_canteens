@@ -54,10 +54,11 @@ class GCF {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(
-        <String, String>{
+        <String, dynamic>{
           "name": user.name,
           "surname": user.surname,
           "email": user.email,
+          "cityId": user.city != null ? int.tryParse(user.city!) : null
         },
       ),
     );
