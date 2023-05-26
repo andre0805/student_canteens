@@ -17,6 +17,7 @@ class Canteen {
   final String longitude;
   final QueueLength queueLength;
   Set<WorkSchedule> workSchedules = {};
+  double distanceFromUser = 0;
 
   Canteen({
     required this.id,
