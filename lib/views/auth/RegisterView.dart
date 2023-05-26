@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:student_canteens/models/City.dart';
 import 'package:student_canteens/services/AuthService.dart';
+import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/models/SCUser.dart';
 
@@ -13,18 +15,33 @@ class RegisterView extends StatefulWidget {
 
 class _AuthViewState extends State<RegisterView> {
   AuthService authService = AuthService.sharedInstance;
+  GCF gcf = GCF.sharedInstance;
 
   String name = "";
   String surname = "";
   String email = "";
   String password = "";
   String confirmPassword = "";
+  City? selectedCity;
 
   String? nameError;
   String? surnameError;
   String? emailError;
   String? passwordError;
   String? confirmPasswordError;
+  String? selectedCityError;
+
+  Set<City> cities = {};
+
+  @override
+  void initState() {
+    super.initState();
+    getCities().then((value) {
+      updateWidget(() {
+        cities = value;
+      });
+    });
+  }
 
   // This widget is the root of your application.
   @override
@@ -157,6 +174,46 @@ class _AuthViewState extends State<RegisterView> {
                 const SizedBox(
                   height: 24,
                 ),
+                SizedBox(
+                  height: 50,
+                  child: DropdownButton(
+                    underline: const SizedBox(
+                      height: 2,
+                      child: Divider(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    focusColor: Colors.white,
+                    isExpanded: true,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
+                    iconSize: 26,
+                    value: selectedCity,
+                    hint: const Text(
+                      "Odaberi grad u kojem studiraš",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    items: cities.map((e) {
+                      return DropdownMenuItem(
+                        value: e,
+                        child: Text(e.name),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      updateWidget(() {
+                        selectedCity = value as City;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
                 ElevatedButton(
                   onPressed: () {
                     signUp();
@@ -207,11 +264,17 @@ class _AuthViewState extends State<RegisterView> {
           password != confirmPassword ? "Lozinke se ne podudaraju" : null;
     });
 
+    if (selectedCity == null) {
+      Utils.showAlertDialog(context, "Greška", "Potrebno odabrati grad");
+    }
+
     return nameError == null &&
         surnameError == null &&
         emailError == null &&
         passwordError == null &&
-        confirmPasswordError == null;
+        confirmPasswordError == null &&
+        selectedCityError == null &&
+        selectedCity != null;
   }
 
   void handleFirebaseAuthError(String errorCode) {
@@ -226,5 +289,9 @@ class _AuthViewState extends State<RegisterView> {
         Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
       }
     });
+  }
+
+  Future<Set<City>> getCities() async {
+    return gcf.getCanteenCities();
   }
 }
