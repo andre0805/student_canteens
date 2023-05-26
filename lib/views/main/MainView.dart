@@ -129,10 +129,7 @@ class _MainViewState extends State<MainView> {
                     title: "Popis menza",
                     icon: Icons.list,
                     onTap: () {
-                      setState(() {
-                        selectedDrawerItemIndex = 0;
-                        storageService.saveInt("selectedDrawerItemIndex", 0);
-                      });
+                      selectDrawerItemIndex(0);
                       Navigator.pop(context);
                     },
                   ),
@@ -142,10 +139,7 @@ class _MainViewState extends State<MainView> {
                     title: "Omiljene menze",
                     icon: Icons.star,
                     onTap: () {
-                      setState(() {
-                        selectedDrawerItemIndex = 1;
-                        storageService.saveInt("selectedDrawerItemIndex", 1);
-                      });
+                      selectDrawerItemIndex(1);
                       Navigator.pop(context);
                     },
                   ),
@@ -155,10 +149,7 @@ class _MainViewState extends State<MainView> {
                     title: "Karta",
                     icon: Icons.map,
                     onTap: () {
-                      updateWidget(() {
-                        selectedDrawerItemIndex = 2;
-                        storageService.saveInt("selectedDrawerItemIndex", 2);
-                      });
+                      selectDrawerItemIndex(2);
                       Navigator.pop(context);
                     },
                   ),
@@ -185,6 +176,16 @@ class _MainViewState extends State<MainView> {
 
   void updateWidget(VoidCallback callback) {
     if (mounted) setState(callback);
+  }
+
+  void selectDrawerItemIndex(int index) {
+    updateWidget(() {
+      selectedDrawerItemIndex = index;
+    });
+
+    if (index != 3) {
+      storageService.saveInt("selectedDrawerItemIndex", index);
+    }
   }
 
   void checkEmailVerified() async {
