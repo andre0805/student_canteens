@@ -174,42 +174,63 @@ class _AuthViewState extends State<RegisterView> {
                 const SizedBox(
                   height: 24,
                 ),
-                SizedBox(
-                  height: 50,
-                  child: DropdownButton(
-                    underline: const SizedBox(
-                      height: 2,
-                      child: Divider(
-                        color: Colors.grey,
+                Wrap(
+                  direction: Axis.horizontal,
+                  alignment: WrapAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 50,
+                      child: DropdownButton(
+                        underline: const SizedBox(
+                          height: 2,
+                          child: Divider(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        focusColor: Colors.white,
+                        isExpanded: false,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                        iconSize: 26,
+                        value: selectedCity,
+                        hint: const Text(
+                          "Odaberi grad u kojem studiraš",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        items: cities.map((e) {
+                          return DropdownMenuItem(
+                            value: e,
+                            child: Text(e.name),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          updateWidget(() {
+                            selectedCity = value as City;
+                          });
+                        },
                       ),
                     ),
-                    focusColor: Colors.white,
-                    isExpanded: true,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                    ),
-                    iconSize: 26,
-                    value: selectedCity,
-                    hint: const Text(
-                      "Odaberi grad u kojem studiraš",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey,
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: () {
+                        Utils.showAlertDialog(
+                          context,
+                          "Grad u kojem studiraš",
+                          """Ova informacija se koristi kako bismo ti mogli slati razne obavijesti o menzama u tvojem gradu.""",
+                        );
+                      },
+                      icon: Icon(
+                        Icons.info_outline_rounded,
+                        size: 20,
+                        color: Colors.blue[200],
                       ),
                     ),
-                    items: cities.map((e) {
-                      return DropdownMenuItem(
-                        value: e,
-                        child: Text(e.name),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      updateWidget(() {
-                        selectedCity = value as City;
-                      });
-                    },
-                  ),
+                  ],
                 ),
                 const SizedBox(
                   height: 24,
