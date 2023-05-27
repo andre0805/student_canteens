@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -20,10 +22,41 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.839547124674-vif74ncbu6sdm8oiib2t48pienhfcba8</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Aplikaciji je potrebna tvoja lokacija kako bi ju mogli prikazati na karti menza ili za sortiranje menza ne temelju tvoje udaljenosti od njih.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Aplikaciji je potrebna tvoja lokacija kako bi ju mogli prikazati na karti menza ili za sortiranje menza ne temelju tvoje udaljenosti od njih.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Aplikacija prati pokrete uređaja kako bi dohvaćala lokaciju uređaja samo dok se uređaj kreće i time smanjila potrošnju baterije.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.transistorsoft.fetch</string>
+	</array>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>location</string>
+		<string>processing</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -43,24 +76,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>com.googleusercontent.apps.839547124674-vif74ncbu6sdm8oiib2t48pienhfcba8</string>
-            </array>
-        </dict>
-    </array>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Aplikaciji je potrebna tvoja lokacija kako bi ju mogli prikazati na karti menza ili za sortiranje menza ne temelju tvoje udaljenosti od njih.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Aplikaciji je potrebna tvoja lokacija kako bi ju mogli prikazati na karti menza ili za sortiranje menza ne temelju tvoje udaljenosti od njih.</string>
 </dict>
 </plist>
