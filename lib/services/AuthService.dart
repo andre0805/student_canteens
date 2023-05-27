@@ -3,11 +3,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
+import 'package:student_canteens/services/StorageService.dart';
 
 class AuthService {
   final GCF gcf = GCF.sharedInstance;
   final SessionManager sessionManager = SessionManager.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final StorageService storageService = StorageService.sharedInstance;
 
   static final AuthService sharedInstance = AuthService._();
 
@@ -35,6 +37,9 @@ class AuthService {
       throw Exception("User not found");
     } else {
       sessionManager.signIn(scUser);
+      if (scUser.city != null) {
+        storageService.saveString("userCity", scUser.city!);
+      }
     }
   }
 
@@ -47,6 +52,9 @@ class AuthService {
     }
 
     sessionManager.signIn(user);
+    if (user.city != null) {
+      storageService.saveString("userCity", user.city!);
+    }
 
     UserCredential userCredential = await firebaseAuth
         .signInWithEmailAndPassword(email: email, password: password);
@@ -62,6 +70,9 @@ class AuthService {
 
     if (scUser != null) {
       sessionManager.signIn(scUser);
+      if (scUser.city != null) {
+        storageService.saveString("userCity", scUser.city!);
+      }
     } else {
       SCUser newUser = SCUser(
         name: googleUser.displayName?.split(" ")[0] ?? "",
@@ -97,6 +108,11 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    await storageService.removeKey('selectedCity');
+    await storageService.removeKey('selectedDrawerItemIndex');
+    await storageService.removeKey('selectedSortCriteria');
+    await storageService.removeKey('userCity');
+
     if (firebaseAuth.currentUser != null) {
       await firebaseAuth.signOut();
     }
