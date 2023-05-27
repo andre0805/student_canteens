@@ -46,6 +46,8 @@ dependencies:
   flutter_speed_dial: ^6.2.0
   timeago: ^3.4.0
   geolocator: ^9.0.2
+  flutter_local_notifications: ^14.1.0
+  android_alarm_manager_plus: ^3.0.1
 
 dev_dependencies:
   flutter_test:
