@@ -46,7 +46,6 @@ dependencies:
   flutter_speed_dial: ^6.2.0
   timeago: ^3.4.0
   geolocator: ^9.0.2
-  flutter_background_geolocation: ^4.11.0
 
 dev_dependencies:
   flutter_test:
