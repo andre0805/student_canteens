@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:student_canteens/models/Canteen.dart';
 
 class SCUser {
@@ -7,6 +8,7 @@ class SCUser {
   final String email;
   final String? city;
   List<Canteen> favoriteCanteens;
+  TimeOfDay? lunchTime;
 
   SCUser({
     this.id,
@@ -15,6 +17,7 @@ class SCUser {
     required this.email,
     required this.city,
     this.favoriteCanteens = const [],
+    this.lunchTime,
   });
 
   factory SCUser.fromJson(Map<String, dynamic> json) {
@@ -24,6 +27,13 @@ class SCUser {
       surname: json['surname'],
       email: json['email'],
       city: json['city'],
+      lunchTime:
+          json['lunch_time_hour'] != null && json['lunch_time_minute'] != null
+              ? TimeOfDay(
+                  hour: json['lunch_time_hour'],
+                  minute: json['lunch_time_minute'],
+                )
+              : null,
     );
   }
 
