@@ -12,6 +12,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_canteens/views/main/MainView.dart';
 import 'firebase_options.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,8 +25,27 @@ void main() async {
 
   timeago.setLocaleMessages('hr', CroatianMessages());
 
+  tzdata.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('Europe/Zagreb'));
+
   if (Platform.isAndroid) {
     await AndroidAlarmManager.initialize();
+  }
+
+  if (Platform.isIOS) {
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    const initializationSettingsIOS = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    const initializationSettings = InitializationSettings(
+      iOS: initializationSettingsIOS,
+    );
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   runApp(const MyApp());
