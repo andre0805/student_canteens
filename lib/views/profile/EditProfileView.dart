@@ -417,18 +417,18 @@ class _EditProfileViewState extends State<EditProfileView> {
     );
 
     if (selectedLunchTime != null) {
-      // if (selectedLunchTime.isBefore(const TimeOfDay(hour: 11, minute: 0)) ||
-      //     selectedLunchTime.isAfter(const TimeOfDay(hour: 18, minute: 0))) {
-      //   Utils.showAlertDialog(
-      //     context,
-      //     "Greška",
-      //     "Vrijeme ručka mora biti između 11:00 i 18:00",
-      //   );
-      // } else {
-      // }
-      updateWidget(() {
-        lunchTime = selectedLunchTime;
-      });
+      if (selectedLunchTime.isBefore(const TimeOfDay(hour: 11, minute: 0)) ||
+          selectedLunchTime.isAfter(const TimeOfDay(hour: 18, minute: 0))) {
+        Utils.showAlertDialog(
+          context,
+          "Greška",
+          "Vrijeme ručka mora biti između 11:00 i 18:00",
+        );
+      } else {
+        updateWidget(() {
+          lunchTime = selectedLunchTime;
+        });
+      }
     }
   }
 
