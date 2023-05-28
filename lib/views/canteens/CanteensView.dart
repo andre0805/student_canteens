@@ -78,7 +78,7 @@ class _CanteensViewState extends State<CanteensView> {
     });
 
     refreshDataTimer = Timer.periodic(
-      const Duration(seconds: 10),
+      const Duration(seconds: 20),
       (timer) {
         refreshWidget();
       },
@@ -228,12 +228,25 @@ class _CanteensViewState extends State<CanteensView> {
     });
   }
 
-  Future<void> getCanteens() {
+  Future<void> getCanteens() async {
     canteenMap.clear();
+
+    Position? userLocation = await getCurrentPosition();
+
     return gcf.getCanteens().then((value) {
       for (Canteen canteen in value) {
+        if (userLocation != null) {
+          canteen.distanceFromUser = locationService.distanceFromPosition(
+            userLocation.latitude,
+            userLocation.longitude,
+            double.parse(canteen.latitude),
+            double.parse(canteen.longitude),
+          );
+        }
+
         String city = canteen.city;
         cities.add(city);
+
         if (canteenMap.containsKey(city)) {
           canteenMap[city]?.add(canteen);
         } else {
