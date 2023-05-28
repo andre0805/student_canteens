@@ -76,7 +76,9 @@ class GCF {
         "name": user.name,
         "surname": user.surname,
         "email": user.email,
-        "cityId": user.city != null ? int.tryParse(user.city!) : null
+        "cityId": user.city != null ? int.tryParse(user.city!) : null,
+        "lunchTimeHour": user.lunchTime?.hour,
+        "lunchTimeMinute": user.lunchTime?.minute,
       }),
     );
 
