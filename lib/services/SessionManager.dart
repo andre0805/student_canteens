@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/NotificationService.dart';
 import 'package:student_canteens/services/StorageService.dart';
@@ -24,7 +22,7 @@ class SessionManager {
       await storageService.saveString(Constants.userCityKey, user.city!);
     }
 
-    if (user.lunchTime != null && Platform.isAndroid) {
+    if (user.lunchTime != null) {
       await notificationService.scheduleNotifications(
         Constants.notificationId,
         user.lunchTime!.hour,

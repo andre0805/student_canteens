@@ -213,7 +213,7 @@ class Utils {
     const platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await FlutterLocalNotificationsPlugin().show(
-      0,
+      Constants.notificationId,
       notificationTitle,
       notificationBody,
       platformChannelSpecifics,
