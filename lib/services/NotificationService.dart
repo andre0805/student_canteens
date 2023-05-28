@@ -62,6 +62,12 @@ class NotificationService {
   }
 
   Future<void> cancelNotifications(int id) async {
-    await AndroidAlarmManager.cancel(id);
+    if (Platform.isAndroid) {
+      await AndroidAlarmManager.cancel(id);
+    }
+
+    if (Platform.isIOS) {
+      await FlutterLocalNotificationsPlugin().cancel(id);
+    }
   }
 }
