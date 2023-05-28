@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/NotificationService.dart';
 import 'package:student_canteens/services/StorageService.dart';
+import 'package:student_canteens/utils/Constants.dart';
 import 'package:student_canteens/utils/utils.dart';
 
 class SessionManager {
@@ -20,13 +21,12 @@ class SessionManager {
     currentUser = user;
 
     if (user.city != null) {
-      await storageService.saveString("selectedCity", user.city!);
-      await storageService.saveString("userCity", user.city!);
+      await storageService.saveString(Constants.userCityKey, user.city!);
     }
 
     if (user.lunchTime != null && Platform.isAndroid) {
       await notificationService.scheduleNotifications(
-        0,
+        Constants.notificationId,
         user.lunchTime!.hour,
         user.lunchTime!.minute,
         Utils.notificationTask,
@@ -38,10 +38,10 @@ class SessionManager {
 
   Future<void> signOut() async {
     currentUser = null;
-    await storageService.removeKey('selectedCity');
-    await storageService.removeKey('selectedDrawerItemIndex');
-    await storageService.removeKey('selectedSortCriteria');
-    await storageService.removeKey('userCity');
+    await storageService.removeKey(Constants.selectedCityKey);
+    await storageService.removeKey(Constants.selectedDrawerItemIndexKey);
+    await storageService.removeKey(Constants.selectedSortCriteriaKey);
+    await storageService.removeKey(Constants.userCityKey);
     await notificationService.cancelNotifications(0);
   }
 }

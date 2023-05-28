@@ -8,6 +8,7 @@ import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
+import 'package:student_canteens/utils/Constants.dart';
 import 'package:student_canteens/views/auth/EmailVerificationView.dart';
 import 'package:student_canteens/views/canteens/CanteensView.dart';
 import 'package:student_canteens/views/favorite_canteens/FavoriteCanteensView.dart';
@@ -57,7 +58,7 @@ class _MainViewState extends State<MainView> {
     }
 
     Future.wait([
-      storageService.getInt("selectedDrawerItemIndex"),
+      storageService.getInt(Constants.selectedDrawerItemIndexKey),
     ]).then((values) {
       updateWidget(() {
         selectedDrawerItemIndex = values[0] ?? 0;
@@ -222,13 +223,13 @@ class _MainViewState extends State<MainView> {
     });
   }
 
-  void selectDrawerItemIndex(int index) {
+  void selectDrawerItemIndex(int index) async {
     updateWidget(() {
       selectedDrawerItemIndex = index;
     });
 
     if (index != 3) {
-      storageService.saveInt("selectedDrawerItemIndex", index);
+      await storageService.saveInt(Constants.selectedDrawerItemIndexKey, index);
     }
   }
 

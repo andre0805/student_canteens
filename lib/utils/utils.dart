@@ -6,6 +6,7 @@ import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/StorageService.dart';
+import 'package:student_canteens/utils/Constants.dart';
 
 class Utils {
   static void showLoadingDialog(BuildContext context) {
@@ -161,7 +162,8 @@ class Utils {
   static void notificationTask() async {
     // Fetch data
     final canteens = await GCF.sharedInstance.getCanteens();
-    final city = await StorageService.sharedInstance.getString("userCity");
+    final city =
+        await StorageService.sharedInstance.getString(Constants.userCityKey);
 
     String notificationTitle;
     String notificationBody = "";
