@@ -8,7 +8,6 @@ import 'package:student_canteens/models/QueueLengthReport.dart';
 import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
-import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteen/CanteenMapView.dart';
 import 'package:student_canteens/views/queue_length/QueueLengthReportsView.dart';
@@ -37,7 +36,6 @@ class _CanteenViewState extends State<CanteenView> {
   _CanteenViewState({required this.canteen, required this.parentRefreshWidget});
 
   SessionManager sessionManager = SessionManager.sharedInstance;
-  StorageService storageService = StorageService.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
   List<QueueLengthReport> queueLengthReports = [];

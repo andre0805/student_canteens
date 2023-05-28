@@ -3,14 +3,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
-import 'package:student_canteens/services/StorageService.dart';
 
 class AuthService {
   final GCF gcf = GCF.sharedInstance;
   final SessionManager sessionManager = SessionManager.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  final StorageService storageService = StorageService.sharedInstance;
-
   static final AuthService sharedInstance = AuthService._();
 
   AuthService._();
