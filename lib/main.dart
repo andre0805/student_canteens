@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
@@ -19,6 +21,10 @@ void main() async {
   );
 
   timeago.setLocaleMessages('hr', CroatianMessages());
+
+  if (Platform.isAndroid) {
+    await AndroidAlarmManager.initialize();
+  }
 
   runApp(const MyApp());
 }
