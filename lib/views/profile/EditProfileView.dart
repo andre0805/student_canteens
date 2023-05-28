@@ -5,6 +5,7 @@ import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
+import 'package:student_canteens/utils/TimeOfDayExtension.dart';
 import 'package:student_canteens/utils/utils.dart';
 import 'package:collection/collection.dart';
 
@@ -28,6 +29,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   String surname = "";
   String email = "";
   City? selectedCity;
+  TimeOfDay? lunchTime;
 
   String? nameError;
   String? surnameError;
@@ -53,6 +55,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       name = currentUser?.name ?? "";
       surname = currentUser?.surname ?? "";
       email = currentUser?.email ?? "";
+      lunchTime = currentUser?.lunchTime;
     });
 
     getCities().then((value) {
@@ -237,6 +240,48 @@ class _EditProfileViewState extends State<EditProfileView> {
                       ],
                     ),
                     const SizedBox(
+                      height: 16,
+                    ),
+                    Wrap(
+                      direction: Axis.horizontal,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          "Vrijeme ručka: ",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[900],
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: showLunchTimePicker,
+                          child: Text(
+                            lunchTime != null
+                                ? lunchTime!.toString().substring(10, 15)
+                                : "Odaberi",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Utils.showAlertDialog(
+                              context,
+                              "Vrijeme ručka",
+                              """Vrijeme u danu kada ćemo ti poslati obavijest o stanju redova u menzama u tvom gradu. (Ova opcija je trenutno dostupna samo na Android uređajima)""",
+                            );
+                          },
+                          icon: Icon(
+                            Icons.info_outline_rounded,
+                            size: 20,
+                            color: Colors.blue[200],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
                       height: 24,
                     ),
                     ElevatedButton(
@@ -266,7 +311,8 @@ class _EditProfileViewState extends State<EditProfileView> {
     return name != currentUser?.name ||
         surname != currentUser?.surname ||
         email != currentUser?.email ||
-        selectedCity?.name != currentUser?.city;
+        selectedCity?.name != currentUser?.city ||
+        lunchTime != currentUser?.lunchTime;
   }
 
   bool validateInput() {
@@ -295,7 +341,8 @@ class _EditProfileViewState extends State<EditProfileView> {
 
     if (name != currentUser?.name ||
         surname != currentUser?.surname ||
-        selectedCity?.name != currentUser?.city) {
+        selectedCity?.name != currentUser?.city ||
+        lunchTime != currentUser?.lunchTime) {
       bool result = await authService.updateUser(
         SCUser(
           id: currentUser?.id,
@@ -303,6 +350,7 @@ class _EditProfileViewState extends State<EditProfileView> {
           surname: surname,
           email: email,
           city: selectedCity?.id.toString(),
+          lunchTime: lunchTime,
         ),
       );
 
@@ -314,6 +362,7 @@ class _EditProfileViewState extends State<EditProfileView> {
           email = currentUser?.email ?? "";
           selectedCity =
               cities.firstWhere((element) => element.name == currentUser?.city);
+          lunchTime = currentUser?.lunchTime;
           widget.parentRefreshWidget();
         });
         Utils.showSnackBarMessage(context, "Uspješno ažuriran profil");
@@ -323,5 +372,27 @@ class _EditProfileViewState extends State<EditProfileView> {
     }
 
     Navigator.pop(context);
+  }
+
+  void showLunchTimePicker() async {
+    TimeOfDay? selectedLunchTime = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 12, minute: 0),
+    );
+
+    if (selectedLunchTime != null) {
+      if (selectedLunchTime.isBefore(const TimeOfDay(hour: 11, minute: 0)) ||
+          selectedLunchTime.isAfter(const TimeOfDay(hour: 18, minute: 0))) {
+        Utils.showAlertDialog(
+          context,
+          "Greška",
+          "Vrijeme ručka mora biti između 11:00 i 18:00",
+        );
+      } else {
+        updateWidget(() {
+          lunchTime = selectedLunchTime;
+        });
+      }
+    }
   }
 }
