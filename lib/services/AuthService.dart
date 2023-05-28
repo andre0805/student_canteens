@@ -36,10 +36,7 @@ class AuthService {
       await signOut();
       throw Exception("User not found");
     } else {
-      sessionManager.signIn(scUser);
-      if (scUser.city != null) {
-        storageService.saveString("userCity", scUser.city!);
-      }
+      await sessionManager.signIn(scUser);
     }
   }
 
@@ -52,9 +49,6 @@ class AuthService {
     }
 
     sessionManager.signIn(user);
-    if (user.city != null) {
-      storageService.saveString("userCity", user.city!);
-    }
 
     UserCredential userCredential = await firebaseAuth
         .signInWithEmailAndPassword(email: email, password: password);
@@ -70,9 +64,6 @@ class AuthService {
 
     if (scUser != null) {
       sessionManager.signIn(scUser);
-      if (scUser.city != null) {
-        storageService.saveString("userCity", scUser.city!);
-      }
     } else {
       SCUser newUser = SCUser(
         name: googleUser.displayName?.split(" ")[0] ?? "",
@@ -108,16 +99,11 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-    await storageService.removeKey('selectedCity');
-    await storageService.removeKey('selectedDrawerItemIndex');
-    await storageService.removeKey('selectedSortCriteria');
-    await storageService.removeKey('userCity');
-
     if (firebaseAuth.currentUser != null) {
       await firebaseAuth.signOut();
     }
 
-    sessionManager.signOut();
+    await sessionManager.signOut();
   }
 
   Future<void> forgotPassword(String email) async {
