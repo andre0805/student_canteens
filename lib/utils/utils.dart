@@ -159,6 +159,7 @@ class Utils {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
 
+  @pragma('vm:entry-point')
   static void notificationTask() async {
     // Fetch data
     final canteens = await GCF.sharedInstance.getCanteens();

@@ -30,6 +30,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   String email = "";
   City? selectedCity;
   TimeOfDay? lunchTime;
+  bool notificationsOn = false;
 
   String? nameError;
   String? surnameError;
@@ -56,6 +57,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       surname = currentUser?.surname ?? "";
       email = currentUser?.email ?? "";
       lunchTime = currentUser?.lunchTime;
+      notificationsOn = currentUser?.lunchTime != null;
     });
 
     getCities().then((value) {
@@ -106,25 +108,28 @@ class _EditProfileViewState extends State<EditProfileView> {
                   vertical: 24,
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.grey[300],
-                        backgroundImage: profileImageUrl != null
-                            ? NetworkImage(profileImageUrl!)
-                            : null,
-                        child: profileImageUrl == null
-                            ? Text(
-                                currentUser?.getInitials() ?? "",
-                                style: TextStyle(
-                                  color: Colors.grey[900],
-                                  fontFamily: "",
-                                  fontSize: 22,
-                                ),
-                              )
-                            : null,
+                    Center(
+                      child: SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.grey[300],
+                          backgroundImage: profileImageUrl != null
+                              ? NetworkImage(profileImageUrl!)
+                              : null,
+                          child: profileImageUrl == null
+                              ? Text(
+                                  currentUser?.getInitials() ?? "",
+                                  style: TextStyle(
+                                    color: Colors.grey[900],
+                                    fontFamily: "",
+                                    fontSize: 22,
+                                  ),
+                                )
+                              : null,
+                        ),
                       ),
                     ),
                     TextFormField(
@@ -245,32 +250,26 @@ class _EditProfileViewState extends State<EditProfileView> {
                     Wrap(
                       direction: Axis.horizontal,
                       crossAxisAlignment: WrapCrossAlignment.center,
+                      // spacing: 16,
                       children: [
                         Text(
-                          "Vrijeme ručka: ",
+                          "Obavijesti",
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.grey[900],
                           ),
                         ),
-                        TextButton(
-                          onPressed: showLunchTimePicker,
-                          child: Text(
-                            lunchTime != null
-                                ? lunchTime!.toString().substring(10, 15)
-                                : "Odaberi",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Colors.blue,
-                            ),
-                          ),
+                        const SizedBox(width: 16),
+                        Switch(
+                          value: notificationsOn,
+                          onChanged: switchChanged,
                         ),
                         IconButton(
                           onPressed: () {
                             Utils.showAlertDialog(
                               context,
-                              "Vrijeme ručka",
-                              """Vrijeme u danu kada ćemo ti poslati obavijest o stanju redova u menzama u tvom gradu. (Ova opcija je trenutno dostupna samo na Android uređajima)""",
+                              "Obavijesti",
+                              "Obavijesti ti šaljemo svakog dana u vrijeme ručka kako bi znao/la u kojoj menzi je najmanja gužva. (Ova opcija je trenutno dostupna samo na Android uređajima).",
                             );
                           },
                           icon: Icon(
@@ -282,11 +281,47 @@ class _EditProfileViewState extends State<EditProfileView> {
                       ],
                     ),
                     const SizedBox(
+                      height: 8,
+                    ),
+                    Visibility(
+                      visible: notificationsOn,
+                      child: Wrap(
+                        direction: Axis.horizontal,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            "Vrijeme ručka: ",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[900],
+                            ),
+                          ),
+                          TextButton(
+                            onPressed:
+                                notificationsOn ? showLunchTimePicker : null,
+                            child: Text(
+                              lunchTime != null
+                                  ? lunchTime!.toString().substring(10, 15)
+                                  : "Odaberi",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: notificationsOn
+                                    ? Colors.blue
+                                    : Colors.blue[200],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
                       height: 24,
                     ),
-                    ElevatedButton(
-                      onPressed: isSaveButtonEnabled ? updateUser : null,
-                      child: const Text("Spremi"),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: isSaveButtonEnabled ? updateUser : null,
+                        child: const Text("Spremi"),
+                      ),
                     ),
                   ],
                 ),
@@ -377,22 +412,30 @@ class _EditProfileViewState extends State<EditProfileView> {
   void showLunchTimePicker() async {
     TimeOfDay? selectedLunchTime = await showTimePicker(
       context: context,
-      initialTime: const TimeOfDay(hour: 12, minute: 0),
+      initialTime:
+          currentUser?.lunchTime ?? const TimeOfDay(hour: 12, minute: 0),
     );
 
     if (selectedLunchTime != null) {
-      if (selectedLunchTime.isBefore(const TimeOfDay(hour: 11, minute: 0)) ||
-          selectedLunchTime.isAfter(const TimeOfDay(hour: 18, minute: 0))) {
-        Utils.showAlertDialog(
-          context,
-          "Greška",
-          "Vrijeme ručka mora biti između 11:00 i 18:00",
-        );
-      } else {
-        updateWidget(() {
-          lunchTime = selectedLunchTime;
-        });
-      }
+      // if (selectedLunchTime.isBefore(const TimeOfDay(hour: 11, minute: 0)) ||
+      //     selectedLunchTime.isAfter(const TimeOfDay(hour: 18, minute: 0))) {
+      //   Utils.showAlertDialog(
+      //     context,
+      //     "Greška",
+      //     "Vrijeme ručka mora biti između 11:00 i 18:00",
+      //   );
+      // } else {
+      // }
+      updateWidget(() {
+        lunchTime = selectedLunchTime;
+      });
     }
+  }
+
+  void switchChanged(bool value) {
+    updateWidget(() {
+      notificationsOn = value;
+      lunchTime = value ? currentUser?.lunchTime : null;
+    });
   }
 }
