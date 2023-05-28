@@ -31,6 +31,9 @@ class SessionManager {
       );
       print(
           "Scheduled notifications for lunch at ${user.lunchTime!.hour}:${user.lunchTime!.minute}");
+    } else {
+      await notificationService.cancelNotifications(Constants.notificationId);
+      print("Cancelled notifications for lunch");
     }
   }
 
