@@ -32,21 +32,22 @@ void main() async {
     await AndroidAlarmManager.initialize();
   }
 
-  if (Platform.isIOS) {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-    const initializationSettingsIOS = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  const initializationSettingsIOS = DarwinInitializationSettings(
+    requestAlertPermission: true,
+    requestBadgePermission: true,
+    requestSoundPermission: true,
+  );
+  const initializationSettingsAndroid =
+      AndroidInitializationSettings('mipmap/ic_launcher');
 
-    const initializationSettings = InitializationSettings(
-      iOS: initializationSettingsIOS,
-    );
+  const initializationSettings = InitializationSettings(
+    iOS: initializationSettingsIOS,
+    android: initializationSettingsAndroid,
+  );
 
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   runApp(const MyApp());
 }
