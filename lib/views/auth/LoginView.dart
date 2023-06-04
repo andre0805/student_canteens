@@ -143,14 +143,6 @@ class _AuthViewState extends State<LoginView> {
                   onPressed: signInWithGoogle,
                   text: "Prijava s Google-om",
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
-                SignInButton(
-                  Buttons.Facebook,
-                  onPressed: () => {},
-                  text: "Prijava s Facebook-om",
-                ),
                 const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
