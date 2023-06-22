@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "839547124674",
+    "project_id": "student-canteens",
+    "storage_bucket": "student-canteens.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:839547124674:android:55acf706bcebe1581bf45b",
+        "android_client_info": {
+          "package_name": "com.example.student_canteens"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "839547124674-k7ncs7n21rb6o8hkbbv68qnak74fberl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYMozKHdmjl3ZM81mlLDWjcVwPTkzVzCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "839547124674-k7ncs7n21rb6o8hkbbv68qnak74fberl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "839547124674-vif74ncbu6sdm8oiib2t48pienhfcba8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.studentCanteens"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
