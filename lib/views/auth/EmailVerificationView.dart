@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:student_canteens/views/HomeView.dart';
+import 'package:student_canteens/views/canteens/CanteensView.dart';
 import 'package:student_canteens/services/AuthService.dart';
-import 'package:student_canteens/views/utils.dart';
+import 'package:student_canteens/utils/utils.dart';
 
 class EmailVerificationView extends StatefulWidget {
   const EmailVerificationView({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class EmailVerificationView extends StatefulWidget {
 }
 
 class _EmailVerificationViewState extends State<EmailVerificationView> {
-  AuthService authService = AuthService();
+  AuthService authService = AuthService.sharedInstance;
   bool isEmailVerified = false;
   Timer? checkEmailVerifiedTimer;
   Timer? resendEmailTimer;
@@ -47,7 +47,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   @override
   Widget build(BuildContext context) {
     return isEmailVerified
-        ? HomeView()
+        ? CanteensView()
         : Scaffold(
             backgroundColor: Colors.grey[200],
             body: SafeArea(
@@ -76,10 +76,6 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[900],
-                              disabledBackgroundColor: Colors.grey[400],
-                            ),
                             onPressed: (resendEmailCounter == 0)
                                 ? sendEmailVerification
                                 : null,
@@ -94,7 +90,9 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
                           ),
                           ElevatedButton(
                             onPressed: cancelEmailVerification,
-                            style: ElevatedButton.styleFrom(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                            ),
                             child: const Text("Poništi"),
                           ),
                         ],
@@ -108,15 +106,20 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
           );
   }
 
+  void updateWidget(void Function() callback) {
+    if (!mounted) return;
+    setState(callback);
+  }
+
   void sendEmailVerification() async {
-    setState(() {
+    updateWidget(() {
       resendEmailCounter = 10;
     });
 
     resendEmailTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
-        setState(() {
+        updateWidget(() {
           resendEmailCounter--;
           if (resendEmailCounter == 0) {
             timer.cancel();
@@ -138,7 +141,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   void checkEmailVerified() async {
     await FirebaseAuth.instance.currentUser?.reload();
 
-    setState(() {
+    updateWidget(() {
       isEmailVerified =
           FirebaseAuth.instance.currentUser?.emailVerified ?? false;
     });
@@ -156,7 +159,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   }
 
   void handleFirebaseAuthError(String errorCode) {
-    setState(() {
+    updateWidget(() {
       if (errorCode == 'too-many-requests') {
         Utils.showAlertDialog(context, "Greška",
             "Previše zahtjeva. Molim te pokušaj ponovo kasnije.");

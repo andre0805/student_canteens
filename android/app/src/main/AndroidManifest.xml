@@ -3,6 +3,7 @@
    <application
         android:label="student_canteens"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -30,6 +31,16 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCWZ8NHTDOEnjn2o_zi2H_4qEhISHkHWiY"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <queries>
+        <!-- to opens https URLs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
 </manifest>

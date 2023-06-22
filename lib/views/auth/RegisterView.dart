@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
-import 'package:student_canteens/views/utils.dart';
+import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/models/SCUser.dart';
 
 class RegisterView extends StatefulWidget {
@@ -12,7 +12,7 @@ class RegisterView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<RegisterView> {
-  AuthService authService = AuthService();
+  AuthService authService = AuthService.sharedInstance;
 
   String name = "";
   String surname = "";
@@ -31,7 +31,6 @@ class _AuthViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[900],
         title: const Text("Registracija"),
         leading: IconButton(
           onPressed: () {
@@ -161,9 +160,6 @@ class _AuthViewState extends State<RegisterView> {
                   onPressed: () {
                     signUp();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[900],
-                  ),
                   child: const Text("Registriraj se"),
                 ),
                 const Spacer(),
@@ -173,6 +169,11 @@ class _AuthViewState extends State<RegisterView> {
         ),
       ),
     );
+  }
+
+  void updateWidget(void Function() callback) {
+    if (!mounted) return;
+    setState(callback);
   }
 
   void signUp() async {
@@ -195,7 +196,7 @@ class _AuthViewState extends State<RegisterView> {
   }
 
   bool validateInput() {
-    setState(() {
+    updateWidget(() {
       nameError = name.isEmpty ? "Potrebno ime" : null;
       surnameError = surname.isEmpty ? "Potrebno prezime" : null;
       emailError = email.isEmpty ? "Potrebna email adresa" : null;
@@ -214,7 +215,7 @@ class _AuthViewState extends State<RegisterView> {
   }
 
   void handleFirebaseAuthError(String errorCode) {
-    setState(() {
+    updateWidget(() {
       if (errorCode == 'email-already-in-use') {
         emailError = "Korisnik s ovom email adresom već postoji";
       } else if (errorCode == 'invalid-email') {
