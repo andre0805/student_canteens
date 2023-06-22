@@ -44,6 +44,7 @@ class _CanteenViewState extends State<CanteenView> {
   List<QueueLengthReport> queueLengthReports = [];
   bool isLoading = false;
   bool isFavorite = false;
+  Timer? refreshDataTimer;
 
   @override
   void initState() {
@@ -67,11 +68,19 @@ class _CanteenViewState extends State<CanteenView> {
         queueLengthReports = value[2] as List<QueueLengthReport>;
       });
     });
+
+    refreshDataTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (timer) {
+        refreshWidget();
+      },
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
+    refreshDataTimer?.cancel();
   }
 
   @override
@@ -430,34 +439,48 @@ class _CanteenViewState extends State<CanteenView> {
   }
 
   void reportQueueLength(QueueLength queueLength) async {
-    gcf.reportQueueLength(canteen.id, queueLength, null).then((reportId) {
+    if (mounted) Utils.showLoadingDialog(context);
+
+    int? reportId = await gcf.reportQueueLength(canteen.id, queueLength, null);
+
+    if (reportId != null) {
+      await refreshWidget();
+      await parentRefreshWidget();
+    }
+
+    if (mounted) {
       if (reportId != null) {
-        refreshWidget();
-        parentRefreshWidget();
-        if (mounted) {
-          Utils.showSnackBarMessageWithAction(
-            context,
-            QueueLengthExtension.getReportResponseMessage(queueLength),
-            "Poništi",
-            () => removeQueueLengthReport(reportId),
-          );
-        }
+        Utils.showSnackBarMessageWithAction(
+          context,
+          QueueLengthExtension.getReportResponseMessage(queueLength),
+          "Poništi",
+          () => removeQueueLengthReport(reportId),
+        );
       } else {
-        if (mounted) Utils.showSnackBarMessage(context, "Greška!");
+        Utils.showSnackBarMessage(context, "Greška!");
       }
-    });
+      Navigator.pop(context);
+    }
   }
 
   void removeQueueLengthReport(int reportId) async {
-    gcf.removeQueueLengthReport(reportId).then((result) {
+    if (mounted) Utils.showLoadingDialog(context);
+
+    bool result = await gcf.removeQueueLengthReport(reportId);
+
+    if (result) {
+      await refreshWidget();
+      await parentRefreshWidget();
+    }
+
+    if (mounted) {
       if (result) {
-        refreshWidget();
-        parentRefreshWidget();
-        if (mounted) Utils.showSnackBarMessage(context, "Prijava poništena!");
+        Utils.showSnackBarMessage(context, "Prijava poništena!");
       } else {
-        if (mounted) Utils.showSnackBarMessage(context, "Greška!");
+        Utils.showSnackBarMessage(context, "Greška!");
       }
-    });
+      Navigator.pop(context);
+    }
   }
 
   void showQueueLengthInfo() {
