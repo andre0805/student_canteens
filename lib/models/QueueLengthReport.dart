@@ -5,7 +5,6 @@ class QueueLengthReport {
   final int id;
   final int canteenId;
   final QueueLength queueLength;
-  final String? description;
   final DateTime createdAt;
   final int userId;
   final String name;
@@ -16,7 +15,6 @@ class QueueLengthReport {
     required this.id,
     required this.canteenId,
     required this.queueLength,
-    required this.description,
     required this.createdAt,
     required this.userId,
     required this.name,
@@ -29,7 +27,6 @@ class QueueLengthReport {
       id: json['id'] as int,
       canteenId: json['canteen_id'] as int,
       queueLength: QueueLengthExtension.fromInt(json['queue_length'] as int),
-      description: json['description'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
       userId: json['user_id'] as int,
       name: json['name'] as String,

@@ -12,7 +12,6 @@ class Canteen {
   final String county;
   final String? contact;
   final String? url;
-  final String? imageUrl;
   final String latitude;
   final String longitude;
   final QueueLength queueLength;
@@ -28,7 +27,6 @@ class Canteen {
     required this.county,
     required this.contact,
     required this.url,
-    required this.imageUrl,
     required this.latitude,
     required this.longitude,
     required this.queueLength,
@@ -44,7 +42,6 @@ class Canteen {
       county: json['county'],
       contact: json['contact'],
       url: json['url'],
-      imageUrl: json['cover_picture'],
       latitude: json['latitude'],
       longitude: json['longitude'],
       queueLength: QueueLengthExtension.fromInt(json['queue_length']),

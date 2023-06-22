@@ -32,21 +32,22 @@ void main() async {
     await AndroidAlarmManager.initialize();
   }
 
-  if (Platform.isIOS) {
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-    const initializationSettingsIOS = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  const initializationSettingsIOS = DarwinInitializationSettings(
+    requestAlertPermission: true,
+    requestBadgePermission: true,
+    requestSoundPermission: true,
+  );
+  const initializationSettingsAndroid =
+      AndroidInitializationSettings('mipmap/ic_launcher');
 
-    const initializationSettings = InitializationSettings(
-      iOS: initializationSettingsIOS,
-    );
+  const initializationSettings = InitializationSettings(
+    iOS: initializationSettingsIOS,
+    android: initializationSettingsAndroid,
+  );
 
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   runApp(const MyApp());
 }
@@ -111,13 +112,16 @@ class _MainViewState extends State<HomeView> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: isLoading
-          ? const CircularProgressIndicator()
-          : SessionManager.sharedInstance.currentUser == null
-              ? const LoginView()
-              : MainView(),
-    );
+    return isLoading
+        ? Container(
+            color: Colors.grey[200],
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+        : SessionManager.sharedInstance.currentUser == null
+            ? const LoginView()
+            : MainView();
   }
 
   void updateWidget(VoidCallback callback) {

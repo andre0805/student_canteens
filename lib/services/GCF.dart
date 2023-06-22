@@ -214,8 +214,7 @@ class GCF {
     }
   }
 
-  Future<int?> reportQueueLength(
-      int canteenId, QueueLength queueLength, String? description) async {
+  Future<int?> reportQueueLength(int canteenId, QueueLength queueLength) async {
     int? userId = sessionManager.currentUser?.id;
 
     if (userId == null) return null;
@@ -230,7 +229,6 @@ class GCF {
           "userId": userId,
           "canteenId": canteenId,
           "queueLength": queueLength.index,
-          "description": description,
         },
       ),
     );

@@ -30,7 +30,7 @@ class CroatianMessages implements timeago.LookupMessages {
 
     if (minutes % 10 == 1) return '$minutes minutu';
 
-    if (minutes % 10 == 2 || minutes % 10 == 3 || minutes % 4 == 0) {
+    if (minutes % 10 == 2 || minutes % 10 == 3 || minutes % 10 == 4) {
       return '$minutes minute';
     }
 
@@ -51,7 +51,7 @@ class CroatianMessages implements timeago.LookupMessages {
 
     if (hours % 10 == 1) return '$hours sat';
 
-    if (hours % 10 == 2 || hours % 10 == 3 || hours % 4 == 0) {
+    if (hours % 10 == 2 || hours % 10 == 3 || hours % 10 == 4) {
       return '$hours sata';
     }
 
@@ -82,7 +82,7 @@ class CroatianMessages implements timeago.LookupMessages {
 
     if (months % 10 == 1) return '$months mjesec';
 
-    if (months % 10 == 2 || months % 10 == 3 || months % 4 == 0) {
+    if (months % 10 == 2 || months % 10 == 3 || months % 10 == 4) {
       return '$months mjeseca';
     }
 
@@ -103,7 +103,7 @@ class CroatianMessages implements timeago.LookupMessages {
 
     if (years % 10 == 1) return '$years godinu';
 
-    if (years % 10 == 2 || years % 10 == 3 || years % 4 == 0) {
+    if (years % 10 == 2 || years % 10 == 3 || years % 10 == 4) {
       return '$years godine';
     }
 

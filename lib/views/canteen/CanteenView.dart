@@ -491,7 +491,7 @@ class _CanteenViewState extends State<CanteenView> {
   void reportQueueLength(QueueLength queueLength) async {
     if (mounted) Utils.showLoadingDialog(context);
 
-    int? reportId = await gcf.reportQueueLength(canteen.id, queueLength, null);
+    int? reportId = await gcf.reportQueueLength(canteen.id, queueLength);
 
     if (reportId != null) {
       await refreshWidget();
