@@ -40,7 +40,6 @@ class _CanteenViewState extends State<CanteenView> {
   StorageService storageService = StorageService.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
-  Set<WorkSchedule> workSchedules = {};
   List<QueueLengthReport> queueLengthReports = [];
   bool isLoading = false;
   bool isFavorite = false;
@@ -59,7 +58,7 @@ class _CanteenViewState extends State<CanteenView> {
       getQueueLengthReports(),
     ]).then((value) {
       updateWidget(() {
-        workSchedules = value[0] as Set<WorkSchedule>;
+        canteen.workSchedules = value[0] as Set<WorkSchedule>;
         isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
         queueLengthReports = value[1] as List<QueueLengthReport>;
         isLoading = false;
@@ -85,7 +84,7 @@ class _CanteenViewState extends State<CanteenView> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       floatingActionButton: Visibility(
-        visible: !isLoading,
+        visible: !isLoading && canteen.isOpen,
         child: SpeedDial(
           backgroundColor: Colors.grey[900],
           foregroundColor: Colors.grey[200],
@@ -226,7 +225,7 @@ class _CanteenViewState extends State<CanteenView> {
 
                       // work schedule
                       Visibility(
-                        visible: workSchedules.isNotEmpty,
+                        visible: canteen.workSchedules.isNotEmpty,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -244,7 +243,7 @@ class _CanteenViewState extends State<CanteenView> {
                               ),
                               child: WorkScheduleListView(
                                 canteen: canteen,
-                                workSchedules: workSchedules,
+                                workSchedules: canteen.workSchedules,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -375,7 +374,7 @@ class _CanteenViewState extends State<CanteenView> {
     ]).then((value) {
       updateWidget(() {
         canteen = value[0] as Canteen;
-        workSchedules = value[1] as Set<WorkSchedule>;
+        canteen.workSchedules = value[1] as Set<WorkSchedule>;
         isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
         queueLengthReports = value[2] as List<QueueLengthReport>;
       });
@@ -494,7 +493,7 @@ class _CanteenViewState extends State<CanteenView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            """• Prosječna duljina reda u menzi računa se na temelju svih prijava u posljednjih 15 minuta.\n\n• Duljinu reda u menzi možeš prijaviti klikom na gumb u donjem desnom kutu ekrana.\n\n• Ako pogrešno prijaviš duljinu reda u menzi, možeš je poništiti klikom na jednu od svojih prijava u popisu prijava.""",
+            """• Prosječna duljina reda u menzi računa se na temelju svih prijava u posljednjih 15 minuta.\n\n• Duljinu reda u menzi, ako je otvorena, možeš prijaviti klikom na gumb u donjem desnom kutu ekrana.\n\n• Ako pogrešno prijaviš duljinu reda u menzi, možeš je poništiti klikom na jednu od svojih prijava u popisu prijava.""",
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,

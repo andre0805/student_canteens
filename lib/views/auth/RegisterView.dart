@@ -180,9 +180,8 @@ class _AuthViewState extends State<RegisterView> {
   void signUp() async {
     if (!validateInput()) return;
 
-    Utils.showLoadingDialog(context);
-
     try {
+      Utils.showLoadingDialog(context);
       SCUser user = SCUser(name: name, surname: surname, email: email);
       await authService.signUp(user, password);
       Navigator.pop(context);

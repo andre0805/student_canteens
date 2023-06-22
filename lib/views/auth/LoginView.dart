@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/utils/utils.dart';
 import 'RegisterView.dart';
@@ -193,11 +194,28 @@ class _AuthViewState extends State<LoginView> {
   }
 
   void signInWithGoogle() async {
+    GoogleSignInAccount googleAuth;
+    OAuthCredential credential;
+
     try {
-      await authService.signInWithGoogle();
+      Map<GoogleSignInAccount, OAuthCredential> googleUserData =
+          await authService.signInWithGoogle();
+      googleAuth = googleUserData.keys.first;
+      credential = googleUserData.values.first;
+    } catch (e) {
+      Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
+      return;
+    }
+
+    try {
+      Utils.showLoadingDialog(context);
+      await authService.signInGoogleUser(googleAuth, credential);
+      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
       handleFirebaseAuthError(e.code);
     } catch (e) {
+      Navigator.pop(context);
       Utils.showAlertDialog(context, "Greška", "Došlo je do pogreške");
     }
   }
@@ -205,10 +223,11 @@ class _AuthViewState extends State<LoginView> {
   void signIn() async {
     if (!validateInput()) return;
 
-    // Utils.showLoadingDialog(context);
+    Utils.showLoadingDialog(context);
 
     try {
       await authService.signIn(email, password);
+      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       handleFirebaseAuthError(e.code);

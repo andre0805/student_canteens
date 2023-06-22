@@ -3,10 +3,11 @@ import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/utils/CroatianMessages.dart';
-import 'package:student_canteens/views/auth/EmailVerificationView.dart';
+import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/auth/LoginView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:student_canteens/views/main/MainView.dart';
 import 'firebase_options.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -22,29 +23,8 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  final AuthService authService = AuthService.sharedInstance;
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  final SessionManager sessionManager = SessionManager.sharedInstance;
-  final GCF gcf = GCF.sharedInstance;
-
-  bool isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    subscribeToAuthChanges();
-    updateWidget(() {
-      isLoading = true;
-    });
-  }
 
   // This widget is the root of your application.
   @override
@@ -71,15 +51,44 @@ class _MyAppState extends State<MyApp> {
           color: Colors.blue,
         ),
       ),
-      home: Scaffold(
-        body: Center(
-          child: isLoading
-              ? const CircularProgressIndicator()
-              : SessionManager.sharedInstance.currentUser == null
-                  ? const LoginView()
-                  : const EmailVerificationView(),
-        ),
-      ),
+      home: const HomeView(),
+    );
+  }
+}
+
+class HomeView extends StatefulWidget {
+  const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _MainViewState();
+}
+
+class _MainViewState extends State<HomeView> {
+  final AuthService authService = AuthService.sharedInstance;
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final SessionManager sessionManager = SessionManager.sharedInstance;
+  final GCF gcf = GCF.sharedInstance;
+
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    subscribeToAuthChanges();
+    updateWidget(() {
+      isLoading = true;
+    });
+  }
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: isLoading
+          ? const CircularProgressIndicator()
+          : SessionManager.sharedInstance.currentUser == null
+              ? const LoginView()
+              : MainView(),
     );
   }
 
@@ -89,11 +98,16 @@ class _MyAppState extends State<MyApp> {
 
   void subscribeToAuthChanges() {
     firebaseAuth.authStateChanges().listen((User? user) async {
+      if (!isLoading) Utils.showLoadingDialog(context);
+
       if (user == null) {
         await handleLogout();
       } else {
         await handleLogin(user);
       }
+
+      if (!isLoading) Navigator.pop(context);
+
       updateWidget(() {
         isLoading = false;
       });

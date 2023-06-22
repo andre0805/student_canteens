@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:student_canteens/models/QueueLength.dart';
+import 'package:student_canteens/models/WorkSchedule.dart';
+import 'package:student_canteens/utils/TimeOfDayExtension.dart';
 
 class Canteen {
   final int id;
@@ -13,6 +16,7 @@ class Canteen {
   final String latitude;
   final String longitude;
   final QueueLength queueLength;
+  Set<WorkSchedule> workSchedules = {};
 
   Canteen({
     required this.id,
@@ -44,5 +48,28 @@ class Canteen {
       longitude: json['longitude'],
       queueLength: QueueLengthExtension.fromInt(json['queue_length']),
     );
+  }
+
+  bool get isOpen {
+    TimeOfDay currentTime = TimeOfDay.now();
+    int dayOfWeek = DateTime.now().weekday;
+
+    Set<WorkSchedule> todayWorkSchedules = workSchedules
+        .where((workSchedule) => workSchedule.dayOfWeek == dayOfWeek)
+        .toSet();
+
+    if (todayWorkSchedules.isEmpty) return false;
+
+    for (WorkSchedule workSchedule in todayWorkSchedules) {
+      TimeOfDay? openTime = workSchedule.getOpenTimeOfDay();
+      TimeOfDay? closeTime = workSchedule.getCloseTimeOfDay();
+
+      if (openTime == null || closeTime == null) continue;
+
+      if (currentTime.isAfter(openTime) && currentTime.isBefore(closeTime))
+        return true;
+    }
+
+    return false;
   }
 }
