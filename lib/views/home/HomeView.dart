@@ -4,9 +4,11 @@ import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
+import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/views/canteens/CanteensView.dart';
 import 'package:student_canteens/views/favorite_canteens/FavoriteCanteensView.dart';
 import 'package:student_canteens/views/home/DrawerItem.dart';
+import 'package:student_canteens/views/map/MapView.dart';
 
 int selectedDrawerItemIndex = 0;
 
@@ -20,6 +22,7 @@ class _HomeViewState extends State<HomeView> {
   final AuthService authService = AuthService.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final SessionManager sessionManager = SessionManager.sharedInstance;
+  final StorageService storageService = StorageService.sharedInstance;
 
   SCUser? currentUser;
   String? profileImageUrl;
@@ -27,11 +30,19 @@ class _HomeViewState extends State<HomeView> {
   final views = [
     const CanteensView(),
     const FavoriteCanteensView(),
+    MapView(),
   ];
 
   @override
   void initState() {
     super.initState();
+    Future.wait([
+      storageService.getInt("selectedDrawerItemIndex"),
+    ]).then((values) {
+      updateWidget(() {
+        selectedDrawerItemIndex = values[0] ?? 0;
+      });
+    });
     currentUser = sessionManager.currentUser;
     profileImageUrl = firebaseAuth.currentUser?.photoURL;
   }
@@ -92,6 +103,7 @@ class _HomeViewState extends State<HomeView> {
               onTap: () {
                 setState(() {
                   selectedDrawerItemIndex = 0;
+                  storageService.saveInt("selectedDrawerItemIndex", 0);
                 });
                 Navigator.pop(context);
               },
@@ -103,6 +115,7 @@ class _HomeViewState extends State<HomeView> {
               onTap: () {
                 setState(() {
                   selectedDrawerItemIndex = 1;
+                  storageService.saveInt("selectedDrawerItemIndex", 1);
                 });
                 Navigator.pop(context);
               },
@@ -114,6 +127,7 @@ class _HomeViewState extends State<HomeView> {
               onTap: () {
                 updateWidget(() {
                   selectedDrawerItemIndex = 2;
+                  storageService.saveInt("selectedDrawerItemIndex", 2);
                 });
                 Navigator.pop(context);
               },

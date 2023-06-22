@@ -17,7 +17,7 @@ class FavoriteCanteensView extends StatefulWidget {
 
 class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
   AuthService authService = AuthService.sharedInstance;
-  StorageService storageService = StorageService();
+  StorageService storageService = StorageService.sharedInstance;
   SessionManager sessionManager = SessionManager.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
@@ -53,6 +53,7 @@ class _FavoriteCanteensViewState extends State<FavoriteCanteensView> {
         slivers: [
           // app bar
           SliverAppBar.medium(
+            centerTitle: true,
             surfaceTintColor: Colors.grey[900],
             title: const Text(
               "Omiljene menze",

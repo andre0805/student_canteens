@@ -18,7 +18,7 @@ class CanteensView extends StatefulWidget {
 
 class _CanteensViewState extends State<CanteensView> {
   AuthService authService = AuthService.sharedInstance;
-  StorageService storageService = StorageService();
+  StorageService storageService = StorageService.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
   Map<String, List<Canteen>> canteenMap = HashMap();
@@ -83,6 +83,7 @@ class _CanteensViewState extends State<CanteensView> {
         slivers: [
           // app bar
           SliverAppBar.medium(
+            centerTitle: true,
             surfaceTintColor: Colors.grey[900],
             title: const Text(
               "Popis menza",

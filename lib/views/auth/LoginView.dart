@@ -62,6 +62,7 @@ class _AuthViewState extends State<LoginView> {
                       borderSide: BorderSide(color: Colors.grey.shade900),
                     ),
                   ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(
                   height: 8,
