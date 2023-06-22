@@ -6,7 +6,7 @@ import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/Comparator.dart';
-import 'package:student_canteens/views/canteens/CanteenView.dart';
+import 'package:student_canteens/views/canteen/CanteenView.dart';
 import 'package:student_canteens/views/canteens/CanteenListItemView.dart';
 
 class CanteensView extends StatefulWidget {
@@ -76,106 +76,91 @@ class _CanteensViewState extends State<CanteensView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: RefreshIndicator(
-        onRefresh: refreshWidget,
-        edgeOffset: 180,
-        child: CustomScrollView(
-          slivers: [
-            // app bar
-            SliverAppBar.medium(
-              surfaceTintColor: Colors.grey[900],
-              leading: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.menu),
-              ),
-              title: const Text(
-                "Popis menza",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    authService.signOut();
-                  },
-                  icon: const Icon(Icons.logout),
-                ),
-              ],
-            ),
-
-            // loading indicator
-            SliverVisibility(
-              visible: isLoading,
-              sliver: const SliverFillRemaining(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
+    return RefreshIndicator(
+      onRefresh: refreshWidget,
+      edgeOffset: 180,
+      child: CustomScrollView(
+        slivers: [
+          // app bar
+          SliverAppBar.medium(
+            surfaceTintColor: Colors.grey[900],
+            title: const Text(
+              "Popis menza",
+              style: TextStyle(
+                color: Colors.white,
               ),
             ),
+          ),
 
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 8),
+          // loading indicator
+          SliverVisibility(
+            visible: isLoading,
+            sliver: const SliverFillRemaining(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
+          ),
 
-            // city picker
-            SliverVisibility(
-              visible: !isLoading,
-              sliver: SliverToBoxAdapter(
-                child: Center(
-                  child: SizedBox(
-                    width: 220,
-                    height: 50,
-                    child: DropdownButton(
-                      focusColor: Colors.white,
-                      isExpanded: true,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                      ),
-                      iconSize: 26,
-                      value: selectedCity,
-                      items: cities.map((e) {
-                        return DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        selectCity(value.toString());
-                      },
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 8),
+          ),
+
+          // city picker
+          SliverVisibility(
+            visible: !isLoading,
+            sliver: SliverToBoxAdapter(
+              child: Center(
+                child: SizedBox(
+                  width: 220,
+                  height: 50,
+                  child: DropdownButton(
+                    focusColor: Colors.white,
+                    isExpanded: true,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
                     ),
-                  ),
-                ),
-              ),
-            ),
-
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 8),
-            ),
-
-            // list of canteens
-            SliverVisibility(
-              visible: !isLoading,
-              sliver: SliverPadding(
-                padding: const EdgeInsets.only(bottom: 24),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: selectedCanteens.length,
-                    (context, index) {
-                      return CanteenListItemView(
-                        canteen: selectedCanteens[index],
-                        onTap: () => selectCanteen(selectedCanteens[index]),
+                    iconSize: 26,
+                    value: selectedCity,
+                    items: cities.map((e) {
+                      return DropdownMenuItem(
+                        value: e,
+                        child: Text(e),
                       );
+                    }).toList(),
+                    onChanged: (value) {
+                      selectCity(value.toString());
                     },
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 8),
+          ),
+
+          // list of canteens
+          SliverVisibility(
+            visible: !isLoading,
+            sliver: SliverPadding(
+              padding: const EdgeInsets.only(bottom: 24),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  childCount: selectedCanteens.length,
+                  (context, index) {
+                    return CanteenListItemView(
+                      canteen: selectedCanteens[index],
+                      onTap: () => selectCanteen(selectedCanteens[index]),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

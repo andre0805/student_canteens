@@ -3,7 +3,7 @@ import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/QueueLengthReport.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/utils/utils.dart';
-import 'package:student_canteens/views/canteens/QueueLengthView.dart';
+import 'package:student_canteens/views/queue_length/QueueLengthView.dart';
 
 class QueueLengthReportsView extends StatelessWidget {
   final Canteen canteen;

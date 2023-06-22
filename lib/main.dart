@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_canteens/services/AuthService.dart';
+import 'package:student_canteens/services/GCF.dart';
+import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/utils/CroatianMessages.dart';
 import 'package:student_canteens/views/auth/EmailVerificationView.dart';
 import 'package:student_canteens/views/auth/LoginView.dart';
@@ -30,11 +32,18 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final AuthService authService = AuthService.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final SessionManager sessionManager = SessionManager.sharedInstance;
+  final GCF gcf = GCF.sharedInstance;
+
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     subscribeToAuthChanges();
+    updateWidget(() {
+      isLoading = true;
+    });
   }
 
   // This widget is the root of your application.
@@ -63,18 +72,19 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       home: Scaffold(
-        body: StreamBuilder<User?>(
-          stream: firebaseAuth.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return const EmailVerificationView();
-            } else {
-              return const LoginView();
-            }
-          },
+        body: Center(
+          child: isLoading
+              ? const CircularProgressIndicator()
+              : SessionManager.sharedInstance.currentUser == null
+                  ? const LoginView()
+                  : const EmailVerificationView(),
         ),
       ),
     );
+  }
+
+  void updateWidget(VoidCallback callback) {
+    if (mounted) setState(callback);
   }
 
   void subscribeToAuthChanges() {
@@ -84,14 +94,21 @@ class _MyAppState extends State<MyApp> {
       } else {
         await handleLogin(user);
       }
+      updateWidget(() {
+        isLoading = false;
+      });
     });
   }
 
   Future<void> handleLogin(User user) async {
     await authService.signInUser(user);
+    sessionManager.currentUser?.favoriteCanteens =
+        await gcf.getFavoriteCanteens();
+    updateWidget(() {});
   }
 
   Future<void> handleLogout() async {
     await authService.signOut();
+    updateWidget(() {});
   }
 }

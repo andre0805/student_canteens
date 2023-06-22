@@ -10,10 +10,10 @@ import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/SessionManager.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/utils.dart';
-import 'package:student_canteens/views/canteens/CanteenMapView.dart';
-import 'package:student_canteens/views/canteens/QueueLengthReportsView.dart';
-import 'package:student_canteens/views/canteens/QueueLengthView.dart';
-import 'package:student_canteens/views/canteens/WorkScheduleListView.dart';
+import 'package:student_canteens/views/canteen/CanteenMapView.dart';
+import 'package:student_canteens/views/queue_length/QueueLengthReportsView.dart';
+import 'package:student_canteens/views/queue_length/QueueLengthView.dart';
+import 'package:student_canteens/views/canteen/WorkScheduleListView.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CanteenView extends StatefulWidget {
@@ -56,16 +56,13 @@ class _CanteenViewState extends State<CanteenView> {
 
     Future.wait([
       getWorkschedule(),
-      getFavoriteCanteens(),
       getQueueLengthReports(),
     ]).then((value) {
       updateWidget(() {
         workSchedules = value[0] as Set<WorkSchedule>;
-        sessionManager.currentUser?.favoriteCanteens = value[1] as Set<int>;
+        isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
+        queueLengthReports = value[1] as List<QueueLengthReport>;
         isLoading = false;
-        isFavorite =
-            sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
-        queueLengthReports = value[2] as List<QueueLengthReport>;
       });
     });
 
@@ -374,16 +371,13 @@ class _CanteenViewState extends State<CanteenView> {
     Future.wait([
       getCanteen(),
       getWorkschedule(),
-      getFavoriteCanteens(),
       getQueueLengthReports(),
     ]).then((value) {
       updateWidget(() {
         canteen = value[0] as Canteen;
         workSchedules = value[1] as Set<WorkSchedule>;
-        sessionManager.currentUser?.favoriteCanteens = value[2] as Set<int>;
-        isFavorite =
-            sessionManager.currentUser?.isFavorite(canteen.id) ?? false;
-        queueLengthReports = value[3] as List<QueueLengthReport>;
+        isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
+        queueLengthReports = value[2] as List<QueueLengthReport>;
       });
     });
   }
@@ -408,34 +402,42 @@ class _CanteenViewState extends State<CanteenView> {
     return gcf.getQueueLengthReports(canteen.id);
   }
 
-  Future<Set<int>> getFavoriteCanteens() {
-    return gcf.getFavoriteCanteens();
-  }
-
-  void addFavoriteCanteen() {
+  void addFavoriteCanteen() async {
     updateWidget(() {
-      isFavorite = !isFavorite;
+      isFavorite = true;
     });
 
-    gcf.addFavoriteCanteen(canteen.id).then((value) {
+    bool result = await gcf.addFavoriteCanteen(canteen);
+
+    if (result) {
+      await parentRefreshWidget();
+      if (mounted)
+        Utils.showSnackBarMessage(context, "Dodano u omiljene menze!");
+    } else {
       updateWidget(() {
-        isFavorite = value;
+        isFavorite = false;
       });
-    });
+      if (mounted) Utils.showSnackBarMessage(context, "Greška!");
+    }
   }
 
-  void removeFavoriteCanteen() {
+  void removeFavoriteCanteen() async {
     updateWidget(() {
-      isFavorite = !isFavorite;
+      isFavorite = false;
     });
 
-    gcf.removeFavoriteCanteen(canteen.id).then(
-      (value) {
-        updateWidget(() {
-          isFavorite = !value;
-        });
-      },
-    );
+    bool result = await gcf.removeFavoriteCanteen(canteen);
+
+    if (result) {
+      await parentRefreshWidget();
+      if (mounted)
+        Utils.showSnackBarMessage(context, "Uklonjeno iz omiljenih menza!");
+    } else {
+      updateWidget(() {
+        isFavorite = true;
+      });
+      if (mounted) Utils.showSnackBarMessage(context, "Greška!");
+    }
   }
 
   void reportQueueLength(QueueLength queueLength) async {

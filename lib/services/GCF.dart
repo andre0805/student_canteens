@@ -111,10 +111,10 @@ class GCF {
     }
   }
 
-  Future<Set<int>> getFavoriteCanteens() async {
+  Future<List<Canteen>> getFavoriteCanteens() async {
     String? userId = sessionManager.currentUser?.id;
 
-    if (userId == null) return {};
+    if (userId == null) return [];
 
     http.Response response = await http.post(
       Uri.parse(BASE_URL + GET_FAVORITE_CANTEENS),
@@ -130,17 +130,15 @@ class GCF {
 
     if (response.statusCode == 200) {
       final List<dynamic> json = jsonDecode(response.body);
-      final Set<int> favoriteCanteens = json
-          .map((e) => Map<String, int>.from(e))
-          .map((e) => e.values.first)
-          .toSet();
+      final List<Canteen> favoriteCanteens =
+          json.map((e) => Canteen.fromJson(e)).toList();
       return favoriteCanteens;
     } else {
-      return {};
+      return [];
     }
   }
 
-  Future<bool> addFavoriteCanteen(int canteenId) async {
+  Future<bool> addFavoriteCanteen(Canteen canteen) async {
     String? userId = sessionManager.currentUser?.id;
 
     if (userId == null) return false;
@@ -153,20 +151,20 @@ class GCF {
       body: jsonEncode(
         <String, dynamic>{
           "userId": userId,
-          "canteenId": canteenId,
+          "canteenId": canteen.id,
         },
       ),
     );
 
     if (response.statusCode == 201) {
-      sessionManager.currentUser?.favoriteCanteens.add(canteenId);
+      sessionManager.currentUser?.favoriteCanteens.add(canteen);
       return true;
     } else {
       return false;
     }
   }
 
-  Future<bool> removeFavoriteCanteen(int canteenId) async {
+  Future<bool> removeFavoriteCanteen(Canteen canteen) async {
     String? userId = sessionManager.currentUser?.id;
 
     if (userId == null) return false;
@@ -179,13 +177,14 @@ class GCF {
       body: jsonEncode(
         <String, dynamic>{
           "userId": userId,
-          "canteenId": canteenId,
+          "canteenId": canteen.id,
         },
       ),
     );
 
     if (response.statusCode == 200) {
-      sessionManager.currentUser?.favoriteCanteens.remove(canteenId);
+      sessionManager.currentUser?.favoriteCanteens
+          .removeWhere((element) => element.id == canteen.id);
       return true;
     } else {
       return false;
