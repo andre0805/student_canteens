@@ -1,4 +1,5 @@
 import 'package:student_canteens/models/Canteen.dart';
+import 'package:student_canteens/models/City.dart';
 import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/models/QueueLengthReport.dart';
 import 'package:student_canteens/models/SCUser.dart';
@@ -15,6 +16,7 @@ class GCF {
   static const String GET_CANTEEN = '/getCanteen';
   static const String GET_USER = '/getUser';
   static const String CREATE_USER = '/createUser';
+  static const String UPDATE_USER = '/updateUser';
   static const String GET_WORK_SCHEDULE = '/getWorkSchedule';
   static const String GET_FAVORITE_CANTEENS = '/getFavoriteCanteens';
   static const String ADD_FAVORITE_CANTEEN = '/addFavoriteCanteen';
@@ -22,6 +24,7 @@ class GCF {
   static const String REPORT_QUEUE_LENGTH = '/addReport';
   static const String REMOVE_QUEUE_LENGTH_REPORT = '/removeReport';
   static const String GET_QUEUE_LENGTH_REPORTS = '/getCanteenReports';
+  static const String GET_CANTEEN_CITIES = '/getCanteenCities';
 
   static const GCF sharedInstance = GCF._();
 
@@ -52,13 +55,32 @@ class GCF {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(
-        <String, String>{
+        <String, dynamic>{
           "name": user.name,
           "surname": user.surname,
           "email": user.email,
+          "cityId": user.city != null ? int.tryParse(user.city!) : null
         },
       ),
     );
+  }
+
+  Future<bool> updateUser(SCUser user) async {
+    http.Response response = await http.post(
+      Uri.parse(BASE_URL + UPDATE_USER),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        "id": user.id,
+        "name": user.name,
+        "surname": user.surname,
+        "email": user.email,
+        "cityId": user.city != null ? int.tryParse(user.city!) : null
+      }),
+    );
+
+    return response.statusCode == 200;
   }
 
   Future<List<Canteen>> getCanteens() async {
@@ -251,6 +273,22 @@ class GCF {
       return json.map((e) => QueueLengthReport.fromJson(e)).toList();
     } else {
       return [];
+    }
+  }
+
+  Future<Set<City>> getCanteenCities() async {
+    http.Response response = await http.get(
+      Uri.parse(BASE_URL + GET_CANTEEN_CITIES),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> json = jsonDecode(response.body);
+      return json.map((e) => City.fromJson(e)).toSet();
+    } else {
+      return {};
     }
   }
 }

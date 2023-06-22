@@ -5,6 +5,7 @@ class SCUser {
   final String name;
   final String surname;
   final String email;
+  final String? city;
   List<Canteen> favoriteCanteens;
 
   SCUser({
@@ -12,6 +13,7 @@ class SCUser {
     required this.name,
     required this.surname,
     required this.email,
+    required this.city,
     this.favoriteCanteens = const [],
   });
 
@@ -21,6 +23,7 @@ class SCUser {
       name: json['name'],
       surname: json['surname'],
       email: json['email'],
+      city: json['city'],
     );
   }
 

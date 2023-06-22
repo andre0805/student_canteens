@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:student_canteens/models/SCUser.dart';
 import 'package:student_canteens/services/AuthService.dart';
@@ -12,6 +13,7 @@ import 'package:student_canteens/views/canteens/CanteensView.dart';
 import 'package:student_canteens/views/favorite_canteens/FavoriteCanteensView.dart';
 import 'package:student_canteens/views/main/DrawerItem.dart';
 import 'package:student_canteens/views/map/MapView.dart';
+import 'package:student_canteens/views/profile/EditProfileView.dart';
 
 int selectedDrawerItemIndex = 0;
 
@@ -84,24 +86,21 @@ class _MainViewState extends State<MainView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   UserAccountsDrawerHeader(
-                    accountName: Text(
-                      currentUser?.getDisplayName() ?? "",
-                      style: TextStyle(
-                        color: Colors.grey[200],
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    accountEmail: Text(
-                      currentUser?.email ?? "",
-                      style: TextStyle(
-                        color: Colors.grey[200],
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    margin: const EdgeInsets.all(0),
+                    arrowColor: Colors.grey[900] ?? Colors.black,
+                    onDetailsPressed: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context) => EditProfileView(
+                            parentRefreshWidget: refreshWidget,
+                          ),
+                        ),
+                      );
+                    },
                     currentAccountPicture: Padding(
-                      padding: const EdgeInsets.all(4.0),
+                      padding: const EdgeInsets.all(4),
                       child: CircleAvatar(
                         backgroundColor: Colors.grey[200],
                         backgroundImage: profileImageUrl != null
@@ -119,6 +118,28 @@ class _MainViewState extends State<MainView> {
                             : null,
                       ),
                     ),
+                    accountName: Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Text(
+                        currentUser?.getDisplayName() ?? "",
+                        style: TextStyle(
+                          color: Colors.grey[200],
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    accountEmail: Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Text(
+                        currentUser?.email ?? "",
+                        style: TextStyle(
+                          color: Colors.grey[200],
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.grey[900],
                     ),
@@ -129,10 +150,7 @@ class _MainViewState extends State<MainView> {
                     title: "Popis menza",
                     icon: Icons.list,
                     onTap: () {
-                      setState(() {
-                        selectedDrawerItemIndex = 0;
-                        storageService.saveInt("selectedDrawerItemIndex", 0);
-                      });
+                      selectDrawerItemIndex(0);
                       Navigator.pop(context);
                     },
                   ),
@@ -142,10 +160,7 @@ class _MainViewState extends State<MainView> {
                     title: "Omiljene menze",
                     icon: Icons.star,
                     onTap: () {
-                      setState(() {
-                        selectedDrawerItemIndex = 1;
-                        storageService.saveInt("selectedDrawerItemIndex", 1);
-                      });
+                      selectDrawerItemIndex(1);
                       Navigator.pop(context);
                     },
                   ),
@@ -155,10 +170,7 @@ class _MainViewState extends State<MainView> {
                     title: "Karta",
                     icon: Icons.map,
                     onTap: () {
-                      updateWidget(() {
-                        selectedDrawerItemIndex = 2;
-                        storageService.saveInt("selectedDrawerItemIndex", 2);
-                      });
+                      selectDrawerItemIndex(2);
                       Navigator.pop(context);
                     },
                   ),
@@ -169,6 +181,22 @@ class _MainViewState extends State<MainView> {
                   ),
                   DrawerItem(
                     index: 3,
+                    title: "Uredi profil",
+                    icon: Icons.edit,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context) => EditProfileView(
+                            parentRefreshWidget: refreshWidget,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  DrawerItem(
+                    index: 4,
                     title: "Odjava",
                     icon: Icons.logout,
                     onTap: () {
@@ -185,6 +213,23 @@ class _MainViewState extends State<MainView> {
 
   void updateWidget(VoidCallback callback) {
     if (mounted) setState(callback);
+  }
+
+  void refreshWidget() {
+    updateWidget(() {
+      currentUser = sessionManager.currentUser;
+      profileImageUrl = firebaseAuth.currentUser?.photoURL;
+    });
+  }
+
+  void selectDrawerItemIndex(int index) {
+    updateWidget(() {
+      selectedDrawerItemIndex = index;
+    });
+
+    if (index != 3) {
+      storageService.saveInt("selectedDrawerItemIndex", index);
+    }
   }
 
   void checkEmailVerified() async {
