@@ -17,6 +17,7 @@ class Canteen {
   final String longitude;
   final QueueLength queueLength;
   Set<WorkSchedule> workSchedules = {};
+  double distanceFromUser = 0;
 
   Canteen({
     required this.id,
@@ -71,5 +72,16 @@ class Canteen {
     }
 
     return false;
+  }
+
+  String getDistanceFromUserString() {
+    if (distanceFromUser == 0) return 'N/A';
+
+    if (distanceFromUser < 1000)
+      return '${distanceFromUser.toStringAsFixed(0)}m';
+
+    distanceFromUser /= 1000;
+
+    return '${distanceFromUser.toStringAsFixed(1)}km';
   }
 }

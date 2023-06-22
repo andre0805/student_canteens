@@ -291,22 +291,17 @@ class _CanteensViewState extends State<CanteensView> {
           return;
         }
 
+        selectedCanteens.forEach((canteen) {
+          canteen.distanceFromUser = locationService.distanceFromPosition(
+            userLocation.latitude,
+            userLocation.longitude,
+            double.parse(canteen.latitude),
+            double.parse(canteen.longitude),
+          );
+        });
+
         comparator = (c1, c2) {
-          double distance1 = locationService.distanceFromPosition(
-            userLocation.latitude,
-            userLocation.longitude,
-            double.parse(c1.latitude),
-            double.parse(c1.longitude),
-          );
-
-          double distance2 = locationService.distanceFromPosition(
-            userLocation.latitude,
-            userLocation.longitude,
-            double.parse(c2.latitude),
-            double.parse(c2.longitude),
-          );
-
-          return distance1.compareTo(distance2);
+          return c1.distanceFromUser.compareTo(c2.distanceFromUser);
         };
         break;
       default:
