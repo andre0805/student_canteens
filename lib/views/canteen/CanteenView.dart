@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:student_canteens/models/Canteen.dart';
 import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/models/QueueLengthReport.dart';
 import 'package:student_canteens/models/WorkSchedule.dart';
 import 'package:student_canteens/services/GCF.dart';
+import 'package:student_canteens/services/LocationService.dart';
 import 'package:student_canteens/services/SessionManager.dart';
-import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteen/CanteenMapView.dart';
 import 'package:student_canteens/views/queue_length/QueueLengthReportsView.dart';
@@ -36,8 +37,8 @@ class _CanteenViewState extends State<CanteenView> {
 
   _CanteenViewState({required this.canteen, required this.parentRefreshWidget});
 
+  LocationService locationService = LocationService.sharedInstance;
   SessionManager sessionManager = SessionManager.sharedInstance;
-  StorageService storageService = StorageService.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
   List<QueueLengthReport> queueLengthReports = [];
@@ -56,17 +57,30 @@ class _CanteenViewState extends State<CanteenView> {
     Future.wait([
       getWorkschedule(),
       getQueueLengthReports(),
+      getCurrentPosition(),
     ]).then((value) {
+      Position? currentPosition = value[2] as Position?;
+
       updateWidget(() {
         canteen.workSchedules = value[0] as Set<WorkSchedule>;
         isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
         queueLengthReports = value[1] as List<QueueLengthReport>;
+
+        if (currentPosition != null) {
+          canteen.distanceFromUser = Geolocator.distanceBetween(
+            double.parse(canteen.latitude),
+            double.parse(canteen.longitude),
+            currentPosition.latitude,
+            currentPosition.longitude,
+          );
+        }
+
         isLoading = false;
       });
     });
 
     refreshDataTimer = Timer.periodic(
-      const Duration(seconds: 10),
+      const Duration(seconds: 20),
       (timer) {
         refreshWidget();
       },
@@ -391,6 +405,8 @@ class _CanteenViewState extends State<CanteenView> {
   }
 
   Future<void> refreshWidget() async {
+    Position? currentPosition = await getCurrentPosition();
+
     Future.wait([
       getCanteen(),
       getWorkschedule(),
@@ -401,6 +417,15 @@ class _CanteenViewState extends State<CanteenView> {
         canteen.workSchedules = value[1] as Set<WorkSchedule>;
         isFavorite = sessionManager.currentUser?.isFavorite(canteen) ?? false;
         queueLengthReports = value[2] as List<QueueLengthReport>;
+
+        if (currentPosition != null) {
+          canteen.distanceFromUser = Geolocator.distanceBetween(
+            double.parse(canteen.latitude),
+            double.parse(canteen.longitude),
+            currentPosition.latitude,
+            currentPosition.longitude,
+          );
+        }
       });
     });
   }
@@ -505,6 +530,16 @@ class _CanteenViewState extends State<CanteenView> {
         Utils.showSnackBarMessage(context, "Greška!");
       }
       Navigator.pop(context);
+    }
+  }
+
+  Future<Position?> getCurrentPosition() async {
+    try {
+      Position position = await locationService.getCurrentPosition();
+      return position;
+    } catch (e) {
+      Utils.showAlertDialog(context, "Greška", e.toString());
+      return null;
     }
   }
 

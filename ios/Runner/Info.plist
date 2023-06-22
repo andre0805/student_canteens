@@ -47,20 +47,20 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>com.googleusercontent.apps.839547124674-vif74ncbu6sdm8oiib2t48pienhfcba8</string>
-            </array>
-        </dict>
-    </array>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Aplikaciji je potrebna tvoja lokacija kako bi ju mogli prikazati na karti menza ili za sortiranje menza ne temelju tvoje udaljenosti od njih.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Aplikaciji je potrebna tvoja lokacija kako bi ju mogli prikazati na karti menza ili za sortiranje menza ne temelju tvoje udaljenosti od njih.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.839547124674-vif74ncbu6sdm8oiib2t48pienhfcba8</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Tvoja lokacija nam je potrebna kako bismo ti mogli prikazati najbliže menze u okruženju i sortirati ih po udaljenosti, a moći ćeš i vidjeti svoju lokaciju na karti za brži put do željene menze.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Tvoja lokacija nam je potrebna kako bismo ti mogli prikazati najbliže menze u okruženju i sortirati ih po udaljenosti, a moći ćeš i vidjeti svoju lokaciju na karti za brži put do željene menze.</string>
 </dict>
 </plist>

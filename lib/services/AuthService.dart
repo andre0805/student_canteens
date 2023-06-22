@@ -8,7 +8,6 @@ class AuthService {
   final GCF gcf = GCF.sharedInstance;
   final SessionManager sessionManager = SessionManager.sharedInstance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-
   static final AuthService sharedInstance = AuthService._();
 
   AuthService._();
@@ -34,7 +33,7 @@ class AuthService {
       await signOut();
       throw Exception("User not found");
     } else {
-      sessionManager.signIn(scUser);
+      await sessionManager.signIn(scUser);
     }
   }
 
@@ -101,7 +100,7 @@ class AuthService {
       await firebaseAuth.signOut();
     }
 
-    sessionManager.signOut();
+    await sessionManager.signOut();
   }
 
   Future<void> forgotPassword(String email) async {

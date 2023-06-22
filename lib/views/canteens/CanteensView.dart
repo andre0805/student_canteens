@@ -9,6 +9,7 @@ import 'package:student_canteens/services/GCF.dart';
 import 'package:student_canteens/services/LocationService.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/Comparator.dart';
+import 'package:student_canteens/utils/Constants.dart';
 import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteen/CanteenView.dart';
 import 'package:student_canteens/views/canteens/CanteenListItemView.dart';
@@ -31,7 +32,7 @@ class _CanteensViewState extends State<CanteensView> {
     return HR_Comparator.compare(key1, key2);
   });
 
-  String selectedCity = "";
+  String? selectedCity;
   List<Canteen> selectedCanteens = [];
   String selectedSortCriteria = "";
   bool isLoading = false;
@@ -46,8 +47,9 @@ class _CanteensViewState extends State<CanteensView> {
     });
 
     Future.wait([
-      storageService.getString("selectedSortCriteria"),
-      storageService.getString("selectedCity"),
+      storageService.getString(Constants.selectedSortCriteriaKey),
+      storageService.getString(Constants.selectedCityKey),
+      storageService.getString(Constants.userCityKey),
       getCanteens(),
     ]).then((value) {
       updateWidget(() {
@@ -62,10 +64,9 @@ class _CanteensViewState extends State<CanteensView> {
           selectedCanteens = canteenMap[selectedCity] ?? [];
         } catch (e) {
           try {
-            selectedCity = cities.first;
+            selectedCity = value[2] as String;
             selectedCanteens = canteenMap[selectedCity] ?? [];
           } catch (e) {
-            selectedCity = "";
             selectedCanteens = [];
           }
         }
@@ -77,7 +78,7 @@ class _CanteensViewState extends State<CanteensView> {
     });
 
     refreshDataTimer = Timer.periodic(
-      const Duration(seconds: 10),
+      const Duration(seconds: 20),
       (timer) {
         refreshWidget();
       },
@@ -172,6 +173,7 @@ class _CanteensViewState extends State<CanteensView> {
                     ),
                     iconSize: 26,
                     value: selectedCity,
+                    hint: const Text("Odaberi grad"),
                     items: cities.map((e) {
                       return DropdownMenuItem(
                         value: e,
@@ -226,12 +228,25 @@ class _CanteensViewState extends State<CanteensView> {
     });
   }
 
-  Future<void> getCanteens() {
+  Future<void> getCanteens() async {
     canteenMap.clear();
+
+    Position? userLocation = await getCurrentPosition();
+
     return gcf.getCanteens().then((value) {
       for (Canteen canteen in value) {
+        if (userLocation != null) {
+          canteen.distanceFromUser = locationService.distanceFromPosition(
+            userLocation.latitude,
+            userLocation.longitude,
+            double.parse(canteen.latitude),
+            double.parse(canteen.longitude),
+          );
+        }
+
         String city = canteen.city;
         cities.add(city);
+
         if (canteenMap.containsKey(city)) {
           canteenMap[city]?.add(canteen);
         } else {
@@ -244,7 +259,7 @@ class _CanteensViewState extends State<CanteensView> {
   }
 
   void selectCity(String city) async {
-    await storageService.saveString("selectedCity", city);
+    await storageService.saveString(Constants.selectedCityKey, city);
 
     updateWidget(() {
       selectedCity = city;
@@ -264,7 +279,8 @@ class _CanteensViewState extends State<CanteensView> {
   }
 
   void sortCanteensBy(String criteria) async {
-    storageService.saveString("selectedSortCriteria", criteria);
+    await storageService.saveString(
+        Constants.selectedSortCriteriaKey, criteria);
     selectedSortCriteria = criteria;
 
     if (selectedCanteens.isEmpty || selectedCanteens.length == 1) return;

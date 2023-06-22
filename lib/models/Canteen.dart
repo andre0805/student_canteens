@@ -80,8 +80,6 @@ class Canteen {
     if (distanceFromUser < 1000)
       return '${distanceFromUser.toStringAsFixed(0)}m';
 
-    distanceFromUser /= 1000;
-
-    return '${distanceFromUser.toStringAsFixed(1)}km';
+    return '${(distanceFromUser / 1000).toStringAsFixed(1)}km';
   }
 }

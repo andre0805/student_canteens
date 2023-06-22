@@ -24,4 +24,9 @@ class StorageService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getInt(key);
   }
+
+  Future<void> removeKey(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(key);
+  }
 }
