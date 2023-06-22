@@ -96,8 +96,9 @@ class _MapViewState extends State<MapView> {
               zoomGesturesEnabled: true,
               rotateGesturesEnabled: false,
               tiltGesturesEnabled: false,
-              myLocationButtonEnabled: false,
-              myLocationEnabled: false,
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
+              padding: const EdgeInsets.all(20),
               initialCameraPosition: CameraPosition(
                 target: center,
                 zoom: 6.5,

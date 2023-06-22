@@ -54,7 +54,7 @@ class _CanteenMapViewState extends State<CanteenMapView> {
       rotateGesturesEnabled: false,
       tiltGesturesEnabled: false,
       myLocationButtonEnabled: false,
-      myLocationEnabled: false,
+      myLocationEnabled: true,
       initialCameraPosition: CameraPosition(
         target: canteenLocation,
         zoom: 13.0,

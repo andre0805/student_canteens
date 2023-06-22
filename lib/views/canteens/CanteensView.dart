@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:student_canteens/models/Canteen.dart';
+import 'package:student_canteens/models/QueueLength.dart';
 import 'package:student_canteens/services/AuthService.dart';
 import 'package:student_canteens/services/GCF.dart';
+import 'package:student_canteens/services/LocationService.dart';
 import 'package:student_canteens/services/StorageService.dart';
 import 'package:student_canteens/utils/Comparator.dart';
+import 'package:student_canteens/utils/utils.dart';
 import 'package:student_canteens/views/canteen/CanteenView.dart';
 import 'package:student_canteens/views/canteens/CanteenListItemView.dart';
 
@@ -19,6 +23,7 @@ class CanteensView extends StatefulWidget {
 class _CanteensViewState extends State<CanteensView> {
   AuthService authService = AuthService.sharedInstance;
   StorageService storageService = StorageService.sharedInstance;
+  LocationService locationService = LocationService.sharedInstance;
   GCF gcf = GCF.sharedInstance;
 
   Map<String, List<Canteen>> canteenMap = HashMap();
@@ -28,6 +33,7 @@ class _CanteensViewState extends State<CanteensView> {
 
   String selectedCity = "";
   List<Canteen> selectedCanteens = [];
+  String selectedSortCriteria = "";
   bool isLoading = false;
   Timer? refreshDataTimer;
 
@@ -40,12 +46,19 @@ class _CanteensViewState extends State<CanteensView> {
     });
 
     Future.wait([
+      storageService.getString("selectedSortCriteria"),
       storageService.getString("selectedCity"),
       getCanteens(),
     ]).then((value) {
       updateWidget(() {
         try {
-          selectedCity = value[0] as String;
+          selectedSortCriteria = value[0] as String;
+        } catch (e) {
+          selectedSortCriteria = "name";
+        }
+
+        try {
+          selectedCity = value[1] as String;
           selectedCanteens = canteenMap[selectedCity] ?? [];
         } catch (e) {
           try {
@@ -56,6 +69,9 @@ class _CanteensViewState extends State<CanteensView> {
             selectedCanteens = [];
           }
         }
+
+        sortCanteensBy(selectedSortCriteria);
+
         isLoading = false;
       });
     });
@@ -91,6 +107,38 @@ class _CanteensViewState extends State<CanteensView> {
                 color: Colors.white,
               ),
             ),
+            actions: [
+              PopupMenuButton(
+                icon: Icon(
+                  Icons.sort,
+                  color: Colors.grey[200],
+                ),
+                surfaceTintColor: Colors.grey[200],
+                onSelected: (value) => sortCanteensBy(value),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      value: "name",
+                      child: Text(selectedSortCriteria == 'name'
+                          ? "• Sortiraj po: Naziv"
+                          : "  Sortiraj po: Naziv"),
+                    ),
+                    PopupMenuItem(
+                      value: "queueLength",
+                      child: Text(selectedSortCriteria == 'queueLength'
+                          ? "• Sortiraj po: Duljina reda"
+                          : "  Sortiraj po: Duljina reda"),
+                    ),
+                    PopupMenuItem(
+                      value: "distance",
+                      child: Text(selectedSortCriteria == 'distance'
+                          ? "• Sortiraj po: Udaljenost"
+                          : "  Sortiraj po: Udaljenost"),
+                    ),
+                  ];
+                },
+              ),
+            ],
           ),
 
           // loading indicator
@@ -173,9 +221,8 @@ class _CanteensViewState extends State<CanteensView> {
 
   Future<void> refreshWidget() async {
     return getCanteens().then((value) {
-      updateWidget(() {
-        selectedCanteens = canteenMap[selectedCity] ?? [];
-      });
+      selectedCanteens = canteenMap[selectedCity] ?? [];
+      sortCanteensBy(selectedSortCriteria);
     });
   }
 
@@ -202,6 +249,7 @@ class _CanteensViewState extends State<CanteensView> {
     updateWidget(() {
       selectedCity = city;
       selectedCanteens = canteenMap[city] ?? [];
+      sortCanteensBy(selectedSortCriteria);
     });
   }
 
@@ -213,5 +261,70 @@ class _CanteensViewState extends State<CanteensView> {
             CanteenView(canteen: canteen, parentRefreshWidget: refreshWidget),
       ),
     );
+  }
+
+  void sortCanteensBy(String criteria) async {
+    storageService.saveString("selectedSortCriteria", criteria);
+    selectedSortCriteria = criteria;
+
+    if (selectedCanteens.isEmpty || selectedCanteens.length == 1) return;
+
+    Comparator<Canteen> comparator;
+    switch (criteria) {
+      case "name":
+        comparator = (c1, c2) => HR_Comparator.compare(c1.name, c2.name);
+        break;
+      case "queueLength":
+        comparator = (c1, c2) {
+          int queueLengthCompareResult =
+              QueueLengthExtension.compare(c1.queueLength, c2.queueLength);
+          return queueLengthCompareResult == 0
+              ? HR_Comparator.compare(c1.name, c2.name)
+              : queueLengthCompareResult;
+        };
+        break;
+      case "distance":
+        Position? userLocation = await getCurrentPosition();
+
+        if (userLocation == null) {
+          sortCanteensBy('name');
+          return;
+        }
+
+        comparator = (c1, c2) {
+          double distance1 = locationService.distanceFromPosition(
+            userLocation.latitude,
+            userLocation.longitude,
+            double.parse(c1.latitude),
+            double.parse(c1.longitude),
+          );
+
+          double distance2 = locationService.distanceFromPosition(
+            userLocation.latitude,
+            userLocation.longitude,
+            double.parse(c2.latitude),
+            double.parse(c2.longitude),
+          );
+
+          return distance1.compareTo(distance2);
+        };
+        break;
+      default:
+        comparator = (c1, c2) => 0;
+    }
+
+    updateWidget(() {
+      selectedCanteens.sort(comparator);
+    });
+  }
+
+  Future<Position?> getCurrentPosition() async {
+    try {
+      Position position = await locationService.getCurrentPosition();
+      return position;
+    } catch (e) {
+      Utils.showAlertDialog(context, "Greška", e.toString());
+      return null;
+    }
   }
 }

@@ -40,6 +40,13 @@ extension QueueLengthExtension on QueueLength {
     }
   }
 
+  static int compare(QueueLength queueLength1, QueueLength queueLength2) {
+    if (queueLength1 == queueLength2) return 0;
+    if (queueLength1 == QueueLength.UNKNOWN) return 1;
+    if (queueLength2 == QueueLength.UNKNOWN) return -1;
+    return queueLength1.index.compareTo(queueLength2.index);
+  }
+
   static String getString(QueueLength queueLength) {
     switch (queueLength) {
       case QueueLength.NONE:
