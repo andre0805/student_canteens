@@ -2,7 +2,7 @@
 
 ## About
 *Student Canteens* is a simple yet very useful Flutter app which enables students to track length of queues in student canteens all over Croatia. 
-It was developed as a part of my [Final thesis](https://zir.nsk.hr/islandora/object/fer%3A10835) @ [FER](www.unizg.fer).
+It was developed as a part of my [Final thesis](https://zir.nsk.hr/islandora/object/fer%3A10835) @ [FER](https://www.fer.unizg.hr).
 The whole system relies on students to report length of the queue when they are nearby canteen or in the queue.
 
 ## Features:
