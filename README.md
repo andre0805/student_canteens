@@ -5,6 +5,11 @@
 It was developed as a part of my [Final thesis](https://zir.nsk.hr/islandora/object/fer%3A10835) @ [FER](https://www.fer.unizg.hr).
 The whole system relies on students to report length of the queue when they are nearby canteen or in the queue.
 
+## Thesis
+The thesis describes the development process of a mobile application for monitoring queue lengths in student canteens, with the aim of addressing the daily problem of long canteen queues faced by the students. The application was developed for Android and iOS platforms using Flutter development framework, and for the needs of application, a database and a backend service for communication with the database have also been developed.
+The application offers users to view available canteens in the chosen city of study and the details of each canteen such as working hours, information on the current queue status, the ability to report the queue length, as well as personalized experience by adding favorite canteens. Additionally, the functionality of receiving daily notifications about canteen queue status at defined time of lunch has also been implemented.
+All things considered, this app provides a useful service to students, enhancing their daily experience and enabling them to plan their canteen visits better.
+
 ## Features:
 * Login/Registration
 * Login with Google
